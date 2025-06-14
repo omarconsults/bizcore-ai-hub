@@ -1,7 +1,6 @@
 
 import React from 'react';
 import Dashboard from '@/components/Dashboard';
-import BusinessLaunch from '@/components/BusinessLaunch';
 import ComplianceHub from '@/components/ComplianceHub';
 import Operations from '@/components/Operations';
 import KnowledgeHub from '@/components/KnowledgeHub';
@@ -36,7 +35,8 @@ const DashboardContent = ({ activeModule }: DashboardContentProps) => {
     case 'dashboard':
       return <Dashboard />;
     case 'launch':
-      return <BusinessLaunch />;
+      // Redirect launch to dashboard since they're now merged
+      return <Dashboard />;
     case 'compliance':
       return <ComplianceHub />;
     case 'operations':
