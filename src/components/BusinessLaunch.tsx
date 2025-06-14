@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,6 +16,7 @@ import {
 const BusinessLaunch = () => {
   const [selectedEntityType, setSelectedEntityType] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
+  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const { toast } = useToast();
 
   const entityTypes = [
@@ -108,29 +108,28 @@ const BusinessLaunch = () => {
     });
   };
 
-  const handleCACRegistration = () => {
+  const handleStartRegistration = () => {
+    setShowRegistrationForm(true);
     toast({
-      title: "Starting CAC Registration",
-      description: "Redirecting to CAC registration portal...",
+      title: "Starting Registration",
+      description: "Opening the in-house CAC registration form...",
     });
-    // In a real app, this would redirect to the CAC website
-    window.open('https://services.cac.gov.ng/', '_blank');
   };
 
-  const handleNameAvailability = () => {
+  const handleNameSearch = () => {
     toast({
-      title: "Checking Name Availability",
-      description: "Opening CAC name search portal...",
+      title: "Name Search",
+      description: "Use our in-house name search feature to check availability...",
     });
-    window.open('https://services.cac.gov.ng/search/', '_blank');
+    // This would trigger the name search functionality
   };
 
   const handleDownloadForms = () => {
     toast({
       title: "Downloading Forms",
-      description: "CAC registration forms are being prepared...",
+      description: "Preparing registration documents for download...",
     });
-    // In a real app, this would download the actual forms
+    // This would download the prepared forms
   };
 
   const handleComplianceAlerts = () => {
@@ -139,6 +138,41 @@ const BusinessLaunch = () => {
       description: "Setting up compliance reminders for your business...",
     });
   };
+
+  if (showRegistrationForm) {
+    return (
+      <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Building className="text-blue-900" size={28} />
+              CAC Business Registration
+            </h1>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowRegistrationForm(false)}
+            >
+              Back to Launch Toolkit
+            </Button>
+          </div>
+          <p className="text-gray-600">Complete your business registration with our in-house CAC form</p>
+        </div>
+        
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-8 text-center">
+            <div className="text-4xl mb-4">📋</div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Registration Form Integration</h2>
+            <p className="text-gray-600 mb-4">
+              The existing CAC business registration form from your dashboard will be integrated here.
+            </p>
+            <p className="text-sm text-gray-500">
+              Selected Entity Type: <span className="font-medium text-blue-900">{selectedEntityType}</span>
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
@@ -287,27 +321,28 @@ const BusinessLaunch = () => {
 
         {/* Quick Actions & Resources */}
         <div className="space-y-6">
-          {/* CAC Quick Start */}
+          {/* In-House Registration */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="text-blue-900" size={20} />
-                CAC Quick Start
+                In-House Registration
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Button 
                 className="w-full bg-emerald-600 hover:bg-emerald-700"
-                onClick={handleCACRegistration}
+                onClick={handleStartRegistration}
+                disabled={!selectedEntityType}
               >
-                Start CAC Registration
+                Start Registration Form
               </Button>
               <Button 
                 variant="outline" 
                 className="w-full"
-                onClick={handleNameAvailability}
+                onClick={handleNameSearch}
               >
-                Check Name Availability
+                Search Business Name
               </Button>
               <Button 
                 variant="outline" 
