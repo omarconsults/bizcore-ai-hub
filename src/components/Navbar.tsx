@@ -1,11 +1,25 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, MessageCircle } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
-const Navbar = () => {
+interface NavbarProps {
+  onAuthClick?: () => void;
+}
+
+const Navbar = ({ onAuthClick }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+
+  const handleAuthAction = () => {
+    if (user) {
+      signOut();
+    } else if (onAuthClick) {
+      onAuthClick();
+    }
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -31,12 +45,23 @@ const Navbar = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="outline" className="border-blue-900 text-blue-900 hover:bg-blue-50">
-              Sign In
-            </Button>
-            <Button className="bg-blue-900 hover:bg-blue-800 text-white">
-              Start Free Trial
-            </Button>
+            {user ? (
+              <>
+                <span className="text-sm text-gray-600">Welcome, {user.user_metadata?.business_name || user.email}</span>
+                <Button variant="outline" onClick={handleAuthAction} className="border-blue-900 text-blue-900 hover:bg-blue-50">
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" onClick={onAuthClick} className="border-blue-900 text-blue-900 hover:bg-blue-50">
+                  Sign In
+                </Button>
+                <Button onClick={onAuthClick} className="bg-blue-900 hover:bg-blue-800 text-white">
+                  Start Free Trial
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -59,12 +84,20 @@ const Navbar = () => {
               <a href="#resources" className="block px-3 py-2 text-gray-600 hover:text-blue-900">Resources</a>
               <a href="#contact" className="block px-3 py-2 text-gray-600 hover:text-blue-900">Contact</a>
               <div className="flex flex-col space-y-2 px-3 pt-2">
-                <Button variant="outline" className="w-full border-blue-900 text-blue-900">
-                  Sign In
-                </Button>
-                <Button className="w-full bg-blue-900 hover:bg-blue-800 text-white">
-                  Start Free Trial
-                </Button>
+                {user ? (
+                  <Button variant="outline" onClick={handleAuthAction} className="w-full border-blue-900 text-blue-900">
+                    Sign Out
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="outline" onClick={onAuthClick} className="w-full border-blue-900 text-blue-900">
+                      Sign In
+                    </Button>
+                    <Button onClick={onAuthClick} className="w-full bg-blue-900 hover:bg-blue-800 text-white">
+                      Start Free Trial
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

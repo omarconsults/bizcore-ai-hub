@@ -13,12 +13,15 @@ import {
   Settings,
   HelpCircle
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const DashboardSidebar = ({ activeModule, setActiveModule }) => {
+  const { user } = useAuth();
+
   const modules = [
     { id: 'dashboard', name: 'Dashboard', icon: Home },
     { id: 'launch', name: 'Business Launch', icon: Building },
-    { id: 'compliance', name: 'Compliance Hub', icon: Shield },
+    { id: compliance', name: 'Compliance Hub', icon: Shield },
     { id: 'operations', name: 'Operations', icon: Calculator },
     { id: 'team', name: 'HR & Team', icon: Users },
     { id: 'marketing', name: 'Marketing', icon: Megaphone },
@@ -31,6 +34,10 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
     { id: 'settings', name: 'Settings', icon: Settings },
     { id: 'help', name: 'Help & Support', icon: HelpCircle },
   ];
+
+  const businessName = user?.user_metadata?.business_name || 'Your Business';
+  const userEmail = user?.email || '';
+  const userInitial = businessName.charAt(0).toUpperCase();
 
   return (
     <div className="w-64 bg-white shadow-lg border-r border-gray-200 h-screen flex flex-col">
@@ -80,11 +87,11 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
-            A
+            {userInitial}
           </div>
-          <div>
-            <p className="font-medium text-gray-900">Adaora Okafor</p>
-            <p className="text-sm text-gray-500">Fashion House Ltd</p>
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-gray-900 truncate">{businessName}</p>
+            <p className="text-sm text-gray-500 truncate">{userEmail}</p>
           </div>
         </div>
       </div>
