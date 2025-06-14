@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -87,8 +86,6 @@ const Index = () => {
         return <Strategy />;
       case 'presence':
         return <DigitalPresenceAnalyzer />;
-      case 'analytics':
-        return <PlaceholderModule title="Analytics Dashboard" />;
       case 'knowledge':
         return <KnowledgeHub />;
       case 'settings':
