@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -10,6 +10,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { LeaveRequest } from './types';
+import { LeaveRequestForm } from './LeaveRequestForm';
 
 interface LeaveManagementProps {
   leaveRequests: LeaveRequest[];
@@ -21,6 +22,7 @@ export const LeaveManagement: React.FC<LeaveManagementProps> = ({
   setLeaveRequests
 }) => {
   const { toast } = useToast();
+  const [showRequestForm, setShowRequestForm] = useState(false);
 
   const approveLeaveRequest = (requestId: number) => {
     setLeaveRequests(prev => prev.map(request => 
@@ -44,11 +46,9 @@ export const LeaveManagement: React.FC<LeaveManagementProps> = ({
     });
   };
 
-  const requestLeave = () => {
-    toast({
-      title: "Leave Request",
-      description: "Leave request form opened. This would typically open a detailed form."
-    });
+  const handleNewLeaveRequest = (leaveData: any) => {
+    setLeaveRequests(prev => [leaveData, ...prev]);
+    setShowRequestForm(false);
   };
 
   const viewLeaveBalances = () => {
@@ -58,10 +58,19 @@ export const LeaveManagement: React.FC<LeaveManagementProps> = ({
     });
   };
 
+  if (showRequestForm) {
+    return (
+      <LeaveRequestForm
+        onSubmit={handleNewLeaveRequest}
+        onCancel={() => setShowRequestForm(false)}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid md:grid-cols-3 gap-4">
-        <Button onClick={requestLeave} className="bg-blue-900 hover:bg-blue-800 h-20">
+        <Button onClick={() => setShowRequestForm(true)} className="bg-blue-900 hover:bg-blue-800 h-20">
           <div className="text-center">
             <Plus className="mx-auto mb-1" />
             Request Leave
