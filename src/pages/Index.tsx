@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,7 +23,8 @@ const Index = () => {
     console.log('Index component - user:', user);
     console.log('Index component - loading:', loading);
     console.log('Index component - viewMode:', viewMode);
-  }, [user, loading, viewMode]);
+    console.log('Index component - activeModule:', activeModule);
+  }, [user, loading, viewMode, activeModule]);
 
   // Redirect authenticated users to dashboard
   useEffect(() => {
@@ -47,7 +49,23 @@ const Index = () => {
     }
   };
 
+  // Placeholder components for missing modules
+  const PlaceholderModule = ({ title }: { title: string }) => (
+    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+      <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+        <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+        <p className="text-gray-600 mt-1">This module is coming soon!</p>
+      </div>
+      <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-200 text-center">
+        <div className="text-4xl mb-4">🚀</div>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Under Development</h2>
+        <p className="text-gray-600">We're working hard to bring you this feature. Stay tuned for updates!</p>
+      </div>
+    </div>
+  );
+
   const renderDashboardContent = () => {
+    console.log('Rendering module:', activeModule);
     switch (activeModule) {
       case 'dashboard':
         return <Dashboard />;
@@ -57,9 +75,22 @@ const Index = () => {
         return <ComplianceHub />;
       case 'operations':
         return <Operations />;
+      case 'team':
+        return <PlaceholderModule title="HR & Team Management" />;
+      case 'marketing':
+        return <PlaceholderModule title="Marketing Hub" />;
+      case 'strategy':
+        return <PlaceholderModule title="Strategy Planning" />;
+      case 'analytics':
+        return <PlaceholderModule title="Analytics Dashboard" />;
       case 'knowledge':
         return <KnowledgeHub />;
+      case 'settings':
+        return <PlaceholderModule title="Settings" />;
+      case 'help':
+        return <PlaceholderModule title="Help & Support" />;
       default:
+        console.log('Unknown module, defaulting to dashboard:', activeModule);
         return <Dashboard />;
     }
   };
