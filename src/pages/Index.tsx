@@ -11,6 +11,7 @@ import ComplianceHub from '@/components/ComplianceHub';
 import Operations from '@/components/Operations';
 import KnowledgeHub from '@/components/KnowledgeHub';
 import HRDashboard from '@/components/HRDashboard';
+import Marketing from '@/components/Marketing';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -78,7 +79,7 @@ const Index = () => {
       case 'team':
         return <HRDashboard />;
       case 'marketing':
-        return <PlaceholderModule title="Marketing Hub" />;
+        return <Marketing />;
       case 'strategy':
         return <PlaceholderModule title="Strategy Planning" />;
       case 'analytics':
