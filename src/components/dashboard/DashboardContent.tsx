@@ -34,9 +34,6 @@ const DashboardContent = ({ activeModule }: DashboardContentProps) => {
   switch (activeModule) {
     case 'dashboard':
       return <Dashboard />;
-    case 'launch':
-      // Redirect launch to dashboard since they're now merged
-      return <Dashboard />;
     case 'compliance':
       return <ComplianceHub />;
     case 'operations':

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Calculator, 
   TrendingUp, 
@@ -16,9 +17,14 @@ import {
   Download,
   Eye
 } from 'lucide-react';
+import AddEmployeeForm from './operations/AddEmployeeForm';
+import InvoiceCreationForm from './operations/InvoiceCreationForm';
 
 const Operations = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [showAddEmployeeForm, setShowAddEmployeeForm] = useState(false);
+  const [showInvoiceForm, setShowInvoiceForm] = useState(false);
+  const { toast } = useToast();
 
   const monthlyFinancials = {
     revenue: 2400000,
@@ -27,26 +33,26 @@ const Operations = () => {
     growth: 12
   };
 
-  const recentTransactions = [
+  const [recentTransactions, setRecentTransactions] = useState([
     { date: '2024-03-15', type: 'income', description: 'Client Payment - Fashion Consultation', amount: 150000, category: 'Services' },
     { date: '2024-03-14', type: 'expense', description: 'Office Rent', amount: -200000, category: 'Overhead' },
     { date: '2024-03-13', type: 'income', description: 'Product Sales - Online Store', amount: 85000, category: 'Products' },
     { date: '2024-03-12', type: 'expense', description: 'Marketing Campaign', amount: -50000, category: 'Marketing' },
     { date: '2024-03-11', type: 'income', description: 'Wholesale Order', amount: 300000, category: 'Products' }
-  ];
+  ]);
 
-  const pendingInvoices = [
+  const [pendingInvoices, setPendingInvoices] = useState([
     { id: 'INV-001', client: 'Lagos Fashion Week', amount: 500000, dueDate: '2024-03-20', status: 'pending' },
     { id: 'INV-002', client: 'Bella Stores', amount: 250000, dueDate: '2024-03-25', status: 'overdue' },
     { id: 'INV-003', client: 'Style Central', amount: 180000, dueDate: '2024-04-01', status: 'pending' }
-  ];
+  ]);
 
-  const payrollSummary = [
+  const [payrollSummary, setPayrollSummary] = useState([
     { name: 'Adaora Okafor', role: 'Founder/CEO', salary: 400000, status: 'paid' },
     { name: 'Emeka Johnson', role: 'Designer', salary: 250000, status: 'paid' },
     { name: 'Funmi Adebayo', role: 'Sales Manager', salary: 180000, status: 'pending' },
     { name: 'David Okwu', role: 'Operations Assistant', salary: 120000, status: 'pending' }
-  ];
+  ]);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-NG', {
@@ -54,6 +60,46 @@ const Operations = () => {
       currency: 'NGN',
       minimumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const handleEmployeeAdded = (newEmployee) => {
+    setPayrollSummary(prev => [...prev, newEmployee]);
+  };
+
+  const handleInvoiceCreated = (newInvoice) => {
+    setPendingInvoices(prev => [...prev, newInvoice]);
+  };
+
+  const handleProcessPayroll = () => {
+    toast({
+      title: "Payroll Processing",
+      description: "Payroll has been processed successfully for all pending employees.",
+    });
+    
+    setPayrollSummary(prev => 
+      prev.map(employee => ({ ...employee, status: 'paid' }))
+    );
+  };
+
+  const handleGenerateReport = (reportType) => {
+    toast({
+      title: "Report Generated",
+      description: `${reportType} report is being prepared for download.`,
+    });
+  };
+
+  const handleViewInvoice = (invoiceId) => {
+    toast({
+      title: "Opening Invoice",
+      description: `Viewing details for ${invoiceId}.`,
+    });
+  };
+
+  const handleSendReminder = (invoiceId) => {
+    toast({
+      title: "Reminder Sent",
+      description: `Payment reminder sent for ${invoiceId}.`,
+    });
   };
 
   return (
@@ -198,7 +244,10 @@ const Operations = () => {
             <div className="space-y-6">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900">Invoice Management</h3>
-                <Button className="bg-blue-900 hover:bg-blue-800">
+                <Button 
+                  className="bg-blue-900 hover:bg-blue-800"
+                  onClick={() => setShowInvoiceForm(true)}
+                >
                   <Plus className="mr-2" size={16} />
                   Create Invoice
                 </Button>
@@ -225,11 +274,19 @@ const Operations = () => {
                           </Badge>
                         </div>
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleViewInvoice(invoice.id)}
+                          >
                             <Eye className="mr-1" size={14} />
                             View
                           </Button>
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleSendReminder(invoice.id)}
+                          >
                             Send Reminder
                           </Button>
                         </div>
@@ -245,15 +302,27 @@ const Operations = () => {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-3 gap-4">
-                  <Button variant="outline" className="h-20 flex-col">
+                  <Button 
+                    variant="outline" 
+                    className="h-20 flex-col"
+                    onClick={() => setShowInvoiceForm(true)}
+                  >
                     <Receipt className="mb-2" size={20} />
                     Service Invoice
                   </Button>
-                  <Button variant="outline" className="h-20 flex-col">
+                  <Button 
+                    variant="outline" 
+                    className="h-20 flex-col"
+                    onClick={() => setShowInvoiceForm(true)}
+                  >
                     <FileText className="mb-2" size={20} />
                     Product Invoice
                   </Button>
-                  <Button variant="outline" className="h-20 flex-col">
+                  <Button 
+                    variant="outline" 
+                    className="h-20 flex-col"
+                    onClick={() => setShowInvoiceForm(true)}
+                  >
                     <Download className="mb-2" size={20} />
                     Recurring Invoice
                   </Button>
@@ -266,9 +335,21 @@ const Operations = () => {
             <div className="space-y-6">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900">Payroll Management</h3>
-                <Button className="bg-emerald-600 hover:bg-emerald-700">
-                  Process Payroll
-                </Button>
+                <div className="flex gap-3">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setShowAddEmployeeForm(true)}
+                  >
+                    <Plus className="mr-2" size={16} />
+                    Add Employee
+                  </Button>
+                  <Button 
+                    className="bg-emerald-600 hover:bg-emerald-700"
+                    onClick={handleProcessPayroll}
+                  >
+                    Process Payroll
+                  </Button>
+                </div>
               </div>
 
               {/* Payroll Summary */}
@@ -378,7 +459,11 @@ const Operations = () => {
                         <div className="flex-1">
                           <h4 className="font-medium text-gray-900">{report.name}</h4>
                           <p className="text-sm text-gray-600 mt-1">{report.description}</p>
-                          <Button size="sm" className="mt-3 bg-blue-900 hover:bg-blue-800">
+                          <Button 
+                            size="sm" 
+                            className="mt-3 bg-blue-900 hover:bg-blue-800"
+                            onClick={() => handleGenerateReport(report.name)}
+                          >
                             <Download className="mr-1" size={14} />
                             Generate
                           </Button>
@@ -392,6 +477,19 @@ const Operations = () => {
           )}
         </div>
       </div>
+
+      {/* Forms */}
+      <AddEmployeeForm
+        isOpen={showAddEmployeeForm}
+        onClose={() => setShowAddEmployeeForm(false)}
+        onEmployeeAdded={handleEmployeeAdded}
+      />
+
+      <InvoiceCreationForm
+        isOpen={showInvoiceForm}
+        onClose={() => setShowInvoiceForm(false)}
+        onInvoiceCreated={handleInvoiceCreated}
+      />
     </div>
   );
 };

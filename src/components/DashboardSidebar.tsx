@@ -1,7 +1,6 @@
 import React from 'react';
 import { 
   Home, 
-  Building, 
   Shield, 
   Calculator, 
   Users, 
@@ -19,7 +18,6 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
 
   const modules = [
     { id: 'dashboard', name: 'Dashboard', icon: Home },
-    { id: 'launch', name: 'Business Launch', icon: Building },
     { id: 'compliance', name: 'Compliance Hub', icon: Shield },
     { id: 'operations', name: 'Operations', icon: Calculator },
     { id: 'team', name: 'HR & Team', icon: Users },
