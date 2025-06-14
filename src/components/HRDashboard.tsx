@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Users, 
   FileText, 
@@ -43,6 +44,25 @@ const HRDashboard = () => {
   });
   const [jobTitle, setJobTitle] = useState('');
   const [generatedJD, setGeneratedJD] = useState('');
+  const [teamMembers, setTeamMembers] = useState([
+    { id: 1, name: 'Musa Bello', role: 'Sales Manager', status: 'Active', joinDate: '2024-01-15' },
+    { id: 2, name: 'Tobi Adeyemi', role: 'Freelance Designer', status: 'Contract', joinDate: '2024-02-01' },
+    { id: 3, name: 'Sarah Okafor', role: 'Marketing Intern', status: 'Intern', joinDate: '2024-03-01' },
+    { id: 4, name: 'Ahmed Yusuf', role: 'Developer', status: 'Active', joinDate: '2023-12-10' },
+  ]);
+  const [leaveRequests, setLeaveRequests] = useState([
+    { id: 1, name: 'Musa Bello', type: 'Annual Leave', dates: 'Mar 20-22, 2024', status: 'pending' },
+    { id: 2, name: 'Ahmed Yusuf', type: 'Sick Leave', dates: 'Mar 15, 2024', status: 'approved' },
+    { id: 3, name: 'Sarah Okafor', type: 'Personal Leave', dates: 'Mar 25, 2024', status: 'pending' },
+  ]);
+  const [newMemberForm, setNewMemberForm] = useState({
+    name: '',
+    role: '',
+    status: 'Active'
+  });
+  const [showAddMemberForm, setShowAddMemberForm] = useState(false);
+
+  const { toast } = useToast();
 
   const tabs = [
     { id: 'directory', name: 'Team Directory', icon: Users },
@@ -58,21 +78,15 @@ const HRDashboard = () => {
     { name: 'Intern_Sarah.pdf', type: 'Internship', date: '2024-03-05' },
   ];
 
-  const teamMembers = [
-    { name: 'Musa Bello', role: 'Sales Manager', status: 'Active', joinDate: '2024-01-15' },
-    { name: 'Tobi Adeyemi', role: 'Freelance Designer', status: 'Contract', joinDate: '2024-02-01' },
-    { name: 'Sarah Okafor', role: 'Marketing Intern', status: 'Intern', joinDate: '2024-03-01' },
-    { name: 'Ahmed Yusuf', role: 'Developer', status: 'Active', joinDate: '2023-12-10' },
-  ];
-
-  const leaveRequests = [
-    { name: 'Musa Bello', type: 'Annual Leave', dates: 'Mar 20-22, 2024', status: 'pending' },
-    { name: 'Ahmed Yusuf', type: 'Sick Leave', dates: 'Mar 15, 2024', status: 'approved' },
-    { name: 'Sarah Okafor', type: 'Personal Leave', dates: 'Mar 25, 2024', status: 'pending' },
-  ];
-
   const generateJobDescription = () => {
-    if (!jobTitle) return;
+    if (!jobTitle) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter a job title first.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     const template = `Job Title: ${jobTitle}
 
@@ -101,17 +115,143 @@ What We Offer:
 • Performance-based bonuses`;
 
     setGeneratedJD(template);
+    toast({
+      title: "Job Description Generated",
+      description: "Your job description has been created successfully!"
+    });
   };
 
   const handleGenerateContract = () => {
+    if (!contractData.type || !contractData.role) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     console.log('Generating contract with data:', contractData);
-    // Here you would typically call an API to generate the contract
-    alert('Contract generation started! You will receive an email when ready.');
+    toast({
+      title: "Contract Generated",
+      description: "Contract generation started! You will receive an email when ready."
+    });
+    
+    // Reset form
+    setContractData({
+      type: '',
+      role: '',
+      salary: '',
+      startDate: undefined
+    });
   };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedJD);
-    alert('Job description copied to clipboard!');
+    toast({
+      title: "Copied!",
+      description: "Job description copied to clipboard."
+    });
+  };
+
+  const downloadJobDescription = () => {
+    const element = document.createElement('a');
+    const file = new Blob([generatedJD], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = `${jobTitle.replace(/\s+/g, '_')}_Job_Description.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    
+    toast({
+      title: "Downloaded",
+      description: "Job description downloaded successfully!"
+    });
+  };
+
+  const addTeamMember = () => {
+    if (!newMemberForm.name || !newMemberForm.role) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newMember = {
+      id: teamMembers.length + 1,
+      name: newMemberForm.name,
+      role: newMemberForm.role,
+      status: newMemberForm.status,
+      joinDate: new Date().toISOString().split('T')[0]
+    };
+
+    setTeamMembers([...teamMembers, newMember]);
+    setNewMemberForm({ name: '', role: '', status: 'Active' });
+    setShowAddMemberForm(false);
+    
+    toast({
+      title: "Team Member Added",
+      description: `${newMemberForm.name} has been added to the team.`
+    });
+  };
+
+  const approveLeaveRequest = (requestId: number) => {
+    setLeaveRequests(prev => prev.map(request => 
+      request.id === requestId ? { ...request, status: 'approved' } : request
+    ));
+    
+    toast({
+      title: "Leave Approved",
+      description: "Leave request has been approved."
+    });
+  };
+
+  const rejectLeaveRequest = (requestId: number) => {
+    setLeaveRequests(prev => prev.map(request => 
+      request.id === requestId ? { ...request, status: 'rejected' } : request
+    ));
+    
+    toast({
+      title: "Leave Rejected",
+      description: "Leave request has been rejected."
+    });
+  };
+
+  const downloadContract = (contractName: string) => {
+    toast({
+      title: "Download Started",
+      description: `Downloading ${contractName}...`
+    });
+  };
+
+  const requestLeave = () => {
+    toast({
+      title: "Leave Request",
+      description: "Leave request form opened. This would typically open a detailed form."
+    });
+  };
+
+  const viewLeaveBalances = () => {
+    toast({
+      title: "Leave Balances",
+      description: "Opening leave balance overview..."
+    });
+  };
+
+  const startNewReviewCycle = () => {
+    toast({
+      title: "Review Cycle Started",
+      description: "New performance review cycle has been initiated."
+    });
+  };
+
+  const viewReview = (memberName: string) => {
+    toast({
+      title: "Performance Review",
+      description: `Opening review for ${memberName}...`
+    });
   };
 
   const renderContent = () => {
@@ -121,14 +261,54 @@ What We Offer:
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Team Directory</h3>
-              <Button className="bg-blue-900 hover:bg-blue-800">
+              <Button 
+                className="bg-blue-900 hover:bg-blue-800"
+                onClick={() => setShowAddMemberForm(true)}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add Team Member
               </Button>
             </div>
+
+            {showAddMemberForm && (
+              <Card className="border-blue-200 bg-blue-50">
+                <CardContent className="p-4">
+                  <h4 className="font-medium mb-4">Add New Team Member</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="member-name">Name</Label>
+                      <Input
+                        id="member-name"
+                        value={newMemberForm.name}
+                        onChange={(e) => setNewMemberForm({...newMemberForm, name: e.target.value})}
+                        placeholder="Enter full name"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="member-role">Role</Label>
+                      <Input
+                        id="member-role"
+                        value={newMemberForm.role}
+                        onChange={(e) => setNewMemberForm({...newMemberForm, role: e.target.value})}
+                        placeholder="Enter role"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-4">
+                    <Button onClick={addTeamMember} className="bg-emerald-600 hover:bg-emerald-700">
+                      Add Member
+                    </Button>
+                    <Button variant="outline" onClick={() => setShowAddMemberForm(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             <div className="grid gap-4">
-              {teamMembers.map((member, index) => (
-                <Card key={index}>
+              {teamMembers.map((member) => (
+                <Card key={member.id}>
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
@@ -254,7 +434,11 @@ What We Offer:
                         <p className="font-medium text-sm">{contract.name}</p>
                         <p className="text-xs text-gray-500">{contract.type} • {contract.date}</p>
                       </div>
-                      <Button size="sm" variant="outline">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => downloadContract(contract.name)}
+                      >
                         <Download className="h-4 w-4" />
                       </Button>
                     </div>
@@ -304,7 +488,7 @@ What We Offer:
                         <Copy className="mr-2 h-4 w-4" />
                         Copy to Clipboard
                       </Button>
-                      <Button variant="outline" className="flex-1">
+                      <Button onClick={downloadJobDescription} variant="outline" className="flex-1">
                         <Download className="mr-2 h-4 w-4" />
                         Download
                       </Button>
@@ -320,7 +504,7 @@ What We Offer:
         return (
           <div className="space-y-6">
             <div className="grid md:grid-cols-3 gap-4">
-              <Button className="bg-blue-900 hover:bg-blue-800 h-20">
+              <Button onClick={requestLeave} className="bg-blue-900 hover:bg-blue-800 h-20">
                 <div className="text-center">
                   <Plus className="mx-auto mb-1" />
                   Request Leave
@@ -332,7 +516,7 @@ What We Offer:
                   Approve Requests
                 </div>
               </Button>
-              <Button variant="outline" className="h-20">
+              <Button onClick={viewLeaveBalances} variant="outline" className="h-20">
                 <div className="text-center">
                   <CalendarIcon className="mx-auto mb-1" />
                   Leave Balances
@@ -346,8 +530,8 @@ What We Offer:
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {leaveRequests.map((request, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                  {leaveRequests.map((request) => (
+                    <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div>
                         <h4 className="font-medium">{request.name}</h4>
                         <p className="text-sm text-gray-600">{request.type}</p>
@@ -355,19 +539,37 @@ What We Offer:
                       </div>
                       <div className="flex items-center gap-2">
                         {request.status === 'pending' ? (
-                          <Clock className="h-4 w-4 text-yellow-500" />
-                        ) : request.status === 'approved' ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              onClick={() => approveLeaveRequest(request.id)}
+                              className="bg-green-600 hover:bg-green-700"
+                            >
+                              Approve
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => rejectLeaveRequest(request.id)}
+                            >
+                              Reject
+                            </Button>
+                          </div>
                         ) : (
-                          <AlertCircle className="h-4 w-4 text-red-500" />
+                          <>
+                            {request.status === 'approved' ? (
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                            ) : (
+                              <AlertCircle className="h-4 w-4 text-red-500" />
+                            )}
+                            <span className={`px-2 py-1 rounded-full text-xs capitalize ${
+                              request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                              'bg-red-100 text-red-800'
+                            }`}>
+                              {request.status}
+                            </span>
+                          </>
                         )}
-                        <span className={`px-2 py-1 rounded-full text-xs capitalize ${
-                          request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          request.status === 'approved' ? 'bg-green-100 text-green-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {request.status}
-                        </span>
                       </div>
                     </div>
                   ))}
@@ -382,15 +584,15 @@ What We Offer:
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Performance Reviews</h3>
-              <Button className="bg-blue-900 hover:bg-blue-800">
+              <Button onClick={startNewReviewCycle} className="bg-blue-900 hover:bg-blue-800">
                 <Plus className="mr-2 h-4 w-4" />
                 New Review Cycle
               </Button>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {teamMembers.map((member, index) => (
-                <Card key={index}>
+              {teamMembers.map((member) => (
+                <Card key={member.id}>
                   <CardContent className="p-4">
                     <div className="text-center space-y-3">
                       <div className="w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold mx-auto">
@@ -405,7 +607,12 @@ What We Offer:
                           <Star key={star} className="h-4 w-4 text-yellow-400 fill-current" />
                         ))}
                       </div>
-                      <Button size="sm" variant="outline" className="w-full">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={() => viewReview(member.name)}
+                      >
                         View Review
                       </Button>
                     </div>
