@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Home, 
@@ -10,7 +11,8 @@ import {
   BarChart3, 
   BookOpen,
   Settings,
-  HelpCircle
+  HelpCircle,
+  Search
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -25,6 +27,7 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
     { id: 'team', name: 'HR & Team', icon: Users },
     { id: 'marketing', name: 'Marketing', icon: Megaphone },
     { id: 'strategy', name: 'Strategy', icon: Target },
+    { id: 'presence', name: 'Digital Presence', icon: Search },
     { id: 'analytics', name: 'Analytics', icon: BarChart3 },
     { id: 'knowledge', name: 'Knowledge Hub', icon: BookOpen },
   ];
