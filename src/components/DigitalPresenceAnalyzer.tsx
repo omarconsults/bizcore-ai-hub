@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -350,8 +349,8 @@ const DigitalPresenceAnalyzer = () => {
                         {data.found ? (
                           <div className="text-sm space-y-1">
                             <p>Score: <span className={getScoreColor(data.score)}>{data.score}/100</span></p>
-                            {data.followers && <p>Followers: {data.followers}</p>}
-                            {data.lastPost && <p>Last post: {data.lastPost}</p>}
+                            {'followers' in data && <p>Followers: {data.followers}</p>}
+                            {'lastPost' in data && <p>Last post: {data.lastPost}</p>}
                           </div>
                         ) : (
                           <p className="text-sm text-red-600">Profile not found</p>
