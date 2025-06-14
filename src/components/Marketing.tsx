@@ -1,124 +1,157 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { 
-  Bot, 
-  Palette, 
+  TrendingUp, 
+  Users, 
   Mail, 
-  Calendar,
-  Download,
-  Copy,
-  Send,
+  MessageSquare, 
   Eye,
   BarChart3,
-  Users,
-  Hash,
-  Smile,
-  Image,
-  FileText,
-  Clock,
-  Target
+  Plus,
+  Calendar,
+  Target,
+  DollarSign,
+  Zap
 } from 'lucide-react';
-import SocialMediaGenerator from './marketing/SocialMediaGenerator';
-import DesignStudio from './marketing/DesignStudio';
-import CampaignManager from './marketing/CampaignManager';
-import MarketingCalendar from './marketing/MarketingCalendar';
+import CampaignManager from '@/components/marketing/CampaignManager';
+import SocialMediaGenerator from '@/components/marketing/SocialMediaGenerator';
+import DesignStudio from '@/components/marketing/DesignStudio';
+import EmailMarketing from '@/components/marketing/EmailMarketing';
 
 const Marketing = () => {
-  const [activeTab, setActiveTab] = useState('social');
-
-  const marketingStats = [
-    { title: 'Active Campaigns', value: '8', change: '+2 this week', icon: Target },
-    { title: 'Reach This Month', value: '12.5K', change: '+18%', icon: Users },
-    { title: 'Engagement Rate', value: '4.2%', change: '+0.8%', icon: BarChart3 },
-    { title: 'Scheduled Posts', value: '24', change: 'Next 7 days', icon: Clock },
-  ];
+  const [activeTab, setActiveTab] = useState('overview');
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-      {/* Header */}
-      <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Marketing Assistant 🚀</h1>
-            <p className="text-gray-600 mt-1">Create, launch, and manage effective marketing campaigns with AI</p>
-          </div>
-          <div className="text-right">
-            <div className="text-sm text-gray-500">Today</div>
-            <div className="text-lg font-semibold text-gray-900">March 15, 2024</div>
-          </div>
-        </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">Marketing Hub</h2>
+        <Button className="bg-emerald-600 hover:bg-emerald-700">
+          <Plus className="mr-2 h-4 w-4" />
+          New Campaign
+        </Button>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {marketingStats.map((stat, index) => (
-          <Card key={index} className="border-0 shadow-sm">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
-                  <p className="text-sm text-emerald-600 mt-1">{stat.change}</p>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+          <TabsTrigger value="email">Email</TabsTrigger>
+          <TabsTrigger value="social">Social Media</TabsTrigger>
+          <TabsTrigger value="design">Design Studio</TabsTrigger>
+        </TabsList>
+
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid sm:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Website Traffic</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">3,457</div>
+                <div className="text-sm text-gray-500 flex items-center gap-1">
+                  <TrendingUp className="h-4 w-4 text-green-500" />
+                  <span>+12% from last month</span>
                 </div>
-                <div className="p-3 rounded-lg bg-emerald-100">
-                  <stat.icon className="text-emerald-600" size={24} />
+                <Progress value={65} className="mt-4" />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Customer Engagement</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">1,892</div>
+                <div className="text-sm text-gray-500 flex items-center gap-1">
+                  <Users className="h-4 w-4 text-blue-500" />
+                  <span>+8% new users</span>
+                </div>
+                <Progress value={80} className="mt-4" />
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Email Subscribers</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">2,103</div>
+                <div className="text-sm text-gray-500 flex items-center gap-1">
+                  <Mail className="h-4 w-4 text-emerald-500" />
+                  <span>+156 this month</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">SMS Subscribers</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">1,456</div>
+                <div className="text-sm text-gray-500 flex items-center gap-1">
+                  <MessageSquare className="h-4 w-4 text-purple-500" />
+                  <span>+87 this month</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Social Media Reach</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">8,765</div>
+                <div className="text-sm text-gray-500 flex items-center gap-1">
+                  <Eye className="h-4 w-4 text-orange-500" />
+                  <span>+4% this week</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Campaign Performance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
+                <div className="text-center text-gray-500">
+                  <BarChart3 size={48} className="mx-auto mb-2" />
+                  <p>Campaign performance chart will be displayed here</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-        ))}
-      </div>
+        </TabsContent>
 
-      {/* Main Marketing Tools */}
-      <Card className="border-0 shadow-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bot className="text-blue-900" size={20} />
-            Marketing Tools
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="social" className="flex items-center gap-2">
-                <Bot size={16} />
-                <span className="hidden sm:inline">Social Media</span>
-              </TabsTrigger>
-              <TabsTrigger value="design" className="flex items-center gap-2">
-                <Palette size={16} />
-                <span className="hidden sm:inline">Design Studio</span>
-              </TabsTrigger>
-              <TabsTrigger value="campaigns" className="flex items-center gap-2">
-                <Mail size={16} />
-                <span className="hidden sm:inline">Campaigns</span>
-              </TabsTrigger>
-              <TabsTrigger value="calendar" className="flex items-center gap-2">
-                <Calendar size={16} />
-                <span className="hidden sm:inline">Calendar</span>
-              </TabsTrigger>
-            </TabsList>
+        {/* Campaigns Tab */}
+        <TabsContent value="campaigns">
+          <CampaignManager />
+        </TabsContent>
 
-            <TabsContent value="social" className="mt-6">
-              <SocialMediaGenerator />
-            </TabsContent>
+        {/* Email Tab */}
+        <TabsContent value="email">
+          <EmailMarketing />
+        </TabsContent>
 
-            <TabsContent value="design" className="mt-6">
-              <DesignStudio />
-            </TabsContent>
+        {/* Social Media Tab */}
+        <TabsContent value="social">
+          <SocialMediaGenerator />
+        </TabsContent>
 
-            <TabsContent value="campaigns" className="mt-6">
-              <CampaignManager />
-            </TabsContent>
-
-            <TabsContent value="calendar" className="mt-6">
-              <MarketingCalendar />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+        {/* Design Studio Tab */}
+        <TabsContent value="design">
+          <DesignStudio />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
