@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -119,7 +118,7 @@ const GrantAlerts = () => {
     return matchesSearch && matchesFilter;
   });
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'open': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
       case 'closing-soon': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
@@ -128,7 +127,7 @@ const GrantAlerts = () => {
     }
   };
 
-  const getTypeColor = (type) => {
+  const getTypeColor = (type: string) => {
     switch (type) {
       case 'Grant': return 'bg-emerald-100 text-emerald-700';
       case 'Loan': return 'bg-blue-100 text-blue-700';
@@ -138,10 +137,10 @@ const GrantAlerts = () => {
     }
   };
 
-  const calculateDaysLeft = (deadline) => {
+  const calculateDaysLeft = (deadline: string) => {
     const today = new Date();
     const deadlineDate = new Date(deadline);
-    const diffTime = deadlineDate - today;
+    const diffTime = deadlineDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
