@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -54,7 +53,7 @@ const Settings = () => {
     await signOut();
   };
 
-  const updateSetting = (category: string, key: string, value: any) => {
+  const updateSetting = (category: string, key: string, value: boolean) => {
     setSettings(prev => ({
       ...prev,
       [category]: {
