@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,13 +14,18 @@ import {
   Building,
   MapPin,
   Phone,
-  Mail
+  Mail,
+  ListChecks,
+  Clock,
+  FileText,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(true); // For new users
+  const [checkedItems, setCheckedItems] = useState<string[]>([]);
   
   const businessName = user?.user_metadata?.business_name || 'Your Business';
   const isNewUser = !user?.user_metadata?.onboarding_completed;
@@ -237,7 +241,123 @@ const Dashboard = () => {
     return <OnboardingFlow />;
   }
 
-  // Regular dashboard for existing users
+  const toggleChecklistItem = (itemId: string) => {
+    setCheckedItems(prev => 
+      prev.includes(itemId) 
+        ? prev.filter(id => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
+
+  // Business Setup Checklist
+  const setupChecklist = [
+    {
+      id: 'cac-registration',
+      title: 'CAC Business Registration',
+      description: 'Complete your business registration with CAC',
+      status: 'completed',
+      category: 'Legal',
+      priority: 'high'
+    },
+    {
+      id: 'tin-registration',
+      title: 'Tax Identification Number',
+      description: 'Register for TIN with FIRS',
+      status: 'completed',
+      category: 'Tax',
+      priority: 'high'
+    },
+    {
+      id: 'bank-account',
+      title: 'Corporate Bank Account',
+      description: 'Open a business bank account',
+      status: 'in-progress',
+      category: 'Banking',
+      priority: 'high'
+    },
+    {
+      id: 'business-permits',
+      title: 'Business Permits & Licenses',
+      description: 'Obtain industry-specific permits',
+      status: 'pending',
+      category: 'Legal',
+      priority: 'medium'
+    }
+  ];
+
+  // Ongoing Compliance Checklist
+  const complianceChecklist = [
+    {
+      id: 'monthly-tax',
+      title: 'Monthly Tax Returns',
+      description: 'Submit VAT and WHT returns',
+      dueDate: 'Next: Jan 21, 2024',
+      frequency: 'Monthly',
+      category: 'Tax',
+      priority: 'high'
+    },
+    {
+      id: 'annual-returns',
+      title: 'Annual Returns Filing',
+      description: 'File annual returns with CAC',
+      dueDate: 'Due: Mar 31, 2024',
+      frequency: 'Annually',
+      category: 'Legal',
+      priority: 'medium'
+    },
+    {
+      id: 'ndpr-renewal',
+      title: 'NDPR Compliance Review',
+      description: 'Review and update data protection policies',
+      dueDate: 'Due: Feb 15, 2024',
+      frequency: 'Annually',
+      category: 'Privacy',
+      priority: 'medium'
+    },
+    {
+      id: 'financial-audit',
+      title: 'Financial Audit Preparation',
+      description: 'Prepare documents for annual audit',
+      dueDate: 'Due: Apr 30, 2024',
+      frequency: 'Annually',
+      category: 'Finance',
+      priority: 'low'
+    }
+  ];
+
+  // Growth & Operations Checklist
+  const growthChecklist = [
+    {
+      id: 'marketing-plan',
+      title: 'Q1 Marketing Plan',
+      description: 'Develop marketing strategy for next quarter',
+      isChecked: checkedItems.includes('marketing-plan'),
+      category: 'Marketing'
+    },
+    {
+      id: 'inventory-review',
+      title: 'Inventory Management Review',
+      description: 'Optimize inventory levels and processes',
+      isChecked: checkedItems.includes('inventory-review'),
+      category: 'Operations'
+    },
+    {
+      id: 'team-hiring',
+      title: 'Hire Customer Service Rep',
+      description: 'Recruit and onboard new team member',
+      isChecked: checkedItems.includes('team-hiring'),
+      category: 'HR'
+    },
+    {
+      id: 'financial-planning',
+      title: 'Q2 Budget Planning',
+      description: 'Create budget and financial projections',
+      isChecked: checkedItems.includes('financial-planning'),
+      category: 'Finance'
+    }
+  ];
+
+  // Quick Stats
   const quickStats = [
     { title: 'Monthly Revenue', value: '₦2.4M', change: '+12%', icon: DollarSign, positive: true },
     { title: 'Active Customers', value: '156', change: '+8%', icon: Users, positive: true },
@@ -245,6 +365,7 @@ const Dashboard = () => {
     { title: 'Growth Target', value: '76%', change: 'On track', icon: Target, positive: true },
   ];
 
+  // Recent Tasks
   const recentTasks = [
     { task: 'Submit monthly tax returns', due: 'Tomorrow', priority: 'high', status: 'pending' },
     { task: 'Renew NDPR compliance certificate', due: '3 days', priority: 'medium', status: 'pending' },
@@ -252,6 +373,7 @@ const Dashboard = () => {
     { task: 'Review quarterly financials', due: '2 weeks', priority: 'medium', status: 'pending' },
   ];
 
+  // AI Insights
   const aiSuggestions = [
     "Your cash flow looks strong this month. Consider investing in inventory for the peak season.",
     "NDPR renewal is due soon. I can help prepare the required documents.",
@@ -276,7 +398,12 @@ const Dashboard = () => {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickStats.map((stat, index) => (
+        {[
+          { title: 'Monthly Revenue', value: '₦2.4M', change: '+12%', icon: DollarSign, positive: true },
+          { title: 'Active Customers', value: '156', change: '+8%', icon: Users, positive: true },
+          { title: 'Compliance Score', value: '92%', change: '+5%', icon: CheckCircle, positive: true },
+          { title: 'Growth Target', value: '76%', change: 'On track', icon: Target, positive: true },
+        ].map((stat, index) => (
           <Card key={index} className="border-0 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -297,42 +424,135 @@ const Dashboard = () => {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Priority Tasks */}
-        <div className="lg:col-span-2">
+        {/* Business Setup Progress */}
+        <div className="lg:col-span-2 space-y-6">
           <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="text-blue-900" size={20} />
-                Priority Tasks & Deadlines
+                <Building className="text-blue-900" size={20} />
+                Business Setup Progress
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {recentTasks.map((task, index) => (
+              {setupChecklist.map((item, index) => (
                 <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className={`w-3 h-3 rounded-full ${
-                      task.priority === 'high' ? 'bg-red-500' :
-                      task.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                      item.status === 'completed' ? 'bg-emerald-500' :
+                      item.status === 'in-progress' ? 'bg-blue-500' : 'bg-gray-300'
                     }`}></div>
                     <div>
-                      <p className="font-medium text-gray-900">{task.task}</p>
-                      <p className="text-sm text-gray-600">Due: {task.due}</p>
+                      <p className="font-medium text-gray-900">{item.title}</p>
+                      <p className="text-sm text-gray-600">{item.description}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          item.category === 'Legal' ? 'bg-purple-100 text-purple-600' :
+                          item.category === 'Tax' ? 'bg-red-100 text-red-600' :
+                          item.category === 'Banking' ? 'bg-blue-100 text-blue-600' :
+                          'bg-gray-100 text-gray-600'
+                        }`}>
+                          {item.category}
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          item.priority === 'high' ? 'bg-red-100 text-red-600' :
+                          item.priority === 'medium' ? 'bg-yellow-100 text-yellow-600' :
+                          'bg-green-100 text-green-600'
+                        }`}>
+                          {item.priority} priority
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  {item.status === 'completed' ? (
+                    <CheckCircle className="text-emerald-600" size={20} />
+                  ) : (
+                    <Button size="sm" variant="outline">
+                      {item.status === 'in-progress' ? 'Continue' : 'Start'}
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Compliance Checklist */}
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="text-emerald-600" size={20} />
+                Compliance & Deadlines
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {complianceChecklist.map((item, index) => (
+                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Clock className="text-gray-400" size={16} />
+                    <div>
+                      <p className="font-medium text-gray-900">{item.title}</p>
+                      <p className="text-sm text-gray-600">{item.description}</p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-xs text-gray-500">{item.dueDate}</span>
+                        <span className="text-xs text-gray-500">• {item.frequency}</span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          item.category === 'Tax' ? 'bg-red-100 text-red-600' :
+                          item.category === 'Legal' ? 'bg-purple-100 text-purple-600' :
+                          item.category === 'Privacy' ? 'bg-blue-100 text-blue-600' :
+                          'bg-gray-100 text-gray-600'
+                        }`}>
+                          {item.category}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <Button size="sm" variant="outline">
-                    Start
+                    View Details
                   </Button>
                 </div>
               ))}
-              <Button className="w-full bg-blue-900 hover:bg-blue-800">
-                View All Tasks
-                <ArrowRight className="ml-2" size={16} />
-              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Growth & Operations Checklist */}
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ListChecks className="text-blue-600" size={20} />
+                Growth & Operations Tasks
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {growthChecklist.map((item, index) => (
+                <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  <input
+                    type="checkbox"
+                    checked={item.isChecked}
+                    onChange={() => toggleChecklistItem(item.id)}
+                    className="w-4 h-4 text-blue-600 rounded"
+                  />
+                  <div className="flex-1">
+                    <p className={`font-medium ${item.isChecked ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                      {item.title}
+                    </p>
+                    <p className={`text-sm ${item.isChecked ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                      {item.description}
+                    </p>
+                  </div>
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    item.category === 'Marketing' ? 'bg-pink-100 text-pink-600' :
+                    item.category === 'Operations' ? 'bg-orange-100 text-orange-600' :
+                    item.category === 'HR' ? 'bg-green-100 text-green-600' :
+                    'bg-blue-100 text-blue-600'
+                  }`}>
+                    {item.category}
+                  </span>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </div>
 
-        {/* AI Insights */}
+        {/* AI Insights & Compliance Status */}
         <div>
           <Card className="border-0 shadow-sm mb-6">
             <CardHeader>
@@ -342,7 +562,11 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {aiSuggestions.map((suggestion, index) => (
+              {[
+                "Your cash flow looks strong this month. Consider investing in inventory for the peak season.",
+                "NDPR renewal is due soon. I can help prepare the required documents.",
+                "You're hiring fast! Let's set up proper onboarding workflows."
+              ].map((suggestion, index) => (
                 <div key={index} className="p-3 bg-emerald-50 rounded-lg border border-emerald-200">
                   <p className="text-sm text-gray-700">{suggestion}</p>
                   <Button size="sm" variant="ghost" className="mt-2 text-emerald-600 hover:text-emerald-700">
