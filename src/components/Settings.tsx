@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -35,7 +36,6 @@ const Settings = () => {
       thirdPartyIntegrations: true
     },
     appearance: {
-      theme: 'light',
       compactMode: false,
       showTips: true
     }
@@ -53,11 +53,11 @@ const Settings = () => {
     await signOut();
   };
 
-  const updateSetting = (category: string, key: string, value: boolean) => {
+  const updateSetting = (category: 'notifications' | 'privacy' | 'appearance', key: string, value: boolean) => {
     setSettings(prev => ({
       ...prev,
       [category]: {
-        ...prev[category as keyof typeof prev],
+        ...prev[category],
         [key]: value
       }
     }));
