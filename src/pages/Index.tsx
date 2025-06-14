@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,6 +10,7 @@ import BusinessLaunch from '@/components/BusinessLaunch';
 import ComplianceHub from '@/components/ComplianceHub';
 import Operations from '@/components/Operations';
 import KnowledgeHub from '@/components/KnowledgeHub';
+import HRDashboard from '@/components/HRDashboard';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -76,7 +76,7 @@ const Index = () => {
       case 'operations':
         return <Operations />;
       case 'team':
-        return <PlaceholderModule title="HR & Team Management" />;
+        return <HRDashboard />;
       case 'marketing':
         return <PlaceholderModule title="Marketing Hub" />;
       case 'strategy':
