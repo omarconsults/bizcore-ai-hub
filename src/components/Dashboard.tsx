@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -11,10 +11,233 @@ import {
   DollarSign,
   Users,
   Target,
-  ArrowRight
+  ArrowRight,
+  Building,
+  MapPin,
+  Phone,
+  Mail
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const [showOnboarding, setShowOnboarding] = useState(true); // For new users
+  
+  const businessName = user?.user_metadata?.business_name || 'Your Business';
+  const isNewUser = !user?.user_metadata?.onboarding_completed;
+
+  // Onboarding questions component
+  const OnboardingFlow = () => {
+    const [currentStep, setCurrentStep] = useState(0);
+    const [formData, setFormData] = useState({
+      businessType: '',
+      industry: '',
+      location: '',
+      phone: '',
+      goals: []
+    });
+
+    const steps = [
+      {
+        title: "Welcome to BizCore!",
+        subtitle: `Let's set up ${businessName} for success`,
+        content: (
+          <div className="text-center space-y-6">
+            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
+              <Building className="w-10 h-10 text-emerald-600" />
+            </div>
+            <p className="text-gray-600 text-lg">
+              We'll ask you a few quick questions to personalize your experience and help you get started.
+            </p>
+            <p className="text-sm text-gray-500">This will take about 2 minutes</p>
+          </div>
+        )
+      },
+      {
+        title: "What type of business are you running?",
+        subtitle: "This helps us customize your experience",
+        content: (
+          <div className="space-y-4">
+            {[
+              'Limited Liability Company (LLC)',
+              'Private Limited Company (Ltd)',
+              'Partnership',
+              'Sole Proprietorship',
+              'NGO/Non-Profit',
+              'Other'
+            ].map((type) => (
+              <button
+                key={type}
+                onClick={() => setFormData({...formData, businessType: type})}
+                className={`w-full p-4 text-left rounded-lg border-2 transition-colors ${
+                  formData.businessType === type 
+                    ? 'border-emerald-500 bg-emerald-50' 
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        )
+      },
+      {
+        title: "What industry are you in?",
+        subtitle: "We'll provide relevant compliance and growth guidance",
+        content: (
+          <div className="space-y-4">
+            {[
+              'Technology & Software',
+              'E-commerce & Retail',
+              'Fashion & Lifestyle',
+              'Food & Beverage',
+              'Healthcare',
+              'Education',
+              'Professional Services',
+              'Manufacturing',
+              'Other'
+            ].map((industry) => (
+              <button
+                key={industry}
+                onClick={() => setFormData({...formData, industry})}
+                className={`w-full p-4 text-left rounded-lg border-2 transition-colors ${
+                  formData.industry === industry 
+                    ? 'border-emerald-500 bg-emerald-50' 
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                {industry}
+              </button>
+            ))}
+          </div>
+        )
+      },
+      {
+        title: "What are your main goals?",
+        subtitle: "Select all that apply - we'll prioritize these areas",
+        content: (
+          <div className="space-y-4">
+            {[
+              'Register my business with CAC',
+              'Get proper licenses and permits',
+              'Set up accounting and bookkeeping',
+              'Hire and manage employees',
+              'Create marketing campaigns',
+              'Ensure compliance with regulations',
+              'Scale and grow revenue',
+              'Manage cash flow'
+            ].map((goal) => (
+              <button
+                key={goal}
+                onClick={() => {
+                  const goals = formData.goals.includes(goal)
+                    ? formData.goals.filter(g => g !== goal)
+                    : [...formData.goals, goal];
+                  setFormData({...formData, goals});
+                }}
+                className={`w-full p-4 text-left rounded-lg border-2 transition-colors ${
+                  formData.goals.includes(goal)
+                    ? 'border-emerald-500 bg-emerald-50' 
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  {goal}
+                  {formData.goals.includes(goal) && (
+                    <CheckCircle className="w-5 h-5 text-emerald-600" />
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        )
+      }
+    ];
+
+    const handleNext = () => {
+      if (currentStep < steps.length - 1) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        // Complete onboarding
+        console.log('Onboarding completed with data:', formData);
+        setShowOnboarding(false);
+      }
+    };
+
+    const handleBack = () => {
+      if (currentStep > 0) {
+        setCurrentStep(currentStep - 1);
+      }
+    };
+
+    const canProceed = () => {
+      switch (currentStep) {
+        case 0: return true;
+        case 1: return formData.businessType !== '';
+        case 2: return formData.industry !== '';
+        case 3: return formData.goals.length > 0;
+        default: return true;
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="max-w-2xl w-full">
+          <Card className="border-0 shadow-lg">
+            <CardHeader className="text-center pb-6">
+              <div className="flex items-center justify-center mb-4">
+                <div className="flex space-x-2">
+                  {steps.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-3 h-3 rounded-full ${
+                        index <= currentStep ? 'bg-emerald-600' : 'bg-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+              <CardTitle className="text-2xl text-gray-900">
+                {steps[currentStep].title}
+              </CardTitle>
+              <p className="text-gray-600 mt-2">{steps[currentStep].subtitle}</p>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-8">
+                {steps[currentStep].content}
+              </div>
+              
+              <div className="flex justify-between">
+                <Button
+                  variant="outline"
+                  onClick={handleBack}
+                  disabled={currentStep === 0}
+                  className="px-6"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleNext}
+                  disabled={!canProceed()}
+                  className="px-6 bg-emerald-600 hover:bg-emerald-700"
+                >
+                  {currentStep === steps.length - 1 ? 'Get Started' : 'Next'}
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  };
+
+  // Show onboarding for new users
+  if (showOnboarding && isNewUser) {
+    return <OnboardingFlow />;
+  }
+
+  // Regular dashboard for existing users
   const quickStats = [
     { title: 'Monthly Revenue', value: '₦2.4M', change: '+12%', icon: DollarSign, positive: true },
     { title: 'Active Customers', value: '156', change: '+8%', icon: Users, positive: true },
@@ -41,8 +264,8 @@ const Dashboard = () => {
       <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Good morning, Adaora! 👋</h1>
-            <p className="text-gray-600 mt-1">Here's what's happening with Adaora's Fashion House today</p>
+            <h1 className="text-2xl font-bold text-gray-900">Welcome back! 👋</h1>
+            <p className="text-gray-600 mt-1">Here's what's happening with {businessName} today</p>
           </div>
           <div className="text-right">
             <div className="text-sm text-gray-500">Today</div>
