@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,6 +18,7 @@ const LoginForm = ({ onToggleMode }: LoginFormProps) => {
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +37,8 @@ const LoginForm = ({ onToggleMode }: LoginFormProps) => {
           title: "Welcome back!",
           description: "You've successfully logged in.",
         });
+        // Redirect to home page after successful login
+        navigate('/');
       }
     } catch (error) {
       toast({
