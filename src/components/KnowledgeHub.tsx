@@ -1,9 +1,9 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 import { 
   BookOpen, 
   Search, 
@@ -13,21 +13,81 @@ import {
   Clock,
   Star,
   PlayCircle,
-  CheckCircle
+  CheckCircle,
+  RefreshCw,
+  Globe,
+  ExternalLink
 } from 'lucide-react';
+import { ResourceService, type FetchedResource } from '@/services/resourceService';
 
 const KnowledgeHub = () => {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [internetResources, setInternetResources] = useState<FetchedResource[]>([]);
+  const [storedResources, setStoredResources] = useState<FetchedResource[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingNew, setIsFetchingNew] = useState(false);
 
   const categories = [
-    { id: 'all', name: 'All Resources', count: 45 },
-    { id: 'compliance', name: 'Compliance & Legal', count: 12 },
-    { id: 'finance', name: 'Finance & Tax', count: 10 },
-    { id: 'hr', name: 'HR & Employment', count: 8 },
-    { id: 'marketing', name: 'Marketing & Sales', count: 9 },
-    { id: 'operations', name: 'Operations', count: 6 }
+    { id: 'all', name: 'All Resources', count: storedResources.length },
+    { id: 'compliance', name: 'Compliance & Legal', count: storedResources.filter(r => r.category === 'compliance').length },
+    { id: 'finance', name: 'Finance & Tax', count: storedResources.filter(r => r.category === 'finance').length },
+    { id: 'hr', name: 'HR & Employment', count: storedResources.filter(r => r.category === 'hr').length },
+    { id: 'marketing', name: 'Marketing & Sales', count: storedResources.filter(r => r.category === 'marketing').length },
+    { id: 'operations', name: 'Operations', count: storedResources.filter(r => r.category === 'operations').length }
   ];
+
+  // Load stored resources on component mount
+  useEffect(() => {
+    loadStoredResources();
+  }, []);
+
+  // Load stored resources when category or search changes
+  useEffect(() => {
+    loadStoredResources();
+  }, [activeCategory, searchTerm]);
+
+  const loadStoredResources = async () => {
+    try {
+      setIsLoading(true);
+      const resources = await ResourceService.getStoredResources(activeCategory, searchTerm);
+      setStoredResources(resources);
+    } catch (error) {
+      console.error('Error loading stored resources:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load stored resources",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchNewResources = async () => {
+    try {
+      setIsFetchingNew(true);
+      const result = await ResourceService.refreshResources(activeCategory);
+      
+      setInternetResources(result.fresh);
+      setStoredResources(result.stored);
+      
+      toast({
+        title: "Resources Updated",
+        description: `Found ${result.fresh.length} new resources from the internet`,
+      });
+    } catch (error) {
+      console.error('Error fetching new resources:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch new resources from the internet",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFetchingNew(false);
+    }
+  };
 
   const featuredResources = [
     {
@@ -168,6 +228,56 @@ const KnowledgeHub = () => {
     return matchesSearch && matchesCategory;
   });
 
+  const renderResource = (resource: FetchedResource, index: number, isFromInternet = false) => (
+    <Card key={`${isFromInternet ? 'web' : 'stored'}-${index}`} className="border border-gray-200 hover:border-blue-900 transition-colors">
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {getTypeIcon(resource.type)}
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h3 className="font-medium text-gray-900">{resource.title}</h3>
+                {isFromInternet && (
+                  <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
+                    <Globe size={10} className="mr-1" />
+                    Fresh
+                  </Badge>
+                )}
+              </div>
+              <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <Badge className={getTypeColor(resource.type)}>
+                  {resource.type}
+                </Badge>
+                {resource.source && (
+                  <span className="text-xs text-gray-500">by {resource.source}</span>
+                )}
+                {resource.rating && (
+                  <div className="flex items-center gap-1">
+                    <Star size={12} className="text-yellow-500" />
+                    <span className="text-xs text-gray-600">{resource.rating}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {resource.url && (
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => window.open(resource.url, '_blank')}
+              >
+                <ExternalLink size={14} className="mr-1" />
+                Access
+              </Button>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       {/* Header */}
@@ -180,6 +290,19 @@ const KnowledgeHub = () => {
             </h1>
             <p className="text-gray-600 mt-1">Learn, grow, and stay compliant with our comprehensive resources</p>
           </div>
+          
+          <Button 
+            onClick={fetchNewResources} 
+            disabled={isFetchingNew}
+            className="bg-emerald-600 hover:bg-emerald-700"
+          >
+            {isFetchingNew ? (
+              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Globe className="mr-2 h-4 w-4" />
+            )}
+            Fetch Latest
+          </Button>
         </div>
 
         {/* Search */}
@@ -218,6 +341,19 @@ const KnowledgeHub = () => {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Fresh Resources from Internet */}
+          {internetResources.length > 0 && (
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Globe className="text-emerald-600" size={20} />
+                Fresh from the Web
+              </h2>
+              <div className="grid gap-4">
+                {internetResources.map((resource, index) => renderResource(resource, index, true))}
+              </div>
+            </div>
+          )}
+
           {/* Featured Resources */}
           {activeCategory === 'all' && (
             <div>
@@ -276,37 +412,49 @@ const KnowledgeHub = () => {
             </div>
           )}
 
-          {/* All Resources */}
+          {/* Stored Resources */}
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              {activeCategory === 'all' ? 'All Resources' : categories.find(c => c.id === activeCategory)?.name}
+              {storedResources.length > 0 ? 'Stored Resources' : 'All Resources'}
             </h2>
-            <div className="grid gap-4">
-              {filteredResources.map((resource, index) => (
-                <Card key={index} className="border border-gray-200 hover:border-blue-900 transition-colors">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {getTypeIcon(resource.type)}
-                        <div>
-                          <h3 className="font-medium text-gray-900">{resource.title}</h3>
-                          <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Badge className={getTypeColor(resource.type)}>
-                              {resource.type}
-                            </Badge>
-                            <span className="text-xs text-gray-500">{resource.duration}</span>
+            
+            {isLoading ? (
+              <div className="text-center py-8">
+                <RefreshCw className="animate-spin mx-auto mb-2" size={24} />
+                <p className="text-gray-600">Loading resources...</p>
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {/* Show stored resources first */}
+                {storedResources.map((resource, index) => renderResource(resource, index))}
+                
+                {/* Fallback to static resources if no stored resources */}
+                {storedResources.length === 0 && filteredResources.map((resource, index) => (
+                  <Card key={index} className="border border-gray-200 hover:border-blue-900 transition-colors">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          {getTypeIcon(resource.type)}
+                          <div>
+                            <h3 className="font-medium text-gray-900">{resource.title}</h3>
+                            <p className="text-sm text-gray-600 mt-1">{resource.description}</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge className={getTypeColor(resource.type)}>
+                                {resource.type}
+                              </Badge>
+                              <span className="text-xs text-gray-500">{resource.duration}</span>
+                            </div>
                           </div>
                         </div>
+                        <Button size="sm" variant="outline">
+                          Access
+                        </Button>
                       </div>
-                      <Button size="sm" variant="outline">
-                        Access
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
