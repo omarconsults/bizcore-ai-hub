@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useForm } from 'react-hook-form';
 import { 
   TrendingUp, 
   AlertCircle, 
@@ -18,17 +23,219 @@ import {
   ListChecks,
   Clock,
   FileText,
-  Shield
+  Shield,
+  Plus,
+  ExternalLink
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const [showOnboarding, setShowOnboarding] = useState(true); // For new users
+  const [showOnboarding, setShowOnboarding] = useState(true);
   const [checkedItems, setCheckedItems] = useState<string[]>([]);
+  const [applications, setApplications] = useState<{[key: string]: 'draft' | 'submitted' | 'processing' | 'approved' | 'rejected'}>({});
   
   const businessName = user?.user_metadata?.business_name || 'Your Business';
   const isNewUser = !user?.user_metadata?.onboarding_completed;
+
+  const form = useForm({
+    defaultValues: {
+      businessName: '',
+      businessType: '',
+      address: '',
+      phone: '',
+      email: '',
+      ownerName: '',
+      ownerNin: '',
+      agreeToTerms: false
+    }
+  });
+
+  // Application forms for different services
+  const availableServices = [
+    {
+      id: 'cac-registration',
+      title: 'CAC Business Registration',
+      description: 'Register your business with the Corporate Affairs Commission',
+      requirements: ['Business name', 'Business address', 'Owner details', 'NIN'],
+      cost: '₦10,000',
+      processingTime: '5-10 business days',
+      status: applications['cac-registration'] || null
+    },
+    {
+      id: 'tin-registration',
+      title: 'Tax Identification Number (TIN)',
+      description: 'Get your TIN from Federal Inland Revenue Service',
+      requirements: ['CAC certificate', 'Business address', 'Bank details'],
+      cost: 'Free',
+      processingTime: '3-5 business days',
+      status: applications['tin-registration'] || null
+    },
+    {
+      id: 'business-permits',
+      title: 'Business Permits & Licenses',
+      description: 'Industry-specific permits and operational licenses',
+      requirements: ['CAC certificate', 'TIN', 'Industry documents'],
+      cost: '₦15,000 - ₦50,000',
+      processingTime: '2-4 weeks',
+      status: applications['business-permits'] || null
+    },
+    {
+      id: 'bank-account',
+      title: 'Corporate Bank Account',
+      description: 'Open a business bank account with partner banks',
+      requirements: ['CAC certificate', 'TIN', 'Board resolution'],
+      cost: '₦5,000 - ₦20,000',
+      processingTime: '1-3 business days',
+      status: applications['bank-account'] || null
+    }
+  ];
+
+  const handleApplicationSubmit = (serviceId: string, data: any) => {
+    console.log('Submitting application for:', serviceId, data);
+    setApplications(prev => ({
+      ...prev,
+      [serviceId]: 'submitted'
+    }));
+  };
+
+  const ServiceApplicationForm = ({ service }: { service: any }) => {
+    return (
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit((data) => handleApplicationSubmit(service.id, data))} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="businessName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Business Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your business name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="businessType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Business Type</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., Limited Liability Company" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Business Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter complete business address" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input placeholder="080..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="business@email.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          
+          <FormField
+            control={form.control}
+            name="ownerName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Owner/Director Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Full name as on ID" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="ownerNin"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>NIN (National Identification Number)</FormLabel>
+                <FormControl>
+                  <Input placeholder="12345678901" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="agreeToTerms"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>
+                    I agree to the terms and conditions and authorize BizCore to process my application
+                  </FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+          
+          <div className="flex justify-between items-center pt-4">
+            <div className="text-sm text-gray-600">
+              <p>Processing time: {service.processingTime}</p>
+              <p className="font-semibold">Cost: {service.cost}</p>
+            </div>
+            <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">
+              Submit Application
+            </Button>
+          </div>
+        </form>
+      </Form>
+    );
+  };
 
   // Onboarding questions component
   const OnboardingFlow = () => {
@@ -424,8 +631,91 @@ const Dashboard = () => {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Business Setup Progress */}
+        {/* Available Services & Applications */}
         <div className="lg:col-span-2 space-y-6">
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="text-blue-900" size={20} />
+                Business Registration & Services
+              </CardTitle>
+              <p className="text-gray-600">Apply for business registration and other essential services</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {availableServices.map((service, index) => (
+                <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-semibold text-gray-900">{service.title}</h3>
+                        {service.status && (
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            service.status === 'approved' ? 'bg-emerald-100 text-emerald-600' :
+                            service.status === 'processing' ? 'bg-blue-100 text-blue-600' :
+                            service.status === 'submitted' ? 'bg-yellow-100 text-yellow-600' :
+                            service.status === 'rejected' ? 'bg-red-100 text-red-600' :
+                            'bg-gray-100 text-gray-600'
+                          }`}>
+                            {service.status}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">{service.description}</p>
+                      
+                      <div className="grid md:grid-cols-2 gap-4 mb-3">
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-700 mb-1">Requirements:</h4>
+                          <ul className="text-sm text-gray-600">
+                            {service.requirements.map((req, i) => (
+                              <li key={i}>• {req}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Cost:</span> {service.cost}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Processing:</span> {service.processingTime}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2 mt-4">
+                    {!service.status ? (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button className="bg-blue-900 hover:bg-blue-800">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Apply Now
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>Apply for {service.title}</DialogTitle>
+                          </DialogHeader>
+                          <ServiceApplicationForm service={service} />
+                        </DialogContent>
+                      </Dialog>
+                    ) : (
+                      <Button variant="outline" disabled>
+                        Application {service.status}
+                      </Button>
+                    )}
+                    
+                    <Button variant="outline" size="sm">
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Learn More
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Business Setup Progress */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
