@@ -5,6 +5,8 @@ import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useForm } from 'react-hook-form';
 import { 
@@ -37,6 +39,72 @@ const Dashboard = () => {
   
   const businessName = user?.user_metadata?.business_name || 'Your Business';
   const isNewUser = !user?.user_metadata?.onboarding_completed;
+
+  const cacForm = useForm({
+    defaultValues: {
+      // Business Information
+      businessName: '',
+      businessType: '',
+      businessClassification: '',
+      businessDescription: '',
+      businessObjectives: '',
+      businessAddress: '',
+      businessState: '',
+      businessLGA: '',
+      businessPostalCode: '',
+      businessEmail: '',
+      businessPhone: '',
+      businessWebsite: '',
+      
+      // Directors/Shareholders Information
+      directorName1: '',
+      directorNIN1: '',
+      directorBVN1: '',
+      directorEmail1: '',
+      directorPhone1: '',
+      directorAddress1: '',
+      directorNationality1: '',
+      directorOccupation1: '',
+      directorShares1: '',
+      
+      directorName2: '',
+      directorNIN2: '',
+      directorBVN2: '',
+      directorEmail2: '',
+      directorPhone2: '',
+      directorAddress2: '',
+      directorNationality2: '',
+      directorOccupation2: '',
+      directorShares2: '',
+      
+      // Company Secretary
+      secretaryName: '',
+      secretaryAddress: '',
+      secretaryPhone: '',
+      secretaryEmail: '',
+      
+      // Share Capital
+      authorizedShareCapital: '',
+      numberOfShares: '',
+      nominalValue: '',
+      
+      // Registered Office
+      registeredOfficeAddress: '',
+      registeredOfficeState: '',
+      registeredOfficeLGA: '',
+      registeredOfficePostalCode: '',
+      
+      // Additional Information
+      commencementDate: '',
+      financialYearEnd: '',
+      specialResolutions: '',
+      
+      // Declarations
+      agreeToTerms: false,
+      declarationTruth: false,
+      declarationCompliance: false
+    }
+  });
 
   const form = useForm({
     defaultValues: {
@@ -99,7 +167,744 @@ const Dashboard = () => {
     }));
   };
 
+  const CACRegistrationForm = () => {
+    return (
+      <Form {...cacForm}>
+        <form onSubmit={cacForm.handleSubmit((data) => handleApplicationSubmit('cac-registration', data))} className="space-y-6">
+          {/* Business Information Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Business Information</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={cacForm.control}
+                name="businessName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Proposed Business Name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter proposed business name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={cacForm.control}
+                name="businessType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Business Type *</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select business type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="private-limited">Private Limited Company (Ltd)</SelectItem>
+                        <SelectItem value="public-limited">Public Limited Company (Plc)</SelectItem>
+                        <SelectItem value="limited-by-guarantee">Company Limited by Guarantee</SelectItem>
+                        <SelectItem value="unlimited">Unlimited Liability Company</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={cacForm.control}
+              name="businessClassification"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Business Classification *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select business classification" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="small">Small Company</SelectItem>
+                      <SelectItem value="medium">Medium Company</SelectItem>
+                      <SelectItem value="large">Large Company</SelectItem>
+                      <SelectItem value="non-profit">Non-Profit Organization</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={cacForm.control}
+              name="businessDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nature of Business *</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Describe the nature and activities of your business"
+                      className="min-h-[80px]"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={cacForm.control}
+              name="businessObjectives"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Main Objects of the Company *</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="State the main objectives and purposes of the company"
+                      className="min-h-[100px]"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Business Address Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Business Address</h3>
+            
+            <FormField
+              control={cacForm.control}
+              name="businessAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Business Address *</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Enter complete business address"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={cacForm.control}
+                name="businessState"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>State *</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="lagos">Lagos</SelectItem>
+                        <SelectItem value="abuja">FCT Abuja</SelectItem>
+                        <SelectItem value="kano">Kano</SelectItem>
+                        <SelectItem value="rivers">Rivers</SelectItem>
+                        <SelectItem value="ogun">Ogun</SelectItem>
+                        <SelectItem value="kaduna">Kaduna</SelectItem>
+                        {/* Add more states */}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="businessLGA"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Local Government Area *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter LGA" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="businessPostalCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Postal Code</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter postal code" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={cacForm.control}
+                name="businessEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Business Email *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="business@email.com" type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="businessPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Business Phone *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="080..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="businessWebsite"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Website (Optional)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="www.yourwebsite.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Directors Information Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Directors/Shareholders Information</h3>
+            
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-medium text-gray-900 mb-3">Director/Shareholder 1 *</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={cacForm.control}
+                  name="directorName1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Full name as on ID" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={cacForm.control}
+                  name="directorNIN1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NIN *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="12345678901" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={cacForm.control}
+                  name="directorBVN1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>BVN *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="12345678901" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={cacForm.control}
+                  name="directorEmail1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="director@email.com" type="email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={cacForm.control}
+                  name="directorPhone1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="080..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={cacForm.control}
+                  name="directorNationality1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nationality *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nigerian" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={cacForm.control}
+                  name="directorOccupation1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Occupation *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., Entrepreneur" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={cacForm.control}
+                  name="directorShares1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Number of Shares *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., 50000" type="number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={cacForm.control}
+                name="directorAddress1"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel>Residential Address *</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Enter complete residential address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-medium text-gray-900 mb-3">Director/Shareholder 2 (Optional)</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={cacForm.control}
+                  name="directorName2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Full name as on ID" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={cacForm.control}
+                  name="directorNIN2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NIN</FormLabel>
+                      <FormControl>
+                        <Input placeholder="12345678901" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* ... keep existing code (similar fields for director 2) */}
+              </div>
+            </div>
+          </div>
+
+          {/* Share Capital Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Share Capital Information</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={cacForm.control}
+                name="authorizedShareCapital"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Authorized Share Capital *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., ₦100,000" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="numberOfShares"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Number of Shares *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., 100000" type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="nominalValue"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nominal Value per Share *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., ₦1.00" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Registered Office Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Registered Office Address</h3>
+            
+            <FormField
+              control={cacForm.control}
+              name="registeredOfficeAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Registered Office Address *</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Enter complete registered office address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={cacForm.control}
+                name="registeredOfficeState"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>State *</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="lagos">Lagos</SelectItem>
+                        <SelectItem value="abuja">FCT Abuja</SelectItem>
+                        <SelectItem value="kano">Kano</SelectItem>
+                        <SelectItem value="rivers">Rivers</SelectItem>
+                        {/* Add more states */}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="registeredOfficeLGA"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Local Government Area *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter LGA" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="registeredOfficePostalCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Postal Code</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter postal code" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Company Secretary Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Company Secretary (Optional)</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={cacForm.control}
+                name="secretaryName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Secretary Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Full name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="secretaryPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Secretary Phone</FormLabel>
+                    <FormControl>
+                      <Input placeholder="080..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="secretaryEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Secretary Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="secretary@email.com" type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={cacForm.control}
+              name="secretaryAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Secretary Address</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Enter secretary address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Additional Information Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Additional Information</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={cacForm.control}
+                name="commencementDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Commencement Date *</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="financialYearEnd"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Financial Year End *</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select month" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="december">December</SelectItem>
+                        <SelectItem value="march">March</SelectItem>
+                        <SelectItem value="june">June</SelectItem>
+                        <SelectItem value="september">September</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={cacForm.control}
+              name="specialResolutions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Special Resolutions (if any)</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Enter any special resolutions or restrictions"
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Declarations Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Declarations</h3>
+            
+            <div className="space-y-3">
+              <FormField
+                control={cacForm.control}
+                name="agreeToTerms"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        I agree to the terms and conditions and authorize BizCore to process my application with CAC
+                      </FormLabel>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="declarationTruth"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        I declare that the information provided in this application is true and accurate to the best of my knowledge
+                      </FormLabel>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={cacForm.control}
+                name="declarationCompliance"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        I understand and agree to comply with all CAC regulations and requirements for company registration
+                      </FormLabel>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          
+          <div className="flex justify-between items-center pt-6 border-t">
+            <div className="text-sm text-gray-600">
+              <p>Processing time: 5-10 business days</p>
+              <p className="font-semibold">Cost: ₦10,000</p>
+              <p className="text-xs text-gray-500 mt-1">All information will be verified with relevant authorities</p>
+            </div>
+            <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 px-8">
+              Submit CAC Application
+            </Button>
+          </div>
+        </form>
+      </Form>
+    );
+  };
+
   const ServiceApplicationForm = ({ service }: { service: any }) => {
+    if (service.id === 'cac-registration') {
+      return <CACRegistrationForm />;
+    }
+
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit((data) => handleApplicationSubmit(service.id, data))} className="space-y-4">
@@ -692,7 +1497,7 @@ const Dashboard = () => {
                             Apply Now
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                           <DialogHeader>
                             <DialogTitle>Apply for {service.title}</DialogTitle>
                           </DialogHeader>
@@ -867,7 +1672,6 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Compliance Status */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
