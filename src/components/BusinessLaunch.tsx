@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Building, 
   CheckCircle, 
@@ -15,6 +16,8 @@ import {
 
 const BusinessLaunch = () => {
   const [selectedEntityType, setSelectedEntityType] = useState('');
+  const [currentStep, setCurrentStep] = useState(0);
+  const { toast } = useToast();
 
   const entityTypes = [
     {
@@ -46,37 +49,37 @@ const BusinessLaunch = () => {
   const launchSteps = [
     { 
       step: 'Business Name Search & Reservation', 
-      status: 'completed', 
+      status: currentStep >= 1 ? 'completed' : 'pending', 
       description: 'Check availability and reserve your business name',
       timeframe: '1-2 days'
     },
     { 
       step: 'Prepare Incorporation Documents', 
-      status: 'in-progress', 
+      status: currentStep >= 2 ? 'completed' : currentStep === 1 ? 'in-progress' : 'pending', 
       description: 'Memorandum and Articles of Association',
       timeframe: '2-3 days'
     },
     { 
       step: 'CAC Registration & Certificate', 
-      status: 'pending', 
+      status: currentStep >= 3 ? 'completed' : currentStep === 2 ? 'in-progress' : 'pending', 
       description: 'Submit documents and pay registration fees',
       timeframe: '5-10 days'
     },
     { 
       step: 'Tax Identification Number (TIN)', 
-      status: 'pending', 
+      status: currentStep >= 4 ? 'completed' : currentStep === 3 ? 'in-progress' : 'pending', 
       description: 'Register with Federal Inland Revenue Service',
       timeframe: '3-5 days'
     },
     { 
       step: 'Open Corporate Bank Account', 
-      status: 'pending', 
+      status: currentStep >= 5 ? 'completed' : currentStep === 4 ? 'in-progress' : 'pending', 
       description: 'Choose bank and complete account opening',
       timeframe: '1-3 days'
     },
     { 
       step: 'Business Permits & Licenses', 
-      status: 'pending', 
+      status: currentStep >= 6 ? 'completed' : currentStep === 5 ? 'in-progress' : 'pending', 
       description: 'Industry-specific licenses and permits',
       timeframe: '1-4 weeks'
     }
@@ -84,6 +87,58 @@ const BusinessLaunch = () => {
 
   const completedSteps = launchSteps.filter(step => step.status === 'completed').length;
   const progressPercentage = (completedSteps / launchSteps.length) * 100;
+
+  const handleContinueWithEntityType = () => {
+    if (!selectedEntityType) return;
+    
+    toast({
+      title: "Entity Type Selected",
+      description: `You've chosen ${selectedEntityType}. Let's start the registration process!`,
+    });
+    
+    // Start the first step
+    setCurrentStep(1);
+  };
+
+  const handleStepContinue = (stepIndex: number) => {
+    setCurrentStep(stepIndex + 1);
+    toast({
+      title: "Step Completed",
+      description: `${launchSteps[stepIndex].step} has been marked as complete.`,
+    });
+  };
+
+  const handleCACRegistration = () => {
+    toast({
+      title: "Starting CAC Registration",
+      description: "Redirecting to CAC registration portal...",
+    });
+    // In a real app, this would redirect to the CAC website
+    window.open('https://services.cac.gov.ng/', '_blank');
+  };
+
+  const handleNameAvailability = () => {
+    toast({
+      title: "Checking Name Availability",
+      description: "Opening CAC name search portal...",
+    });
+    window.open('https://services.cac.gov.ng/search/', '_blank');
+  };
+
+  const handleDownloadForms = () => {
+    toast({
+      title: "Downloading Forms",
+      description: "CAC registration forms are being prepared...",
+    });
+    // In a real app, this would download the actual forms
+  };
+
+  const handleComplianceAlerts = () => {
+    toast({
+      title: "Compliance Alerts",
+      description: "Setting up compliance reminders for your business...",
+    });
+  };
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
@@ -168,7 +223,10 @@ const BusinessLaunch = () => {
               ))}
               
               {selectedEntityType && (
-                <Button className="w-full bg-blue-900 hover:bg-blue-800">
+                <Button 
+                  className="w-full bg-blue-900 hover:bg-blue-800"
+                  onClick={handleContinueWithEntityType}
+                >
                   Continue with {selectedEntityType}
                   <ArrowRight className="ml-2" size={16} />
                 </Button>
@@ -206,12 +264,16 @@ const BusinessLaunch = () => {
                         {step.timeframe}
                       </div>
                       {step.status === 'in-progress' && (
-                        <Button size="sm" variant="outline">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleStepContinue(index)}
+                        >
                           Continue
                         </Button>
                       )}
                       {step.status === 'pending' && (
-                        <Button size="sm" variant="ghost" className="text-gray-400">
+                        <Button size="sm" variant="ghost" className="text-gray-400" disabled>
                           Pending
                         </Button>
                       )}
@@ -234,13 +296,24 @@ const BusinessLaunch = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+              <Button 
+                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                onClick={handleCACRegistration}
+              >
                 Start CAC Registration
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleNameAvailability}
+              >
                 Check Name Availability
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleDownloadForms}
+              >
                 Download Forms
               </Button>
             </CardContent>
@@ -291,7 +364,11 @@ const BusinessLaunch = () => {
               <p className="text-sm text-gray-600 mb-4">
                 After registration, you'll need to maintain compliance with annual filings and tax obligations.
               </p>
-              <Button variant="outline" className="w-full">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleComplianceAlerts}
+              >
                 Set Up Compliance Alerts
               </Button>
             </CardContent>
