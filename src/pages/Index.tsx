@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,12 +17,23 @@ const Index = () => {
   const [viewMode, setViewMode] = useState('landing'); // 'landing' or 'dashboard'
   const [activeModule, setActiveModule] = useState('dashboard');
 
+  // Debug logging
+  useEffect(() => {
+    console.log('Index component - user:', user);
+    console.log('Index component - loading:', loading);
+    console.log('Index component - viewMode:', viewMode);
+  }, [user, loading, viewMode]);
+
   // Redirect authenticated users to dashboard
   useEffect(() => {
-    if (user && viewMode === 'landing') {
+    if (!loading && user) {
+      console.log('User is authenticated, switching to dashboard');
       setViewMode('dashboard');
+    } else if (!loading && !user) {
+      console.log('User is not authenticated, showing landing page');
+      setViewMode('landing');
     }
-  }, [user, viewMode]);
+  }, [user, loading]);
 
   const handleAuthClick = () => {
     navigate('/auth');
@@ -66,6 +76,7 @@ const Index = () => {
   }
 
   if (user && viewMode === 'dashboard') {
+    console.log('Rendering dashboard for user:', user.email);
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <DashboardSidebar activeModule={activeModule} setActiveModule={setActiveModule} />
@@ -91,6 +102,7 @@ const Index = () => {
     );
   }
 
+  console.log('Rendering landing page');
   return (
     <div className="min-h-screen bg-white">
       <Navbar onAuthClick={handleAuthClick} />
