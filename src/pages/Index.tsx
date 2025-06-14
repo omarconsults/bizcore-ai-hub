@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,6 +15,7 @@ import HRDashboard from '@/components/HRDashboard';
 import Marketing from '@/components/Marketing';
 import Strategy from '@/components/Strategy';
 import DigitalPresenceAnalyzer from '@/components/DigitalPresenceAnalyzer';
+import Settings from '@/components/Settings';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -89,7 +91,7 @@ const Index = () => {
       case 'knowledge':
         return <KnowledgeHub />;
       case 'settings':
-        return <PlaceholderModule title="Settings" />;
+        return <Settings />;
       case 'help':
         return <PlaceholderModule title="Help & Support" />;
       default:
