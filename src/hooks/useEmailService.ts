@@ -1,54 +1,53 @@
 
-import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-export interface EmailData {
-  to: string;
-  subject: string;
-  html?: string;
-  text?: string;
-}
-
 export const useEmailService = () => {
-  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const sendEmail = async (emailData: EmailData) => {
-    setLoading(true);
-    console.log('Sending email:', emailData);
-
+  const sendEmail = async (emailData: {
+    to: string;
+    subject: string;
+    html: string;
+    text: string;
+  }) => {
     try {
+      console.log('Sending email:', emailData);
+
       const { data, error } = await supabase.functions.invoke('send-email', {
-        body: emailData,
+        body: emailData
       });
 
       if (error) {
-        throw error;
+        console.error('Supabase function error:', error);
+        throw new Error(`Email service error: ${error.message}`);
+      }
+
+      if (!data.success) {
+        console.error('Email sending failed:', data);
+        throw new Error(data.error || 'Email sending failed');
       }
 
       console.log('Email sent successfully:', data);
+      
       toast({
-        title: "Email sent successfully!",
-        description: `Email sent to ${emailData.to}`,
+        title: "Email Sent! ✉️",
+        description: "Your email has been sent successfully",
       });
 
-      return { success: true, data };
-    } catch (error) {
+      return data;
+    } catch (error: any) {
       console.error('Error sending email:', error);
+      
       toast({
-        title: "Failed to send email",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
+        title: "Email Failed",
+        description: error.message || "Failed to send email. Please try again.",
+        variant: "destructive"
       });
-      return { success: false, error };
-    } finally {
-      setLoading(false);
+      
+      throw error;
     }
   };
 
-  return {
-    sendEmail,
-    loading,
-  };
+  return { sendEmail };
 };
