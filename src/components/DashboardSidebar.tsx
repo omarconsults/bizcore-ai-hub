@@ -10,7 +10,8 @@ import {
   BookOpen,
   Settings,
   HelpCircle,
-  Search
+  Search,
+  Building2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -19,6 +20,7 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
 
   const modules = [
     { id: 'dashboard', name: 'Dashboard', icon: Home },
+    { id: 'registration', name: 'Business Registration', icon: Building2 },
     { id: 'compliance', name: 'Compliance Hub', icon: Shield },
     { id: 'operations', name: 'Operations', icon: Calculator },
     { id: 'hr', name: 'HR & Team', icon: Users },

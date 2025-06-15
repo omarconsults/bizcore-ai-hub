@@ -26,7 +26,7 @@ const Dashboard = ({ onModuleChange }: DashboardProps) => {
     console.log(`Quick action clicked: ${action}`);
     switch (action) {
       case 'register':
-        onModuleChange?.('compliance');
+        onModuleChange?.('registration');
         break;
       case 'invoice':
         onModuleChange?.('operations');

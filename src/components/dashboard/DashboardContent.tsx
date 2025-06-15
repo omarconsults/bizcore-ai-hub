@@ -9,6 +9,7 @@ import Marketing from '@/components/Marketing';
 import KnowledgeHub from '@/components/KnowledgeHub';
 import Settings from '@/components/Settings';
 import DigitalPresenceAnalyzer from '@/components/DigitalPresenceAnalyzer';
+import BusinessRegistration from '@/components/BusinessRegistration';
 
 interface DashboardContentProps {
   activeModule: string;
@@ -24,6 +25,8 @@ const DashboardContent = ({ activeModule, onModuleChange }: DashboardContentProp
         return <Operations />;
       case 'compliance':
         return <ComplianceHub />;
+      case 'registration':
+        return <BusinessRegistration />;
       case 'hr':
         return <HRDashboard />;
       case 'strategy':
