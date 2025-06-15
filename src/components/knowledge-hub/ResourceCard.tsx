@@ -3,9 +3,10 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Globe, Star, ExternalLink } from 'lucide-react';
+import { Globe, Star, ExternalLink, Download, Eye } from 'lucide-react';
 import { getTypeIcon, getTypeColor } from './utils';
 import { type FetchedResource } from '@/services/resourceService';
+import { useToast } from '@/hooks/use-toast';
 
 interface ResourceCardProps {
   resource: FetchedResource;
@@ -13,7 +14,46 @@ interface ResourceCardProps {
 }
 
 const ResourceCard = ({ resource, isFromInternet = false }: ResourceCardProps) => {
+  const { toast } = useToast();
   const TypeIcon = getTypeIcon(resource.type);
+
+  const handleAccess = () => {
+    if (resource.url && resource.url !== '#') {
+      // Check if it's a real URL or placeholder
+      if (resource.url.startsWith('http')) {
+        window.open(resource.url, '_blank', 'noopener,noreferrer');
+      } else {
+        toast({
+          title: "Resource Access",
+          description: `Opening ${resource.title}...`,
+        });
+      }
+    } else {
+      toast({
+        title: "Coming Soon",
+        description: "This resource will be available soon",
+      });
+    }
+  };
+
+  const getActionText = () => {
+    switch (resource.type) {
+      case 'template': return 'Download';
+      case 'video': return 'Watch';
+      case 'course': return 'Start';
+      default: return 'Access';
+    }
+  };
+
+  const getActionIcon = () => {
+    switch (resource.type) {
+      case 'template': return Download;
+      case 'video': return Eye;
+      default: return ExternalLink;
+    }
+  };
+
+  const ActionIcon = getActionIcon();
 
   return (
     <Card className="border border-gray-200 hover:border-blue-900 transition-colors">
@@ -45,20 +85,21 @@ const ResourceCard = ({ resource, isFromInternet = false }: ResourceCardProps) =
                     <span className="text-xs text-gray-600">{resource.rating}</span>
                   </div>
                 )}
+                {resource.duration && (
+                  <span className="text-xs text-gray-500">{resource.duration}</span>
+                )}
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {resource.url && (
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => window.open(resource.url, '_blank')}
-              >
-                <ExternalLink size={14} className="mr-1" />
-                Access
-              </Button>
-            )}
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={handleAccess}
+            >
+              <ActionIcon size={14} className="mr-1" />
+              {getActionText()}
+            </Button>
           </div>
         </div>
       </CardContent>

@@ -3,21 +3,60 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Clock, Star } from 'lucide-react';
+import { Clock, Star, Download, Eye, ExternalLink } from 'lucide-react';
 import { getTypeIcon, getTypeColor } from './utils';
 import { Resource } from './types';
+import { useToast } from '@/hooks/use-toast';
 
 interface FeaturedResourcesProps {
   resources: Resource[];
 }
 
 const FeaturedResources = ({ resources }: FeaturedResourcesProps) => {
+  const { toast } = useToast();
+
+  const handleResourceAccess = (resource: Resource) => {
+    if (resource.url && resource.url !== '#') {
+      if (resource.url.startsWith('http')) {
+        window.open(resource.url, '_blank', 'noopener,noreferrer');
+      } else {
+        toast({
+          title: "Resource Access",
+          description: `Opening ${resource.title}...`,
+        });
+      }
+    } else {
+      toast({
+        title: "Featured Resource",
+        description: `Accessing ${resource.title}...`,
+      });
+    }
+  };
+
+  const getActionText = (type: string) => {
+    switch (type) {
+      case 'template': return 'Download';
+      case 'video': return 'Watch';
+      case 'course': return 'Start';
+      default: return 'Read';
+    }
+  };
+
+  const getActionIcon = (type: string) => {
+    switch (type) {
+      case 'template': return Download;
+      case 'video': return Eye;
+      default: return ExternalLink;
+    }
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Featured Resources</h2>
       <div className="grid gap-6">
         {resources.map((resource, index) => {
           const TypeIcon = getTypeIcon(resource.type);
+          const ActionIcon = getActionIcon(resource.type);
           
           return (
             <Card key={index} className="border-0 shadow-sm hover:shadow-md transition-shadow">
@@ -62,9 +101,12 @@ const FeaturedResources = ({ resources }: FeaturedResourcesProps) => {
                         </div>
                       </div>
                       
-                      <Button className="bg-blue-900 hover:bg-blue-800">
-                        {resource.type === 'template' ? 'Download' : 
-                         resource.type === 'video' ? 'Watch' : 'Read'}
+                      <Button 
+                        className="bg-blue-900 hover:bg-blue-800"
+                        onClick={() => handleResourceAccess(resource)}
+                      >
+                        <ActionIcon size={14} className="mr-1" />
+                        {getActionText(resource.type)}
                       </Button>
                     </div>
                   </div>

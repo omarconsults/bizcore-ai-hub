@@ -31,14 +31,19 @@ const KnowledgeHubHeader = ({
         <Button 
           onClick={onFetchNew} 
           disabled={isFetchingNew}
-          className="bg-emerald-600 hover:bg-emerald-700"
+          className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50"
         >
           {isFetchingNew ? (
-            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+            <>
+              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              Fetching...
+            </>
           ) : (
-            <Globe className="mr-2 h-4 w-4" />
+            <>
+              <Globe className="mr-2 h-4 w-4" />
+              Fetch Latest
+            </>
           )}
-          Fetch Latest
         </Button>
       </div>
 

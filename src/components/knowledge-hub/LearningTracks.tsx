@@ -4,12 +4,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { LearningTrack } from './types';
+import { useToast } from '@/hooks/use-toast';
 
 interface LearningTracksProps {
   tracks: LearningTrack[];
 }
 
 const LearningTracks = ({ tracks }: LearningTracksProps) => {
+  const { toast } = useToast();
+
+  const handleTrackAction = (track: LearningTrack) => {
+    const action = track.progress > 0 ? 'Continuing' : 'Starting';
+    toast({
+      title: `${action} Learning Track`,
+      description: `${action} "${track.title}" track...`,
+    });
+  };
+
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader>
@@ -36,14 +47,18 @@ const LearningTracks = ({ tracks }: LearningTracksProps) => {
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
-                      className="bg-emerald-600 h-2 rounded-full" 
+                      className="bg-emerald-600 h-2 rounded-full transition-all duration-300" 
                       style={{ width: `${track.progress}%` }}
                     ></div>
                   </div>
                 </div>
               )}
               
-              <Button size="sm" className="w-full mt-3 bg-blue-900 hover:bg-blue-800">
+              <Button 
+                size="sm" 
+                className="w-full mt-3 bg-blue-900 hover:bg-blue-800"
+                onClick={() => handleTrackAction(track)}
+              >
                 {track.progress > 0 ? 'Continue' : 'Start Track'}
               </Button>
             </div>
