@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, conversationHistory = [], systemPrompt } = await req.json()
+    const { message, conversationHistory = [], systemPrompt, requestType = 'chat' } = await req.json()
     
     if (!message) {
       return new Response(
@@ -30,7 +30,59 @@ serve(async (req) => {
       )
     }
 
-    // Enhanced system prompt with comprehensive Nigerian business expertise
+    // Logo generation system prompt
+    const logoSystemPrompt = `You are an expert logo designer and brand identity specialist with deep knowledge of design principles, typography, color theory, and visual branding.
+
+YOUR EXPERTISE:
+• Logo design principles (scalability, simplicity, memorability)
+• Typography selection and pairing
+• Color psychology and brand color schemes
+• SVG code generation for geometric and text-based logos
+• Brand identity development
+• Industry-specific design conventions
+• Nigerian market preferences and cultural considerations
+
+RESPONSE FORMAT FOR LOGO GENERATION:
+Provide exactly 3 distinct logo concepts in this JSON format:
+{
+  "logos": [
+    {
+      "id": 1,
+      "style": "Logo Style Name",
+      "description": "Detailed description of the concept",
+      "colors": {
+        "primary": "#hexcode",
+        "secondary": "#hexcode",
+        "text": "#hexcode"
+      },
+      "typography": "Font recommendation",
+      "svgCode": "Complete SVG code for the logo",
+      "rationale": "Why this design works for the business"
+    }
+  ],
+  "brandGuidelines": {
+    "colorPalette": ["#hex1", "#hex2", "#hex3"],
+    "typography": "Primary font recommendation",
+    "usage": "Guidelines for logo usage"
+  }
+}
+
+LOGO DESIGN REQUIREMENTS:
+• Generate actual SVG code that creates professional logos
+• Use proper typography, geometric shapes, and design principles
+• Consider scalability (logos must work at 16px and 300px)
+• Include color variations (full color, monochrome, reversed)
+• Provide meaningful rationale for each design choice
+• Consider the Nigerian business environment and target market
+
+SVG GUIDELINES:
+• Use viewBox="0 0 200 60" for horizontal logos
+• Keep designs clean and scalable
+• Use proper typography and spacing
+• Include business name in the design
+• Make it professional and industry-appropriate`
+
+    // Enhanced business consultation system prompt  
     const defaultSystemPrompt = `You are an advanced AI business consultant and strategic advisor specializing in Nigerian business operations with deep expertise across all economic sectors. You provide comprehensive, detailed, and actionable business advice.
 
 YOUR EXPERTISE COVERS:
@@ -54,35 +106,12 @@ RESPONSE QUALITY STANDARDS:
 • Provide relevant contact information for agencies
 • Suggest follow-up actions and implementation strategies
 
-MARKET KNOWLEDGE:
-• Deep understanding of Nigerian economic landscape
-• Sector-specific regulatory requirements
-• Regional business variations (Lagos, Abuja, Port Harcourt, Kano)
-• Cultural and language considerations for business
-• Current market trends and opportunities
-• Government policies affecting business operations
-
-FORMAT YOUR RESPONSES:
-• Use clear headings and structured organization
-• Include bullet points for easy scanning
-• Provide step-by-step procedures where applicable
-• Add relevant warnings about compliance requirements
-• Include cost estimates in Nigerian Naira
-• Suggest timelines for implementation
-• End with specific next steps and offer for deeper consultation
-
-TONE AND APPROACH:
-• Professional yet approachable
-• Confident and authoritative
-• Practical and solution-oriented
-• Culturally sensitive to Nigerian business environment
-• Encouraging and supportive of entrepreneurship
-
 Always provide comprehensive, actionable advice that demonstrates deep expertise in Nigerian business operations.`
 
-    const finalSystemPrompt = systemPrompt || defaultSystemPrompt
+    // Choose system prompt based on request type
+    const finalSystemPrompt = requestType === 'logo' ? logoSystemPrompt : (systemPrompt || defaultSystemPrompt)
 
-    // Build conversation context with enhanced prompting
+    // Build conversation context
     const messages = [
       { role: 'system', content: finalSystemPrompt },
       ...conversationHistory.map((msg: any) => ({
@@ -92,9 +121,9 @@ Always provide comprehensive, actionable advice that demonstrates deep expertise
       { role: 'user', content: message }
     ]
 
-    console.log('Sending request to Groq with enhanced system prompt...')
+    console.log(`Sending ${requestType} request to Groq...`)
 
-    // Call Groq API with LLaMA for comprehensive responses
+    // Call Groq API
     const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -104,8 +133,8 @@ Always provide comprehensive, actionable advice that demonstrates deep expertise
       body: JSON.stringify({
         model: 'llama-3.1-70b-versatile',
         messages: messages,
-        max_tokens: 1500, // Increased for more comprehensive responses
-        temperature: 0.7,
+        max_tokens: requestType === 'logo' ? 2000 : 1500,
+        temperature: requestType === 'logo' ? 0.8 : 0.7,
         top_p: 0.9,
         frequency_penalty: 0.1,
         presence_penalty: 0.1,
@@ -122,9 +151,9 @@ Always provide comprehensive, actionable advice that demonstrates deep expertise
     }
 
     const data = await groqResponse.json()
-    const aiResponse = data.choices[0]?.message?.content || 'I apologize, but I could not generate a comprehensive response at this time. Please try rephrasing your question or ask about a specific aspect of your business challenge.'
+    const aiResponse = data.choices[0]?.message?.content || 'I apologize, but I could not generate a response at this time. Please try again.'
 
-    console.log('Generated comprehensive AI response successfully')
+    console.log(`Generated ${requestType} response successfully`)
 
     return new Response(
       JSON.stringify({ response: aiResponse }),

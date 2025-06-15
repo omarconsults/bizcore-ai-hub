@@ -15,9 +15,11 @@ import {
   FileText,
   Wand2,
   Upload,
-  Settings
+  Settings,
+  Sparkles
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useLogoGenerator } from '@/hooks/useLogoGenerator';
 
 const DesignStudio = () => {
   const { toast } = useToast();
@@ -34,14 +36,14 @@ const DesignStudio = () => {
     description: '',
     contactInfo: ''
   });
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedLogos, setGeneratedLogos] = useState([]);
   const [brandKit, setBrandKit] = useState({
     primaryColor: '#3B82F6',
     secondaryColor: '#10B981',
     font: 'Inter',
     logo: null
   });
+
+  const { generateLogos, isGenerating, generatedLogos, brandGuidelines } = useLogoGenerator();
 
   const industries = [
     'Technology & Software',
@@ -87,7 +89,7 @@ const DesignStudio = () => {
     'Holiday Special'
   ];
 
-  const generateLogo = async () => {
+  const handleGenerateLogo = async () => {
     if (!logoData.businessName || !logoData.industry) {
       toast({
         title: "Missing Information",
@@ -97,42 +99,47 @@ const DesignStudio = () => {
       return;
     }
 
-    setIsGenerating(true);
-    
-    // Simulate logo generation
-    setTimeout(() => {
-      const mockLogos = [
-        {
-          id: 1,
-          style: 'Modern Text',
-          preview: '🏢',
-          description: 'Clean, professional text-based logo'
-        },
-        {
-          id: 2,
-          style: 'Icon + Text',
-          preview: '💼',
-          description: 'Icon combined with business name'
-        },
-        {
-          id: 3,
-          style: 'Abstract Symbol',
-          preview: '🔷',
-          description: 'Abstract geometric symbol'
-        }
-      ];
-      
-      setGeneratedLogos(mockLogos);
-      setIsGenerating(false);
-      
-      toast({
-        title: "Logos Generated! ✨",
-        description: "3 logo concepts ready for download"
-      });
-    }, 3000);
+    await generateLogos(logoData);
   };
 
   const downloadLogo = (logoId: number, format: string) => {
+    const logo = generatedLogos.find(l => l.id === logoId);
+    if (!logo) return;
+
+    if (format === 'SVG') {
+      const blob = new Blob([logo.svgCode], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${logoData.businessName}-logo-${logo.style.toLowerCase().replace(/\s+/g, '-')}.svg`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else if (format === 'PNG') {
+      // Convert SVG to PNG using canvas
+      const svg = new Blob([logo.svgCode], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(svg);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 800;
+        canvas.height = 240;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, 800, 240);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const pngUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = pngUrl;
+            a.download = `${logoData.businessName}-logo-${logo.style.toLowerCase().replace(/\s+/g, '-')}.png`;
+            a.click();
+            URL.revokeObjectURL(pngUrl);
+          }
+        });
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    }
+
     toast({
       title: "Download Started",
       description: `Logo downloading in ${format} format`
@@ -150,7 +157,7 @@ const DesignStudio = () => {
     <div className="space-y-6">
       <Tabs value={activeDesignTab} onValueChange={setActiveDesignTab}>
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="logo">Logo Generator</TabsTrigger>
+          <TabsTrigger value="logo">AI Logo Generator</TabsTrigger>
           <TabsTrigger value="flyer">Flyer Creator</TabsTrigger>
           <TabsTrigger value="brand">Brand Kit</TabsTrigger>
         </TabsList>
@@ -160,8 +167,11 @@ const DesignStudio = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Wand2 className="text-purple-600" size={20} />
-                AI Logo Generator
+                <Sparkles className="text-purple-600" size={20} />
+                AI-Powered Logo Generator
+                <span className="text-sm font-normal text-purple-600 bg-purple-50 px-2 py-1 rounded">
+                  LLaMA AI
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -220,19 +230,19 @@ const DesignStudio = () => {
               </div>
 
               <Button 
-                onClick={generateLogo} 
+                onClick={handleGenerateLogo} 
                 disabled={isGenerating}
                 className="w-full bg-purple-600 hover:bg-purple-700"
               >
                 {isGenerating ? (
                   <>
                     <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    Generating Logos...
+                    AI Generating Logos...
                   </>
                 ) : (
                   <>
-                    <Wand2 className="mr-2 h-4 w-4" />
-                    Generate Logo Concepts
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Generate AI Logo Concepts
                   </>
                 )}
               </Button>
@@ -243,15 +253,23 @@ const DesignStudio = () => {
           {generatedLogos.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Generated Logo Concepts</CardTitle>
+                <CardTitle>AI-Generated Logo Concepts</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-3 gap-4">
                   {generatedLogos.map((logo) => (
-                    <div key={logo.id} className="border rounded-lg p-4 text-center space-y-3">
-                      <div className="text-6xl">{logo.preview}</div>
-                      <h3 className="font-semibold">{logoData.businessName}</h3>
-                      <p className="text-sm text-gray-600">{logo.description}</p>
+                    <div key={logo.id} className="border rounded-lg p-4 space-y-3">
+                      <div className="h-20 flex items-center justify-center bg-gray-50 rounded">
+                        <div 
+                          dangerouslySetInnerHTML={{ __html: logo.svgCode }} 
+                          className="max-w-full max-h-full"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{logo.style}</h3>
+                        <p className="text-sm text-gray-600">{logo.description}</p>
+                        <p className="text-xs text-gray-500 mt-1">{logo.rationale}</p>
+                      </div>
                       
                       <div className="space-y-2">
                         <div className="flex gap-2">
@@ -283,6 +301,18 @@ const DesignStudio = () => {
                     </div>
                   ))}
                 </div>
+
+                {/* Brand Guidelines */}
+                {brandGuidelines && (
+                  <div className="mt-6 p-4 bg-purple-50 rounded-lg">
+                    <h4 className="font-semibold text-purple-800 mb-2">AI Brand Guidelines</h4>
+                    <div className="text-sm text-purple-700 space-y-1">
+                      <p><strong>Typography:</strong> {brandGuidelines.typography}</p>
+                      <p><strong>Color Palette:</strong> {brandGuidelines.colorPalette.join(', ')}</p>
+                      <p><strong>Usage:</strong> {brandGuidelines.usage}</p>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
