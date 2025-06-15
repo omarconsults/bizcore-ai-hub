@@ -3,8 +3,26 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, ArrowRight, Users, Shield, TrendingUp, Zap, Clock, Award, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LandingHero = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleStartBusiness = () => {
+    if (user) {
+      navigate('/');
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const handleWatchDemo = () => {
+    // For now, navigate to how-it-works page as demo
+    navigate('/how-it-works');
+  };
+
   const features = [
     "Complete CAC registration & business setup in 48 hours",
     "Automated NDPR, FIRS & state compliance monitoring",
@@ -90,11 +108,18 @@ const LandingHero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4">
-              <Button className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white px-8 sm:px-10 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-2xl shadow-2xl hover:shadow-violet-500/25 transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
+              <Button 
+                onClick={handleStartBusiness}
+                className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white px-8 sm:px-10 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-2xl shadow-2xl hover:shadow-violet-500/25 transition-all duration-300 transform hover:scale-105 w-full sm:w-auto"
+              >
                 Start Your Business Today
                 <ArrowRight className="ml-3" size={20} />
               </Button>
-              <Button variant="outline" className="border-2 border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-8 sm:px-10 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-2xl backdrop-blur-sm transition-all duration-300 w-full sm:w-auto">
+              <Button 
+                variant="outline" 
+                onClick={handleWatchDemo}
+                className="border-2 border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-8 sm:px-10 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-2xl backdrop-blur-sm transition-all duration-300 w-full sm:w-auto"
+              >
                 Watch Demo (3 min)
               </Button>
             </div>
