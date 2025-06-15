@@ -14,10 +14,34 @@ import {
   Search,
   RefreshCw,
   Plus,
-  Minus
+  Minus,
+  AlertTriangle,
+  CheckCircle
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+
+interface UserToken {
+  id: string;
+  user_id: string;
+  email: string;
+  total_tokens: number;
+  used_tokens: number;
+  available_tokens: number;
+  last_reset_date: string;
+  created_at: string;
+}
+
+interface TokenTransaction {
+  id: string;
+  user_id: string;
+  email: string;
+  transaction_type: string;
+  amount: number;
+  feature_used: string;
+  description: string;
+  created_at: string;
+}
 
 const TokenManagement = () => {
   const { toast } = useToast();
@@ -29,11 +53,13 @@ const TokenManagement = () => {
     totalTokensConsumed: 0,
     averageUsage: 0
   });
-  const [userTokens, setUserTokens] = useState([]);
-  const [recentTransactions, setRecentTransactions] = useState([]);
+  const [userTokens, setUserTokens] = useState<UserToken[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<TokenTransaction[]>([]);
 
   const fetchTokenStats = async () => {
     try {
+      setLoading(true);
+      
       // Get total users with tokens
       const { data: usersData, error: usersError } = await supabase
         .from('user_tokens')
@@ -65,6 +91,11 @@ const TokenManagement = () => {
 
       setUserTokens(usersData);
       setRecentTransactions(transactionsData);
+      
+      toast({
+        title: "Success",
+        description: "Token statistics updated successfully",
+      });
     } catch (error) {
       console.error('Error fetching token stats:', error);
       toast({
@@ -129,6 +160,29 @@ const TokenManagement = () => {
     }
   };
 
+  const resetMonthlyTokens = async () => {
+    try {
+      // Call the reset function
+      const { error } = await supabase.rpc('reset_monthly_tokens');
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Monthly tokens reset successfully for all users",
+      });
+      
+      fetchTokenStats();
+    } catch (error) {
+      console.error('Error resetting monthly tokens:', error);
+      toast({
+        title: "Error",
+        description: "Failed to reset monthly tokens",
+        variant: "destructive"
+      });
+    }
+  };
+
   useEffect(() => {
     fetchTokenStats();
   }, []);
@@ -164,10 +218,16 @@ const TokenManagement = () => {
           <h1 className="text-3xl font-bold text-gray-900">Token Management</h1>
           <p className="text-gray-600">Monitor and manage AI token usage across the platform</p>
         </div>
-        <Button onClick={fetchTokenStats} variant="outline">
-          <RefreshCw size={16} className="mr-2" />
-          Refresh
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={resetMonthlyTokens} variant="outline" className="border-emerald-600 text-emerald-600 hover:bg-emerald-50">
+            <RefreshCw size={16} className="mr-2" />
+            Reset Monthly Tokens
+          </Button>
+          <Button onClick={fetchTokenStats} variant="outline">
+            <RefreshCw size={16} className="mr-2" />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -253,22 +313,43 @@ const TokenManagement = () => {
                     <TableHead>Used Tokens</TableHead>
                     <TableHead>Available</TableHead>
                     <TableHead>Usage %</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredUsers.map((user) => {
                     const usagePercent = user.total_tokens > 0 ? (user.used_tokens / user.total_tokens) * 100 : 0;
+                    const isLowBalance = user.available_tokens < 10;
+                    const isHighUsage = usagePercent > 90;
+                    
                     return (
                       <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.email}</TableCell>
                         <TableCell>{user.total_tokens.toLocaleString()}</TableCell>
                         <TableCell>{user.used_tokens.toLocaleString()}</TableCell>
-                        <TableCell>{user.available_tokens.toLocaleString()}</TableCell>
                         <TableCell>
-                          <Badge variant={usagePercent > 90 ? 'destructive' : usagePercent > 70 ? 'secondary' : 'default'}>
+                          <div className="flex items-center gap-2">
+                            {user.available_tokens.toLocaleString()}
+                            {isLowBalance && <AlertTriangle size={16} className="text-red-500" />}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={isHighUsage ? 'destructive' : usagePercent > 70 ? 'secondary' : 'default'}>
                             {Math.round(usagePercent)}%
                           </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {isLowBalance ? (
+                              <AlertTriangle size={16} className="text-red-500" />
+                            ) : (
+                              <CheckCircle size={16} className="text-emerald-500" />
+                            )}
+                            <span className={isLowBalance ? 'text-red-600' : 'text-emerald-600'}>
+                              {isLowBalance ? 'Low' : 'Good'}
+                            </span>
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
@@ -276,6 +357,7 @@ const TokenManagement = () => {
                               size="sm"
                               variant="outline"
                               onClick={() => adjustUserTokens(user.email, 100, 'Admin bonus - 100 tokens')}
+                              className="border-emerald-600 text-emerald-600 hover:bg-emerald-50"
                             >
                               <Plus size={14} className="mr-1" />
                               +100
@@ -284,6 +366,7 @@ const TokenManagement = () => {
                               size="sm"
                               variant="outline"
                               onClick={() => adjustUserTokens(user.email, -50, 'Admin adjustment - 50 tokens removed')}
+                              className="border-red-600 text-red-600 hover:bg-red-50"
                             >
                               <Minus size={14} className="mr-1" />
                               -50
@@ -322,19 +405,28 @@ const TokenManagement = () => {
                       <TableCell>
                         {new Date(transaction.created_at).toLocaleDateString()}
                       </TableCell>
-                      <TableCell>{transaction.email}</TableCell>
+                      <TableCell className="font-medium">{transaction.email}</TableCell>
                       <TableCell>
                         <Badge variant={transaction.transaction_type === 'consume' ? 'destructive' : 'default'}>
                           {transaction.transaction_type}
                         </Badge>
                       </TableCell>
-                      <TableCell className={transaction.amount < 0 ? 'text-red-600' : 'text-green-600'}>
+                      <TableCell className={transaction.amount < 0 ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold'}>
                         {transaction.amount > 0 ? '+' : ''}{transaction.amount}
                       </TableCell>
-                      <TableCell>{transaction.feature_used || '-'}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{transaction.feature_used || '-'}</Badge>
+                      </TableCell>
                       <TableCell className="max-w-xs truncate">{transaction.description}</TableCell>
                     </TableRow>
                   ))}
+                  {recentTransactions.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                        No transactions found.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>

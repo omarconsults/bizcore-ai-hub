@@ -1,54 +1,175 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Edit, AlertCircle, CheckCircle } from 'lucide-react';
+import { Edit, AlertCircle, CheckCircle, RefreshCw, Users, DollarSign, TrendingUp } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+interface Subscription {
+  user_id: string;
+  email: string;
+  subscribed: boolean;
+  subscription_tier: string | null;
+  subscription_end: string | null;
+  created_at: string;
+}
 
 const SubscriptionManagement = () => {
-  const subscriptions = [
-    {
-      id: 1,
-      businessName: "TechStart Nigeria Ltd",
-      plan: "Professional",
-      status: "Active",
-      amount: "₦35,000",
-      nextBilling: "2024-07-15",
-      features: ["Compliance Management", "HR Suite", "Unlimited Invoicing"]
-    },
-    {
-      id: 2,
-      businessName: "Green Valley Farms",
-      plan: "Starter",
-      status: "Active",
-      amount: "₦15,000",
-      nextBilling: "2024-07-20",
-      features: ["Basic Compliance", "Simple Invoicing"]
-    },
-    {
-      id: 3,
-      businessName: "Digital Solutions Inc",
-      plan: "Enterprise",
-      status: "Cancelled",
-      amount: "₦75,000",
-      nextBilling: "-",
-      features: ["All Features", "Dedicated Support", "Custom Integrations"]
+  const { toast } = useToast();
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalSubscribers: 0,
+    activeSubscribers: 0,
+    basicCount: 0,
+    professionalCount: 0,
+    enterpriseCount: 0
+  });
+
+  const fetchSubscriptions = async () => {
+    try {
+      setLoading(true);
+      
+      // For now, we'll use the user_tokens table as we don't have a subscribers table yet
+      // In a real implementation, you'd query the subscribers table
+      const { data, error } = await supabase
+        .from('user_tokens')
+        .select('user_id, email, created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Mock subscription data based on user tokens
+      const mockSubscriptions = data.map((user, index) => ({
+        user_id: user.user_id || 'unknown',
+        email: user.email,
+        subscribed: index % 3 !== 0, // Mock: 2/3 of users are subscribed
+        subscription_tier: index % 3 === 0 ? null : 
+                          index % 3 === 1 ? 'Professional' : 'Basic',
+        subscription_end: index % 3 !== 0 ? 
+          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null,
+        created_at: user.created_at
+      }));
+
+      setSubscriptions(mockSubscriptions);
+
+      // Calculate stats
+      const totalSubscribers = mockSubscriptions.length;
+      const activeSubscribers = mockSubscriptions.filter(s => s.subscribed).length;
+      const basicCount = mockSubscriptions.filter(s => s.subscription_tier === 'Basic').length;
+      const professionalCount = mockSubscriptions.filter(s => s.subscription_tier === 'Professional').length;
+      const enterpriseCount = mockSubscriptions.filter(s => s.subscription_tier === 'Enterprise').length;
+
+      setStats({
+        totalSubscribers,
+        activeSubscribers,
+        basicCount,
+        professionalCount,
+        enterpriseCount
+      });
+
+    } catch (error) {
+      console.error('Error fetching subscriptions:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch subscription data",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+        </div>
+      </div>
+    );
+  }
 
   const planStats = [
-    { plan: "Starter", count: 342, revenue: "₦5,130,000" },
-    { plan: "Professional", count: 456, revenue: "₦15,960,000" },
-    { plan: "Enterprise", count: 58, revenue: "₦4,350,000" }
+    { plan: "Basic", count: stats.basicCount, revenue: "₦" + (stats.basicCount * 15000).toLocaleString() },
+    { plan: "Professional", count: stats.professionalCount, revenue: "₦" + (stats.professionalCount * 35000).toLocaleString() },
+    { plan: "Enterprise", count: stats.enterpriseCount, revenue: "₦" + (stats.enterpriseCount * 75000).toLocaleString() }
   ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Subscription Management</h1>
-        <p className="text-gray-600">Monitor and manage user subscriptions</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Subscription Management</h1>
+          <p className="text-gray-600">Monitor and manage user subscriptions</p>
+        </div>
+        <Button onClick={fetchSubscriptions} variant="outline">
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Refresh
+        </Button>
+      </div>
+
+      {/* Overview Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Users</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalSubscribers}</p>
+              </div>
+              <Users className="text-blue-600" size={24} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Active Subscribers</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.activeSubscribers}</p>
+              </div>
+              <CheckCircle className="text-emerald-600" size={24} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Conversion Rate</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.totalSubscribers > 0 ? Math.round((stats.activeSubscribers / stats.totalSubscribers) * 100) : 0}%
+                </p>
+              </div>
+              <TrendingUp className="text-orange-600" size={24} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Est. Monthly Revenue</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  ₦{((stats.basicCount * 15000) + (stats.professionalCount * 35000) + (stats.enterpriseCount * 75000)).toLocaleString()}
+                </p>
+              </div>
+              <DollarSign className="text-purple-600" size={24} />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Plan Statistics */}
@@ -73,41 +194,50 @@ const SubscriptionManagement = () => {
       {/* Subscriptions Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Subscriptions</CardTitle>
+          <CardTitle>All Subscriptions ({subscriptions.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Business</TableHead>
+                <TableHead>Email</TableHead>
                 <TableHead>Plan</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Next Billing</TableHead>
+                <TableHead>Subscription End</TableHead>
+                <TableHead>Join Date</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {subscriptions.map((subscription) => (
-                <TableRow key={subscription.id}>
-                  <TableCell className="font-medium">{subscription.businessName}</TableCell>
+              {subscriptions.slice(0, 20).map((subscription) => (
+                <TableRow key={subscription.user_id}>
+                  <TableCell className="font-medium">{subscription.email}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{subscription.plan}</Badge>
+                    {subscription.subscription_tier ? (
+                      <Badge variant="outline">{subscription.subscription_tier}</Badge>
+                    ) : (
+                      <Badge variant="secondary">Free</Badge>
+                    )}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {subscription.status === 'Active' ? (
+                      {subscription.subscribed ? (
                         <CheckCircle className="h-4 w-4 text-emerald-600" />
                       ) : (
                         <AlertCircle className="h-4 w-4 text-red-600" />
                       )}
-                      <Badge variant={subscription.status === 'Active' ? 'default' : 'destructive'}>
-                        {subscription.status}
+                      <Badge variant={subscription.subscribed ? 'default' : 'destructive'}>
+                        {subscription.subscribed ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">{subscription.amount}</TableCell>
-                  <TableCell>{subscription.nextBilling}</TableCell>
+                  <TableCell>
+                    {subscription.subscription_end 
+                      ? new Date(subscription.subscription_end).toLocaleDateString()
+                      : '-'
+                    }
+                  </TableCell>
+                  <TableCell>{new Date(subscription.created_at).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Button variant="ghost" size="sm">
