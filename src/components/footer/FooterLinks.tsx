@@ -28,8 +28,7 @@ const FooterLinks = () => {
     { name: 'About Us', href: '/about' },
     { name: 'How It Works', href: '/how-it-works' },
     { name: 'Success Stories', href: '#success-stories' },
-    { name: 'Careers', href: '#careers' },
-    { name: 'Press Kit', href: '#press' },
+    { name: 'Careers', href: '/careers' },
   ];
 
   const productLinks = [
@@ -41,7 +40,7 @@ const FooterLinks = () => {
   ];
 
   const supportLinks = [
-    { name: 'Help Center', href: '#help' },
+    { name: 'Help Center', href: '/help' },
     { name: 'Contact Support', href: '/contact' },
   ];
 

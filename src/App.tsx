@@ -14,6 +14,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
 import CookiePolicy from "./pages/CookiePolicy";
 import NDPRCompliance from "./pages/NDPRCompliance";
+import HelpCenter from "./pages/HelpCenter";
+import Careers from "./pages/Careers";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +37,8 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/cookies" element={<CookiePolicy />} />
             <Route path="/ndpr" element={<NDPRCompliance />} />
+            <Route path="/help" element={<HelpCenter />} />
+            <Route path="/careers" element={<Careers />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
