@@ -123,7 +123,7 @@ Always provide comprehensive, actionable advice that demonstrates deep expertise
 
     console.log(`Sending ${requestType} request to Groq...`)
 
-    // Call Groq API
+    // Call Groq API with updated model
     const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -131,7 +131,7 @@ Always provide comprehensive, actionable advice that demonstrates deep expertise
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-70b-versatile',
+        model: 'llama-3.1-8b-instant',
         messages: messages,
         max_tokens: requestType === 'logo' ? 2000 : 1500,
         temperature: requestType === 'logo' ? 0.8 : 0.7,
