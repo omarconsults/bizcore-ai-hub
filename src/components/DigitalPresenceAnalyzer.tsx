@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -148,17 +149,20 @@ const DigitalPresenceAnalyzer = () => {
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+      {/* Header */}
       <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-        <div className="flex items-center gap-3 mb-4">
-          <Search className="w-8 h-8 text-blue-600" />
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Digital Presence Analyzer</h1>
-            <p className="text-gray-600">Discover how visible and credible your business appears online</p>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Search className="text-blue-900" size={28} />
+              Digital Presence Analyzer
+            </h1>
+            <p className="text-gray-600 mt-1">Discover how visible and credible your business appears online</p>
           </div>
         </div>
 
         {!hasAnalyzed && (
-          <div className="space-y-4">
+          <div className="space-y-4 mt-6">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="business-name">Business Name</Label>
@@ -190,7 +194,7 @@ const DigitalPresenceAnalyzer = () => {
         )}
 
         {isAnalyzing && (
-          <div className="text-center py-8">
+          <div className="text-center py-8 mt-6">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Scanning social media, websites, and business listings...</p>
           </div>
