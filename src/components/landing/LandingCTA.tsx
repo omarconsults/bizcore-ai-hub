@@ -22,42 +22,42 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
   ];
 
   return (
-    <section className="relative py-24 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 overflow-hidden">
+    <section className="relative py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-slate-950 via-violet-950 to-slate-900 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-64 sm:w-96 h-64 sm:h-96 bg-violet-500/15 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 sm:bottom-20 right-10 sm:right-20 w-64 sm:w-96 h-64 sm:h-96 bg-cyan-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-48 sm:w-64 h-48 sm:h-64 bg-emerald-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
 
       {/* Grid overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] sm:bg-[size:50px_50px]"></div>
 
       <div className="relative z-10 max-w-6xl mx-auto text-center px-4 sm:px-6 lg:px-8">
         {/* Urgency Banner */}
-        <div className="inline-flex items-center bg-gradient-to-r from-emerald-500/20 to-orange-500/20 backdrop-blur-sm text-emerald-300 px-8 py-4 rounded-full text-sm font-semibold mb-12 border border-emerald-500/30 animate-pulse">
+        <div className="inline-flex items-center bg-gradient-to-r from-violet-500/20 to-orange-500/20 backdrop-blur-sm text-violet-300 px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm font-semibold mb-8 sm:mb-12 border border-violet-500/30 animate-pulse">
           <Sparkles className="mr-2" size={16} />
           🔥 Limited Time: 50% Off Setup Fees This Month
         </div>
 
-        <h2 className="text-5xl lg:text-7xl font-bold text-white mb-8 leading-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-6 sm:mb-8 leading-tight">
           Ready to Join Nigeria's 
-          <span className="block bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
+          <span className="block bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
             Fastest-Growing Businesses?
           </span>
         </h2>
         
-        <p className="text-xl lg:text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-slate-300 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
           Join 15,000+ Nigerian entrepreneurs who've transformed their ideas into thriving, compliant businesses with BizCore. 
           <span className="text-white font-semibold"> Start your journey today and be operational by week's end.</span>
         </p>
 
         {/* Stats Bar */}
-        <div className="bg-white/5 backdrop-blur-md rounded-3xl p-8 mb-12 border border-white/20 shadow-2xl">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
+        <div className="bg-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 sm:mb-12 border border-white/20 shadow-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-center">
             {urgencyStats.map((stat, index) => (
               <div key={index} className="text-white group">
-                <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">✨</div>
+                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300">✨</div>
                 <div className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">{stat}</div>
               </div>
             ))}
@@ -65,20 +65,20 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
         </div>
 
         {/* Main CTA */}
-        <div className="mb-12">
+        <div className="mb-8 sm:mb-12">
           <Button 
             onClick={onStartDemo}
-            className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white px-16 py-8 rounded-3xl text-xl lg:text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl hover:shadow-emerald-500/25 duration-300"
+            className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white px-12 sm:px-16 py-6 sm:py-8 rounded-2xl sm:rounded-3xl text-lg sm:text-xl lg:text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl hover:shadow-violet-500/25 duration-300 w-full sm:w-auto"
           >
             {user ? 'Enter Your Dashboard →' : 'Start Your Business Journey →'}
-            <ArrowRight className="ml-4" size={28} />
+            <ArrowRight className="ml-3 sm:ml-4" size={24} />
           </Button>
           
-          <div className="mt-8 space-y-4">
-            <p className="text-emerald-300 text-lg font-medium">
+          <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
+            <p className="text-violet-300 text-base sm:text-lg font-medium">
               30-day free trial • No credit card required • Setup starts immediately
             </p>
-            <p className="text-blue-200 text-sm flex items-center justify-center gap-2">
+            <p className="text-cyan-200 text-sm flex items-center justify-center gap-2">
               <TrendingUp size={16} />
               Join today and get your business registered by Friday ⚡
             </p>
@@ -86,35 +86,35 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
         </div>
 
         {/* Guarantees */}
-        <div className="bg-white/5 backdrop-blur-md rounded-3xl p-10 border border-white/20 shadow-2xl">
-          <h3 className="text-3xl font-bold text-white mb-8">Our Ironclad Guarantees</h3>
-          <div className="grid md:grid-cols-3 gap-8">
+        <div className="bg-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-8 sm:p-10 border border-white/20 shadow-2xl">
+          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">Our Ironclad Guarantees</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {guarantees.map((guarantee, index) => (
-              <div key={index} className="flex flex-col items-center text-center space-y-4 group">
-                <div className="p-4 bg-gradient-to-br from-white/10 to-white/5 rounded-2xl group-hover:from-white/20 group-hover:to-white/10 transition-all duration-300">
-                  <guarantee.icon className="text-emerald-400 group-hover:text-emerald-300 transition-colors" size={32} />
+              <div key={index} className="flex flex-col items-center text-center space-y-3 sm:space-y-4 group">
+                <div className="p-3 sm:p-4 bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl group-hover:from-white/20 group-hover:to-white/10 transition-all duration-300">
+                  <guarantee.icon className="text-violet-400 group-hover:text-violet-300 transition-colors" size={28} />
                 </div>
-                <p className="text-white font-medium leading-relaxed group-hover:text-emerald-300 transition-colors">{guarantee.text}</p>
+                <p className="text-white font-medium leading-relaxed group-hover:text-violet-300 transition-colors text-sm sm:text-base">{guarantee.text}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Social Proof Footer */}
-        <div className="mt-16 pt-8 border-t border-white/20">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-slate-300">
+        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/20">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-6 lg:gap-8 text-slate-300">
             <div className="flex items-center gap-3">
               <div className="flex">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-yellow-400 text-2xl">⭐</span>
+                  <span key={i} className="text-yellow-400 text-xl sm:text-2xl">⭐</span>
                 ))}
               </div>
-              <span className="font-medium">4.9/5 from 3,200+ reviews</span>
+              <span className="font-medium text-sm sm:text-base">4.9/5 from 3,200+ reviews</span>
             </div>
-            <div className="hidden md:block w-px h-6 bg-white/30"></div>
-            <div className="font-medium">Featured in TechCrunch Nigeria & BusinessDay</div>
-            <div className="hidden md:block w-px h-6 bg-white/30"></div>
-            <div className="font-medium">SOC 2 Compliant • Bank-level security</div>
+            <div className="hidden md:block w-px h-4 sm:h-6 bg-white/30"></div>
+            <div className="font-medium text-sm sm:text-base">Featured in TechCrunch Nigeria & BusinessDay</div>
+            <div className="hidden md:block w-px h-4 sm:h-6 bg-white/30"></div>
+            <div className="font-medium text-sm sm:text-base">SOC 2 Compliant • Bank-level security</div>
           </div>
         </div>
       </div>

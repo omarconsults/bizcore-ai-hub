@@ -36,14 +36,14 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
           <div className="flex items-center cursor-pointer group" onClick={() => navigate('/')}>
             <div className="flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center">
                   <Sparkles className="text-white" size={18} />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent group-hover:from-blue-400 group-hover:to-emerald-400 transition-all duration-300">
+                  <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent group-hover:from-violet-400 group-hover:to-cyan-400 transition-all duration-300">
                     BizCore
                   </h1>
-                  <p className="text-xs text-emerald-400 font-medium -mt-1">Powered by AI</p>
+                  <p className="text-xs text-cyan-400 font-medium -mt-1">Powered by AI</p>
                 </div>
               </div>
             </div>
@@ -51,29 +51,29 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Features</button>
-              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Pricing</button>
-              <button onClick={() => handleNavigation('/help')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Resources</button>
-              <button onClick={() => handleNavigation('/contact')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Contact</button>
+            <div className="ml-10 flex items-baseline space-x-6 lg:space-x-8">
+              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Features</button>
+              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Pricing</button>
+              <button onClick={() => handleNavigation('/help')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Resources</button>
+              <button onClick={() => handleNavigation('/contact')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Contact</button>
             </div>
           </div>
 
           {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
             {user ? (
               <>
-                <span className="text-sm text-slate-300">Welcome, {user.user_metadata?.business_name || user.email}</span>
-                <Button variant="outline" onClick={handleAuthAction} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200">
+                <span className="text-sm text-slate-300 max-w-32 lg:max-w-none truncate">Welcome, {user.user_metadata?.business_name || user.email}</span>
+                <Button variant="outline" onClick={handleAuthAction} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 text-sm px-3 py-2">
                   Sign Out
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="outline" onClick={onAuthClick} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200">
+                <Button variant="outline" onClick={onAuthClick} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 text-sm px-3 py-2">
                   Sign In
                 </Button>
-                <Button onClick={onAuthClick} className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-semibold px-6 py-2 rounded-xl transition-all duration-200 shadow-lg hover:shadow-blue-500/25">
+                <Button onClick={onAuthClick} className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white font-semibold px-4 lg:px-6 py-2 rounded-xl transition-all duration-200 shadow-lg hover:shadow-violet-500/25 text-sm">
                   Start Free Trial
                 </Button>
               </>
@@ -109,7 +109,7 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
                     <Button variant="outline" onClick={onAuthClick} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
                       Sign In
                     </Button>
-                    <Button onClick={onAuthClick} className="w-full bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-semibold">
+                    <Button onClick={onAuthClick} className="w-full bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white font-semibold">
                       Start Free Trial
                     </Button>
                   </>
