@@ -61,15 +61,37 @@ const KnowledgeManagement = () => {
   const loadResources = async () => {
     try {
       setLoading(true);
-      // Use raw query since TypeScript types haven't been updated yet
+      console.log('Loading resources from knowledge_resources table...');
+      
       const { data, error } = await supabase
         .from('knowledge_resources' as any)
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       
-      const typedData = (data || []) as KnowledgeResource[];
+      console.log('Raw data from Supabase:', data);
+      
+      // Safely convert the data to our expected type
+      const typedData: KnowledgeResource[] = (data || []).map((item: any) => ({
+        id: item.id,
+        title: item.title || '',
+        description: item.description || '',
+        url: item.url || '',
+        type: item.type as ResourceType,
+        category: item.category || '',
+        source: item.source || '',
+        tags: Array.isArray(item.tags) ? item.tags : [],
+        rating: item.rating || 0,
+        duration: item.duration || '',
+        created_at: item.created_at || '',
+        updated_at: item.updated_at || ''
+      }));
+      
+      console.log('Processed resources:', typedData);
       setResources(typedData);
       setFilteredResources(typedData);
     } catch (error) {
@@ -79,6 +101,8 @@ const KnowledgeManagement = () => {
         description: "Failed to load resources",
         variant: "destructive"
       });
+      setResources([]);
+      setFilteredResources([]);
     } finally {
       setLoading(false);
     }
@@ -139,6 +163,8 @@ const KnowledgeManagement = () => {
 
   const handleSave = async () => {
     try {
+      console.log('Saving resource with data:', formData);
+      
       const resourceData = {
         title: formData.title,
         description: formData.description,
@@ -153,22 +179,30 @@ const KnowledgeManagement = () => {
       };
 
       if (editingResource) {
+        console.log('Updating resource:', editingResource.id);
         const { error } = await supabase
           .from('knowledge_resources' as any)
           .update(resourceData)
           .eq('id', editingResource.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
         toast({
           title: "Success",
           description: "Resource updated successfully"
         });
       } else {
+        console.log('Creating new resource');
         const { error } = await supabase
           .from('knowledge_resources' as any)
           .insert([{ ...resourceData, created_at: new Date().toISOString() }]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Insert error:', error);
+          throw error;
+        }
         toast({
           title: "Success",
           description: "Resource created successfully"
@@ -191,12 +225,16 @@ const KnowledgeManagement = () => {
     if (!confirm('Are you sure you want to delete this resource?')) return;
 
     try {
+      console.log('Deleting resource:', resourceId);
       const { error } = await supabase
         .from('knowledge_resources' as any)
         .delete()
         .eq('id', resourceId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Delete error:', error);
+        throw error;
+      }
       toast({
         title: "Success",
         description: "Resource deleted successfully"
@@ -311,7 +349,9 @@ const KnowledgeManagement = () => {
           {loading ? (
             <div className="text-center py-8">Loading resources...</div>
           ) : filteredResources.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No resources found</div>
+            <div className="text-center py-8 text-gray-500">
+              {resources.length === 0 ? 'No resources found. Click "Add Resource" to create your first resource.' : 'No resources match your current filters.'}
+            </div>
           ) : (
             <div className="space-y-4">
               {filteredResources.map((resource) => {
@@ -327,7 +367,7 @@ const KnowledgeManagement = () => {
                           <div className="flex items-center gap-2 mt-2">
                             <Badge variant="outline">{resource.type}</Badge>
                             <Badge variant="secondary">{resource.category}</Badge>
-                            {resource.rating && (
+                            {resource.rating && resource.rating > 0 && (
                               <Badge variant="outline">★ {resource.rating}</Badge>
                             )}
                             {resource.duration && (
