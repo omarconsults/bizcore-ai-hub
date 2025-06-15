@@ -11,12 +11,16 @@ import {
   Settings,
   HelpCircle,
   Search,
-  Building2
+  Building2,
+  Menu,
+  X
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
 
 const DashboardSidebar = ({ activeModule, setActiveModule }) => {
   const { user } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const modules = [
     { id: 'dashboard', name: 'Dashboard', icon: Home },
@@ -39,63 +43,101 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
   const userEmail = user?.email || '';
   const userInitial = businessName.charAt(0).toUpperCase();
 
-  return (
-    <div className="w-64 bg-white shadow-lg border-r border-gray-200 h-screen flex flex-col">
+  const handleModuleClick = (moduleId) => {
+    setActiveModule(moduleId);
+    setIsMobileMenuOpen(false);
+  };
+
+  const SidebarContent = () => (
+    <>
       {/* Logo */}
-      <div className="p-6 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-blue-900">BizCore</h1>
+      <div className="p-4 lg:p-6 border-b border-gray-200">
+        <h1 className="text-xl lg:text-2xl font-bold text-blue-900">BizCore</h1>
         <p className="text-xs text-emerald-600 font-medium">AI Business OS</p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-3 lg:p-4 space-y-1 lg:space-y-2 overflow-y-auto">
         {modules.map((module) => (
           <button
             key={module.id}
-            onClick={() => setActiveModule(module.id)}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+            onClick={() => handleModuleClick(module.id)}
+            className={`w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 lg:py-2 rounded-lg text-left transition-colors text-sm lg:text-base ${
               activeModule === module.id
                 ? 'bg-blue-900 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            <module.icon size={20} />
-            <span className="font-medium">{module.name}</span>
+            <module.icon size={18} className="flex-shrink-0" />
+            <span className="font-medium truncate">{module.name}</span>
           </button>
         ))}
       </nav>
 
       {/* Bottom Items */}
-      <div className="p-4 border-t border-gray-200 space-y-2">
+      <div className="p-3 lg:p-4 border-t border-gray-200 space-y-1 lg:space-y-2">
         {bottomItems.map((item) => (
           <button
             key={item.id}
-            onClick={() => setActiveModule(item.id)}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+            onClick={() => handleModuleClick(item.id)}
+            className={`w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 lg:py-2 rounded-lg text-left transition-colors text-sm lg:text-base ${
               activeModule === item.id
                 ? 'bg-blue-900 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            <item.icon size={20} />
-            <span className="font-medium">{item.name}</span>
+            <item.icon size={18} className="flex-shrink-0" />
+            <span className="font-medium truncate">{item.name}</span>
           </button>
         ))}
       </div>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold">
+      <div className="p-3 lg:p-4 border-t border-gray-200">
+        <div className="flex items-center gap-2 lg:gap-3">
+          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-sm lg:text-base flex-shrink-0">
             {userInitial}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-gray-900 truncate">{businessName}</p>
-            <p className="text-sm text-gray-500 truncate">{userEmail}</p>
+            <p className="font-medium text-gray-900 truncate text-sm lg:text-base">{businessName}</p>
+            <p className="text-xs lg:text-sm text-gray-500 truncate">{userEmail}</p>
           </div>
         </div>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-blue-900 text-white rounded-lg shadow-lg"
+        aria-label="Toggle sidebar"
+      >
+        {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:flex w-64 bg-white shadow-lg border-r border-gray-200 h-screen flex-col">
+        <SidebarContent />
+      </div>
+
+      {/* Mobile Sidebar */}
+      <div className={`lg:hidden fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 z-50 transform transition-transform duration-300 ease-in-out ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      } flex flex-col`}>
+        <SidebarContent />
+      </div>
+    </>
   );
 };
 

@@ -39,41 +39,43 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
                 <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center">
                   <Sparkles className="text-white" size={18} />
                 </div>
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent group-hover:from-violet-400 group-hover:to-cyan-400 transition-all duration-300">
+                <div className="hidden xs:block">
+                  <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent group-hover:from-violet-400 group-hover:to-cyan-400 transition-all duration-300">
                     BizCore
                   </h1>
-                  <p className="text-xs text-cyan-400 font-medium -mt-1">Powered by AI</p>
+                  <p className="text-xs text-cyan-400 font-medium -mt-1 hidden sm:block">Powered by AI</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-6 lg:space-x-8">
-              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Features</button>
-              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Pricing</button>
-              <button onClick={() => handleNavigation('/help')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Resources</button>
-              <button onClick={() => handleNavigation('/contact')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Contact</button>
+          <div className="hidden lg:block">
+            <div className="ml-10 flex items-baseline space-x-4 xl:space-x-8">
+              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm xl:text-base">Features</button>
+              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm xl:text-base">Pricing</button>
+              <button onClick={() => handleNavigation('/help')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm xl:text-base">Resources</button>
+              <button onClick={() => handleNavigation('/contact')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm xl:text-base">Contact</button>
             </div>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
+          {/* CTA Buttons - Desktop */}
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-4">
             {user ? (
               <>
-                <span className="text-sm text-slate-300 max-w-32 lg:max-w-none truncate">Welcome, {user.user_metadata?.business_name || user.email}</span>
-                <Button variant="outline" onClick={handleAuthAction} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 text-sm px-3 py-2">
+                <span className="text-xs lg:text-sm text-slate-300 max-w-24 lg:max-w-32 xl:max-w-none truncate">
+                  Welcome, {user.user_metadata?.business_name || user.email}
+                </span>
+                <Button variant="outline" onClick={handleAuthAction} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 text-xs lg:text-sm px-2 lg:px-3 py-2">
                   Sign Out
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="outline" onClick={onAuthClick} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 text-sm px-3 py-2">
+                <Button variant="outline" onClick={onAuthClick} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 text-xs lg:text-sm px-2 lg:px-3 py-2">
                   Sign In
                 </Button>
-                <Button onClick={onAuthClick} className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white font-semibold px-4 lg:px-6 py-2 rounded-xl transition-all duration-200 shadow-lg hover:shadow-violet-500/25 text-sm">
+                <Button onClick={onAuthClick} className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white font-semibold px-3 lg:px-4 xl:px-6 py-2 rounded-xl transition-all duration-200 shadow-lg hover:shadow-violet-500/25 text-xs lg:text-sm">
                   Start Free Trial
                 </Button>
               </>
@@ -81,10 +83,11 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-slate-300 hover:text-white p-2 transition-colors duration-200"
+              className="text-slate-300 hover:text-white p-2 transition-colors duration-200 rounded-lg hover:bg-slate-800"
+              aria-label="Toggle mobile menu"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -93,17 +96,24 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/10 rounded-b-2xl">
+          <div className="md:hidden lg:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/10 rounded-b-2xl animate-fade-in">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Features</button>
               <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Pricing</button>
               <button onClick={() => handleNavigation('/help')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Resources</button>
               <button onClick={() => handleNavigation('/contact')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Contact</button>
+              
+              {/* Mobile CTA Buttons */}
               <div className="flex flex-col space-y-3 px-3 pt-4 border-t border-white/10 mt-4">
                 {user ? (
-                  <Button variant="outline" onClick={handleAuthAction} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
-                    Sign Out
-                  </Button>
+                  <>
+                    <div className="text-sm text-slate-300 text-center py-2">
+                      Welcome, {user.user_metadata?.business_name || user.email}
+                    </div>
+                    <Button variant="outline" onClick={handleAuthAction} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
+                      Sign Out
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Button variant="outline" onClick={onAuthClick} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">

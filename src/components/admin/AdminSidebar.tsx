@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   LayoutDashboard, 
   Users, 
@@ -10,7 +10,9 @@ import {
   Shield,
   LogOut,
   Coins,
-  Sparkles
+  Sparkles,
+  Menu,
+  X
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +25,7 @@ interface AdminSidebarProps {
 const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const modules = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
@@ -44,60 +47,98 @@ const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
     navigate('/');
   };
 
-  return (
-    <div className="w-64 bg-white shadow-lg border-r border-gray-200 h-screen flex flex-col">
+  const handleModuleClick = (moduleId: string) => {
+    setActiveModule(moduleId);
+    setIsMobileMenuOpen(false);
+  };
+
+  const SidebarContent = () => (
+    <>
       {/* Logo */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-4 lg:p-6 border-b border-gray-200">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-            <Shield className="text-white" size={18} />
+          <div className="w-6 h-6 lg:w-8 lg:h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+            <Shield className="text-white" size={16} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-red-600">Admin Portal</h1>
+            <h1 className="text-lg lg:text-xl font-bold text-red-600">Admin Portal</h1>
           </div>
         </div>
         <p className="text-xs text-gray-600 font-medium">BizCore Management</p>
-        <div className="mt-2 text-xs text-gray-500">
+        <div className="mt-2 text-xs text-gray-500 truncate">
           Logged in as: {user?.email}
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-3 lg:p-4 space-y-1 lg:space-y-2 overflow-y-auto">
         {modules.map((module) => (
           <button
             key={module.id}
-            onClick={() => setActiveModule(module.id)}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+            onClick={() => handleModuleClick(module.id)}
+            className={`w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 lg:py-2 rounded-lg text-left transition-colors text-sm lg:text-base ${
               activeModule === module.id
                 ? 'bg-red-600 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            <module.icon size={20} />
-            <span className="font-medium">{module.name}</span>
+            <module.icon size={18} className="flex-shrink-0" />
+            <span className="font-medium truncate">{module.name}</span>
           </button>
         ))}
       </nav>
 
       {/* Bottom Actions */}
-      <div className="p-4 border-t border-gray-200 space-y-2">
+      <div className="p-3 lg:p-4 border-t border-gray-200 space-y-1 lg:space-y-2">
         <button
           onClick={handleBackToDashboard}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors text-blue-600 hover:bg-blue-50"
+          className="w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 lg:py-2 rounded-lg text-left transition-colors text-blue-600 hover:bg-blue-50 text-sm lg:text-base"
         >
-          <Sparkles size={20} />
-          <span className="font-medium">Back to Dashboard</span>
+          <Sparkles size={18} className="flex-shrink-0" />
+          <span className="font-medium truncate">Back to Dashboard</span>
         </button>
         <button
           onClick={handleSignOut}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors text-gray-600 hover:bg-gray-100"
+          className="w-full flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 lg:py-2 rounded-lg text-left transition-colors text-gray-600 hover:bg-gray-100 text-sm lg:text-base"
         >
-          <LogOut size={20} />
-          <span className="font-medium">Sign Out</span>
+          <LogOut size={18} className="flex-shrink-0" />
+          <span className="font-medium truncate">Sign Out</span>
         </button>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-red-600 text-white rounded-lg shadow-lg"
+        aria-label="Toggle admin sidebar"
+      >
+        {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:flex w-64 bg-white shadow-lg border-r border-gray-200 h-screen flex-col">
+        <SidebarContent />
+      </div>
+
+      {/* Mobile Sidebar */}
+      <div className={`lg:hidden fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 z-50 transform transition-transform duration-300 ease-in-out ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      } flex flex-col`}>
+        <SidebarContent />
+      </div>
+    </>
   );
 };
 
