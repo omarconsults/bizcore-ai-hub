@@ -7,6 +7,7 @@ import PaymentTracking from './PaymentTracking';
 import AdminAnalytics from './AdminAnalytics';
 import ComplianceOverview from './ComplianceOverview';
 import AdminSettings from './AdminSettings';
+import TokenManagement from './TokenManagement';
 
 interface AdminContentProps {
   activeModule: string;
@@ -27,6 +28,8 @@ const AdminContent = ({ activeModule }: AdminContentProps) => {
         return <AdminAnalytics />;
       case 'compliance':
         return <ComplianceOverview />;
+      case 'tokens':
+        return <TokenManagement />;
       case 'settings':
         return <AdminSettings />;
       default:

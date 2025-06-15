@@ -16,10 +16,15 @@ import {
   Users,
   TrendingUp,
   DollarSign,
-  CheckCircle
+  CheckCircle,
+  Coins
 } from 'lucide-react';
+import { useTokens } from '@/hooks/useTokens';
+import { useAuth } from '@/contexts/AuthContext';
 
 const BusinessPlanGenerator = () => {
+  const { user } = useAuth();
+  const { tokenBalance, consumeTokens } = useTokens();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     businessName: '',
@@ -33,6 +38,8 @@ const BusinessPlanGenerator = () => {
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPlan, setGeneratedPlan] = useState(null);
+
+  const BUSINESS_PLAN_TOKEN_COST = 50;
 
   const sectors = [
     'Technology & Software',
@@ -65,6 +72,21 @@ const BusinessPlanGenerator = () => {
   };
 
   const generateBusinessPlan = async () => {
+    if (!user) {
+      alert('Please log in to generate a business plan');
+      return;
+    }
+
+    const canConsume = await consumeTokens(
+      BUSINESS_PLAN_TOKEN_COST, 
+      'business_plan_generation', 
+      `Business plan generated for ${formData.businessName}`
+    );
+
+    if (!canConsume) {
+      return; // consumeTokens already shows error toast
+    }
+
     setIsGenerating(true);
     
     // Simulate AI generation
@@ -104,7 +126,7 @@ const BusinessPlanGenerator = () => {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-xl font-bold text-gray-900">Your Business Plan</h3>
-            <p className="text-gray-600">AI-generated business plan for {formData.businessName}</p>
+            <p className="text-gray-600">AI-generated business plan for {formData.businessName} ({BUSINESS_PLAN_TOKEN_COST} tokens used)</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" className="flex items-center gap-2">
@@ -230,21 +252,39 @@ const BusinessPlanGenerator = () => {
           <h3 className="text-xl font-bold text-gray-900">AI Business Plan Generator</h3>
           <p className="text-gray-600">Create a professional business plan in minutes</p>
         </div>
-        <div className="flex items-center gap-2">
-          {steps.map((step) => (
-            <div key={step.number} className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
-              currentStep >= step.number ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
-            }`}>
-              <step.icon size={14} />
-              <span className="hidden sm:inline">{step.title}</span>
+        <div className="flex items-center gap-4">
+          {user && (
+            <div className="flex items-center gap-2 bg-emerald-100 px-3 py-1 rounded-full">
+              <Coins size={16} className="text-emerald-600" />
+              <span className="text-sm font-medium text-emerald-700">
+                {tokenBalance.availableTokens} tokens
+              </span>
             </div>
-          ))}
+          )}
+          <div className="flex items-center gap-2">
+            {steps.map((step) => (
+              <div key={step.number} className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
+                currentStep >= step.number ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
+              }`}>
+                <step.icon size={14} />
+                <span className="hidden sm:inline">{step.title}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Step {currentStep}: {steps[currentStep - 1].title}</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            <span>Step {currentStep}: {steps[currentStep - 1].title}</span>
+            {currentStep === 4 && (
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Coins size={12} />
+                {BUSINESS_PLAN_TOKEN_COST} tokens required
+              </Badge>
+            )}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {currentStep === 1 && (
@@ -373,6 +413,22 @@ const BusinessPlanGenerator = () => {
                   </div>
                 </div>
               </div>
+              
+              {!user && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-amber-800">Please log in to generate your business plan</p>
+                </div>
+              )}
+              
+              {user && tokenBalance.availableTokens < BUSINESS_PLAN_TOKEN_COST && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-red-800">
+                    You need {BUSINESS_PLAN_TOKEN_COST} tokens but only have {tokenBalance.availableTokens} available.
+                    Purchase more tokens to continue.
+                  </p>
+                </div>
+              )}
+
               {isGenerating ? (
                 <div className="flex items-center justify-center gap-3">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600"></div>
@@ -383,9 +439,10 @@ const BusinessPlanGenerator = () => {
                   onClick={generateBusinessPlan}
                   className="bg-emerald-600 hover:bg-emerald-700"
                   size="lg"
+                  disabled={!user || tokenBalance.availableTokens < BUSINESS_PLAN_TOKEN_COST}
                 >
                   <Wand2 className="w-4 h-4 mr-2" />
-                  Generate Business Plan
+                  Generate Business Plan ({BUSINESS_PLAN_TOKEN_COST} tokens)
                 </Button>
               )}
             </div>

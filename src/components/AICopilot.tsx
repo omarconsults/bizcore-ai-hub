@@ -3,9 +3,13 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, Send, X, Minimize2 } from 'lucide-react';
+import { MessageCircle, Send, X, Minimize2, Coins } from 'lucide-react';
+import { useTokens } from '@/hooks/useTokens';
+import { useAuth } from '@/contexts/AuthContext';
 
 const AICopilot = () => {
+  const { user } = useAuth();
+  const { tokenBalance, consumeTokens } = useTokens();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [message, setMessage] = useState('');
@@ -23,12 +27,32 @@ const AICopilot = () => {
     "Create an invoice template"
   ];
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!message.trim()) return;
+    
+    if (!user) {
+      setMessages([...messages, 
+        { type: 'user', content: message },
+        { type: 'ai', content: "Please log in to use the AI assistant. AI features require authentication and consume tokens." }
+      ]);
+      setMessage('');
+      return;
+    }
+
+    const canConsume = await consumeTokens(1, 'ai_copilot', `AI Copilot message: "${message.substring(0, 50)}..."`);
+    
+    if (!canConsume) {
+      setMessages([...messages, 
+        { type: 'user', content: message },
+        { type: 'ai', content: "Sorry, you don't have enough tokens to send this message. Please purchase more tokens or upgrade your subscription." }
+      ]);
+      setMessage('');
+      return;
+    }
     
     setMessages([...messages, 
       { type: 'user', content: message },
-      { type: 'ai', content: "I understand you need help with that. Let me guide you through the process step by step..." }
+      { type: 'ai', content: "I understand you need help with that. Let me guide you through the process step by step... (1 token consumed)" }
     ]);
     setMessage('');
   };
@@ -54,6 +78,12 @@ const AICopilot = () => {
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <MessageCircle size={16} />
               AI Business Assistant
+              {user && (
+                <div className="flex items-center gap-1 text-xs bg-emerald-700 px-2 py-1 rounded">
+                  <Coins size={12} />
+                  {tokenBalance.availableTokens}
+                </div>
+              )}
             </CardTitle>
             <div className="flex gap-1">
               <Button
@@ -96,7 +126,7 @@ const AICopilot = () => {
             {/* Quick Suggestions */}
             {messages.length === 1 && (
               <div className="px-4 pb-2">
-                <p className="text-xs text-gray-500 mb-2">Quick suggestions:</p>
+                <p className="text-xs text-gray-500 mb-2">Quick suggestions (1 token each):</p>
                 <div className="space-y-1">
                   {suggestions.map((suggestion, index) => (
                     <button
@@ -113,15 +143,31 @@ const AICopilot = () => {
 
             {/* Input Area */}
             <div className="p-3 border-t bg-gray-50">
+              {!user && (
+                <div className="mb-2 text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                  Please log in to use AI features
+                </div>
+              )}
+              {user && tokenBalance.availableTokens < 5 && (
+                <div className="mb-2 text-xs text-red-600 bg-red-50 p-2 rounded">
+                  Low token balance! Purchase more tokens to continue.
+                </div>
+              )}
               <div className="flex gap-2">
                 <Input
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Ask me anything about your business..."
+                  placeholder={user ? "Ask me anything... (1 token)" : "Please log in first"}
                   className="flex-1 text-sm"
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  disabled={!user || tokenBalance.availableTokens < 1}
                 />
-                <Button onClick={handleSendMessage} size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+                <Button 
+                  onClick={handleSendMessage} 
+                  size="sm" 
+                  className="bg-emerald-600 hover:bg-emerald-700"
+                  disabled={!user || tokenBalance.availableTokens < 1}
+                >
                   <Send size={14} />
                 </Button>
               </div>

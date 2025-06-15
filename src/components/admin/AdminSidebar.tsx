@@ -8,7 +8,8 @@ import {
   FileText,
   BarChart3,
   Shield,
-  LogOut
+  LogOut,
+  Coins
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +28,7 @@ const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
     { id: 'users', name: 'User Management', icon: Users },
     { id: 'subscriptions', name: 'Subscriptions', icon: CreditCard },
     { id: 'payments', name: 'Payments', icon: FileText },
+    { id: 'tokens', name: 'Token Management', icon: Coins },
     { id: 'analytics', name: 'Analytics', icon: BarChart3 },
     { id: 'compliance', name: 'Compliance', icon: Shield },
     { id: 'settings', name: 'Settings', icon: Settings },
