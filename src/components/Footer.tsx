@@ -37,10 +37,7 @@ const Footer = () => {
 
   const supportLinks = [
     { name: 'Help Center', href: '#help' },
-    { name: 'API Documentation', href: '#api' },
-    { name: 'Video Tutorials', href: '#tutorials' },
     { name: 'Contact Support', href: '/contact' },
-    { name: 'System Status', href: '#status' },
   ];
 
   const legalLinks = [
