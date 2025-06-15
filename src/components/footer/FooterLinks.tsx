@@ -52,7 +52,7 @@ const FooterLinks = () => {
   ];
 
   return (
-    <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-8">
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
       {/* Company Links */}
       <FooterSection title="Company">
         <ul className="space-y-3">
@@ -60,7 +60,7 @@ const FooterLinks = () => {
             <li key={index}>
               <button 
                 onClick={() => handleLinkClick(link.href)}
-                className="text-gray-300 hover:text-emerald-400 transition-colors text-left"
+                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm"
               >
                 {link.name}
               </button>
@@ -76,7 +76,7 @@ const FooterLinks = () => {
             <li key={index}>
               <button 
                 onClick={() => handleProductLink(link.module)}
-                className="text-gray-300 hover:text-emerald-400 transition-colors text-left"
+                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm"
               >
                 {link.name}
               </button>
@@ -85,38 +85,37 @@ const FooterLinks = () => {
         </ul>
       </FooterSection>
 
-      {/* Support & Legal */}
-      <div>
-        <FooterSection title="Support">
-          <ul className="space-y-3 mb-6">
-            {supportLinks.map((link, index) => (
-              <li key={index}>
-                <button 
-                  onClick={() => handleLinkClick(link.href)}
-                  className="text-gray-300 hover:text-emerald-400 transition-colors text-left"
-                >
-                  {link.name}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </FooterSection>
+      {/* Support */}
+      <FooterSection title="Support">
+        <ul className="space-y-3">
+          {supportLinks.map((link, index) => (
+            <li key={index}>
+              <button 
+                onClick={() => handleLinkClick(link.href)}
+                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm"
+              >
+                {link.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </FooterSection>
 
-        <FooterSection title="Legal">
-          <ul className="space-y-3">
-            {legalLinks.map((link, index) => (
-              <li key={index}>
-                <button 
-                  onClick={() => handleLinkClick(link.href)}
-                  className="text-gray-300 hover:text-emerald-400 transition-colors text-left"
-                >
-                  {link.name}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </FooterSection>
-      </div>
+      {/* Legal */}
+      <FooterSection title="Legal">
+        <ul className="space-y-3">
+          {legalLinks.map((link, index) => (
+            <li key={index}>
+              <button 
+                onClick={() => handleLinkClick(link.href)}
+                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm"
+              >
+                {link.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </FooterSection>
     </div>
   );
 };
