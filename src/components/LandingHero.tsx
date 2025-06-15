@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -77,22 +78,6 @@ const LandingHero = () => {
       
       {/* Enhanced grid overlay with animation */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] sm:bg-[size:50px_50px] animate-pulse" style={{ animationDuration: '8s' }}></div>
-      
-      {/* Shooting stars effect */}
-      <div className="absolute inset-0">
-        {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-px h-px bg-white rounded-full opacity-0"
-            style={{
-              top: `${20 + i * 30}%`,
-              left: '-2px',
-              animation: `shootingStar 8s linear infinite`,
-              animationDelay: `${i * 3}s`
-            }}
-          />
-        ))}
-      </div>
       
       {/* Floating elements */}
       <div className="absolute inset-0 pointer-events-none">
@@ -297,35 +282,3 @@ const LandingHero = () => {
 };
 
 export default LandingHero;
-
-<style jsx>{`
-  @keyframes shootingStar {
-    0% {
-      transform: translateX(-100px) translateY(100px);
-      opacity: 0;
-    }
-    10% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 1;
-    }
-    100% {
-      transform: translateX(100vw) translateY(-100px);
-      opacity: 0;
-    }
-  }
-  
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-20px);
-    }
-  }
-  
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-`}</style>
