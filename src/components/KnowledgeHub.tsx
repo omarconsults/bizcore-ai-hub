@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Globe, RefreshCw } from 'lucide-react';
+import { Globe, RefreshCw, Database, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ResourceService, type FetchedResource } from '@/services/resourceService';
 import KnowledgeHubHeader from './knowledge-hub/KnowledgeHubHeader';
@@ -23,6 +23,7 @@ const KnowledgeHub = () => {
   const [storedResources, setStoredResources] = useState<FetchedResource[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingNew, setIsFetchingNew] = useState(false);
+  const [hasDbError, setHasDbError] = useState(false);
 
   const categories = [
     { id: 'all', name: 'All Resources', count: storedResources.length },
@@ -38,21 +39,31 @@ const KnowledgeHub = () => {
   }, []);
 
   useEffect(() => {
-    loadStoredResources();
-  }, [activeCategory, searchTerm]);
+    if (!hasDbError) {
+      loadStoredResources();
+    }
+  }, [activeCategory, searchTerm, hasDbError]);
 
   const loadStoredResources = async () => {
     try {
       setIsLoading(true);
+      setHasDbError(false);
       const resources = await ResourceService.getStoredResources(activeCategory, searchTerm);
       setStoredResources(resources);
     } catch (error) {
       console.error('Error loading stored resources:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load stored resources",
-        variant: "destructive",
-      });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      if (errorMessage.includes('knowledge_resources') || errorMessage.includes('relation') || errorMessage.includes('does not exist')) {
+        setHasDbError(true);
+        // Don't show error toast for missing table - this is expected
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to load stored resources",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -65,6 +76,7 @@ const KnowledgeHub = () => {
       
       setInternetResources(result.fresh);
       setStoredResources(result.stored);
+      setHasDbError(false);
       
       toast({
         title: "Resources Updated",
@@ -72,11 +84,22 @@ const KnowledgeHub = () => {
       });
     } catch (error) {
       console.error('Error fetching new resources:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch new resources from the internet",
-        variant: "destructive",
-      });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      if (errorMessage.includes('knowledge_resources') || errorMessage.includes('relation')) {
+        setHasDbError(true);
+        toast({
+          title: "Database Setup Required",
+          description: "Please set up the knowledge resources database to use this feature",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to fetch new resources from the internet",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsFetchingNew(false);
     }
@@ -105,6 +128,22 @@ const KnowledgeHub = () => {
         onCategoryChange={setActiveCategory}
       />
 
+      {hasDbError && (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <Database className="text-orange-600 mt-1" size={20} />
+              <div>
+                <h4 className="font-medium text-orange-900">Database Setup Required</h4>
+                <p className="text-sm text-orange-700 mt-1">
+                  The knowledge resources database table needs to be created. The system will use local resources for now.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {internetResources.length > 0 && (
@@ -127,7 +166,7 @@ const KnowledgeHub = () => {
 
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              {storedResources.length > 0 ? 'Stored Resources' : 'All Resources'}
+              {storedResources.length > 0 ? 'Stored Resources' : 'Available Resources'}
             </h2>
             
             {isLoading ? (
