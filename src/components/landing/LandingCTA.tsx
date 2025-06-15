@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, ArrowRight, Zap, Clock, Shield } from 'lucide-react';
+import { CheckCircle, ArrowRight, Zap, Clock, Shield, Sparkles, TrendingUp } from 'lucide-react';
 
 interface LandingCTAProps {
   onStartDemo: () => void;
@@ -22,84 +22,91 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-emerald-600 relative overflow-hidden">
+    <section className="relative py-24 bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full"></div>
-        <div className="absolute bottom-20 right-20 w-24 h-24 bg-emerald-300 rounded-full"></div>
-        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-300 rounded-full"></div>
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
 
-      <div className="max-w-6xl mx-auto text-center px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* Grid overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+
+      <div className="relative z-10 max-w-6xl mx-auto text-center px-4 sm:px-6 lg:px-8">
         {/* Urgency Banner */}
-        <div className="inline-flex items-center bg-emerald-500 text-white px-6 py-3 rounded-full text-sm font-semibold mb-8 animate-pulse">
+        <div className="inline-flex items-center bg-gradient-to-r from-emerald-500/20 to-orange-500/20 backdrop-blur-sm text-emerald-300 px-8 py-4 rounded-full text-sm font-semibold mb-12 border border-emerald-500/30 animate-pulse">
+          <Sparkles className="mr-2" size={16} />
           🔥 Limited Time: 50% Off Setup Fees This Month
         </div>
 
-        <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+        <h2 className="text-5xl lg:text-7xl font-bold text-white mb-8 leading-tight">
           Ready to Join Nigeria's 
-          <span className="text-emerald-300 block">Fastest-Growing Businesses?</span>
+          <span className="block bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
+            Fastest-Growing Businesses?
+          </span>
         </h2>
         
-        <p className="text-xl lg:text-2xl text-blue-100 mb-8 max-w-4xl mx-auto leading-relaxed">
+        <p className="text-xl lg:text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed">
           Join 15,000+ Nigerian entrepreneurs who've transformed their ideas into thriving, compliant businesses with BizCore. 
-          <strong className="text-white"> Start your journey today and be operational by week's end.</strong>
+          <span className="text-white font-semibold"> Start your journey today and be operational by week's end.</span>
         </p>
 
         {/* Stats Bar */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-10 border border-white/20">
-          <div className="grid md:grid-cols-3 gap-6 text-center">
+        <div className="bg-white/5 backdrop-blur-md rounded-3xl p-8 mb-12 border border-white/20 shadow-2xl">
+          <div className="grid md:grid-cols-3 gap-8 text-center">
             {urgencyStats.map((stat, index) => (
-              <div key={index} className="text-white">
-                <div className="text-2xl font-bold mb-1">✨</div>
-                <div className="text-sm font-medium">{stat}</div>
+              <div key={index} className="text-white group">
+                <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">✨</div>
+                <div className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">{stat}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Main CTA */}
-        <div className="mb-10">
+        <div className="mb-12">
           <Button 
             onClick={onStartDemo}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white px-12 py-6 rounded-2xl text-xl lg:text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl"
+            className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white px-16 py-8 rounded-3xl text-xl lg:text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl hover:shadow-emerald-500/25 duration-300"
           >
             {user ? 'Enter Your Dashboard →' : 'Start Your Business Journey →'}
-            <ArrowRight className="ml-3" size={28} />
+            <ArrowRight className="ml-4" size={28} />
           </Button>
           
-          <div className="mt-6">
-            <p className="text-emerald-200 text-lg font-medium">
+          <div className="mt-8 space-y-4">
+            <p className="text-emerald-300 text-lg font-medium">
               30-day free trial • No credit card required • Setup starts immediately
             </p>
-            <p className="text-blue-200 text-sm mt-2">
+            <p className="text-blue-200 text-sm flex items-center justify-center gap-2">
+              <TrendingUp size={16} />
               Join today and get your business registered by Friday ⚡
             </p>
           </div>
         </div>
 
         {/* Guarantees */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-          <h3 className="text-2xl font-bold text-white mb-6">Our Ironclad Guarantees</h3>
-          <div className="grid md:grid-cols-3 gap-6">
+        <div className="bg-white/5 backdrop-blur-md rounded-3xl p-10 border border-white/20 shadow-2xl">
+          <h3 className="text-3xl font-bold text-white mb-8">Our Ironclad Guarantees</h3>
+          <div className="grid md:grid-cols-3 gap-8">
             {guarantees.map((guarantee, index) => (
-              <div key={index} className="flex items-start gap-4 text-left">
-                <guarantee.icon className="text-emerald-300 flex-shrink-0 mt-1" size={24} />
-                <div>
-                  <p className="text-white font-medium leading-relaxed">{guarantee.text}</p>
+              <div key={index} className="flex flex-col items-center text-center space-y-4 group">
+                <div className="p-4 bg-gradient-to-br from-white/10 to-white/5 rounded-2xl group-hover:from-white/20 group-hover:to-white/10 transition-all duration-300">
+                  <guarantee.icon className="text-emerald-400 group-hover:text-emerald-300 transition-colors" size={32} />
                 </div>
+                <p className="text-white font-medium leading-relaxed group-hover:text-emerald-300 transition-colors">{guarantee.text}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Social Proof Footer */}
-        <div className="mt-12 pt-8 border-t border-white/20">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-blue-200">
-            <div className="flex items-center gap-2">
+        <div className="mt-16 pt-8 border-t border-white/20">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-slate-300">
+            <div className="flex items-center gap-3">
               <div className="flex">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-yellow-400 text-xl">⭐</span>
+                  <span key={i} className="text-yellow-400 text-2xl">⭐</span>
                 ))}
               </div>
               <span className="font-medium">4.9/5 from 3,200+ reviews</span>

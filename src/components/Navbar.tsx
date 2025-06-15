@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -29,24 +29,33 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-slate-950/95 backdrop-blur-md border-b border-white/10 sticky top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center cursor-pointer" onClick={() => navigate('/')}>
+          <div className="flex items-center cursor-pointer group" onClick={() => navigate('/')}>
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-blue-900">BizCore</h1>
-              <p className="text-xs text-emerald-600 font-medium">Powered by AI</p>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                  <Sparkles className="text-white" size={18} />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent group-hover:from-blue-400 group-hover:to-emerald-400 transition-all duration-300">
+                    BizCore
+                  </h1>
+                  <p className="text-xs text-emerald-400 font-medium -mt-1">Powered by AI</p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
-              <button onClick={() => handleNavigation('/')} className="text-gray-600 hover:text-blue-900 transition-colors">Features</button>
-              <button onClick={() => handleNavigation('/')} className="text-gray-600 hover:text-blue-900 transition-colors">Pricing</button>
-              <button onClick={() => handleNavigation('/help')} className="text-gray-600 hover:text-blue-900 transition-colors">Resources</button>
-              <button onClick={() => handleNavigation('/contact')} className="text-gray-600 hover:text-blue-900 transition-colors">Contact</button>
+              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Features</button>
+              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Pricing</button>
+              <button onClick={() => handleNavigation('/help')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Resources</button>
+              <button onClick={() => handleNavigation('/contact')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium">Contact</button>
             </div>
           </div>
 
@@ -54,17 +63,17 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
-                <span className="text-sm text-gray-600">Welcome, {user.user_metadata?.business_name || user.email}</span>
-                <Button variant="outline" onClick={handleAuthAction} className="border-blue-900 text-blue-900 hover:bg-blue-50">
+                <span className="text-sm text-slate-300">Welcome, {user.user_metadata?.business_name || user.email}</span>
+                <Button variant="outline" onClick={handleAuthAction} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200">
                   Sign Out
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="outline" onClick={onAuthClick} className="border-blue-900 text-blue-900 hover:bg-blue-50">
+                <Button variant="outline" onClick={onAuthClick} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200">
                   Sign In
                 </Button>
-                <Button onClick={onAuthClick} className="bg-blue-900 hover:bg-blue-800 text-white">
+                <Button onClick={onAuthClick} className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-semibold px-6 py-2 rounded-xl transition-all duration-200 shadow-lg hover:shadow-blue-500/25">
                   Start Free Trial
                 </Button>
               </>
@@ -75,7 +84,7 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-blue-900 p-2"
+              className="text-slate-300 hover:text-white p-2 transition-colors duration-200"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -84,23 +93,23 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="md:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/10 rounded-b-2xl">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-900">Features</button>
-              <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-900">Pricing</button>
-              <button onClick={() => handleNavigation('/help')} className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-900">Resources</button>
-              <button onClick={() => handleNavigation('/contact')} className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-900">Contact</button>
-              <div className="flex flex-col space-y-2 px-3 pt-2">
+              <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Features</button>
+              <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Pricing</button>
+              <button onClick={() => handleNavigation('/help')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Resources</button>
+              <button onClick={() => handleNavigation('/contact')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Contact</button>
+              <div className="flex flex-col space-y-3 px-3 pt-4 border-t border-white/10 mt-4">
                 {user ? (
-                  <Button variant="outline" onClick={handleAuthAction} className="w-full border-blue-900 text-blue-900">
+                  <Button variant="outline" onClick={handleAuthAction} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
                     Sign Out
                   </Button>
                 ) : (
                   <>
-                    <Button variant="outline" onClick={onAuthClick} className="w-full border-blue-900 text-blue-900">
+                    <Button variant="outline" onClick={onAuthClick} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
                       Sign In
                     </Button>
-                    <Button onClick={onAuthClick} className="w-full bg-blue-900 hover:bg-blue-800 text-white">
+                    <Button onClick={onAuthClick} className="w-full bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-semibold">
                       Start Free Trial
                     </Button>
                   </>
