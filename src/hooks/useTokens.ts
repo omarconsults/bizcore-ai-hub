@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -177,7 +178,7 @@ export const useTokens = () => {
 
       const formattedTransactions: TokenTransaction[] = data.map(transaction => ({
         id: transaction.id,
-        transactionType: transaction.transaction_type,
+        transactionType: transaction.transaction_type as TokenTransaction['transactionType'],
         amount: transaction.amount,
         featureUsed: transaction.feature_used,
         description: transaction.description,
