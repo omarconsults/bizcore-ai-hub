@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Search, Plus, Edit, Trash2, MoreHorizontal, RefreshCw, Mail, Calendar, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import CreateUserModal from './CreateUserModal';
 
 interface User {
   id: string;
@@ -238,8 +238,8 @@ const UserManagement = () => {
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh
           </Button>
-          <Button className="bg-red-600 hover:bg-red-700">
-            <Plus className="mr-2 h-4 w-4" />
+          <CreateUserModal onUserCreated={fetchUsers} />
+          <Button variant="outline">
             Export Users
           </Button>
         </div>
