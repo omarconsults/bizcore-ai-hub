@@ -18,6 +18,7 @@ interface User {
   email_confirmed_at: string;
   total_tokens?: number;
   used_tokens?: number;
+  source: 'business_profile' | 'tokens' | 'auth' | 'onboarding';
 }
 
 const UserManagement = () => {
@@ -33,19 +34,36 @@ const UserManagement = () => {
       setLoading(true);
       setError(null);
       
-      console.log('Fetching users data...');
+      console.log('Fetching comprehensive user data...');
       
-      // Try multiple approaches to get user data
-      
-      // First, try to get users from business_profiles (this should work for registered users)
+      const userMap = new Map<string, User>();
+
+      // 1. Get users from business_profiles
       const { data: businessProfiles, error: businessError } = await supabase
         .from('business_profiles')
         .select('user_id, business_name, created_at')
         .order('created_at', { ascending: false });
 
-      console.log('Business profiles data:', { businessProfiles, businessError });
+      console.log('Business profiles:', { businessProfiles, businessError });
 
-      // Then get token data for additional user info
+      if (businessProfiles && !businessError) {
+        businessProfiles.forEach(profile => {
+          const user: User = {
+            id: profile.user_id,
+            email: profile.user_id, // Will be updated from other sources
+            created_at: profile.created_at,
+            last_sign_in_at: profile.created_at,
+            business_name: profile.business_name,
+            email_confirmed_at: profile.created_at,
+            total_tokens: 0,
+            used_tokens: 0,
+            source: 'business_profile'
+          };
+          userMap.set(profile.user_id, user);
+        });
+      }
+
+      // 2. Get users from user_tokens
       const { data: tokenData, error: tokenError } = await supabase
         .from('user_tokens')
         .select('user_id, email, created_at, total_tokens, used_tokens')
@@ -53,31 +71,11 @@ const UserManagement = () => {
 
       console.log('Token data:', { tokenData, tokenError });
 
-      // Combine the data sources
-      const userMap = new Map();
-
-      // Add users from business profiles
-      if (businessProfiles && !businessError) {
-        businessProfiles.forEach(profile => {
-          userMap.set(profile.user_id, {
-            id: profile.user_id,
-            email: profile.user_id, // We'll try to get actual email from tokens
-            created_at: profile.created_at,
-            last_sign_in_at: profile.created_at,
-            business_name: profile.business_name,
-            email_confirmed_at: profile.created_at,
-            total_tokens: 0,
-            used_tokens: 0
-          });
-        });
-      }
-
-      // Enhance with token data
       if (tokenData && !tokenError) {
         tokenData.forEach(token => {
           const userId = token.user_id || token.email;
           if (userMap.has(userId)) {
-            const existing = userMap.get(userId);
+            const existing = userMap.get(userId)!;
             userMap.set(userId, {
               ...existing,
               email: token.email,
@@ -85,8 +83,7 @@ const UserManagement = () => {
               used_tokens: token.used_tokens
             });
           } else {
-            // Add users who exist in tokens but not in business profiles
-            userMap.set(userId, {
+            const user: User = {
               id: userId,
               email: token.email,
               created_at: token.created_at,
@@ -94,7 +91,79 @@ const UserManagement = () => {
               business_name: token.email.split('@')[0],
               email_confirmed_at: token.created_at,
               total_tokens: token.total_tokens,
-              used_tokens: token.used_tokens
+              used_tokens: token.used_tokens,
+              source: 'tokens'
+            };
+            userMap.set(userId, user);
+          }
+        });
+      }
+
+      // 3. Get users from onboarding_progress (might catch users who started onboarding)
+      const { data: onboardingData, error: onboardingError } = await supabase
+        .from('onboarding_progress')
+        .select('user_id, created_at')
+        .order('created_at', { ascending: false });
+
+      console.log('Onboarding data:', { onboardingData, onboardingError });
+
+      if (onboardingData && !onboardingError) {
+        // Group by user_id to get unique users and their earliest onboarding step
+        const onboardingUsers = onboardingData.reduce((acc, step) => {
+          if (!acc[step.user_id] || new Date(step.created_at) < new Date(acc[step.user_id].created_at)) {
+            acc[step.user_id] = step;
+          }
+          return acc;
+        }, {} as Record<string, any>);
+
+        Object.values(onboardingUsers).forEach((onboarding: any) => {
+          if (!userMap.has(onboarding.user_id)) {
+            const user: User = {
+              id: onboarding.user_id,
+              email: onboarding.user_id, // Will try to extract email pattern
+              created_at: onboarding.created_at,
+              last_sign_in_at: onboarding.created_at,
+              business_name: 'Onboarding User',
+              email_confirmed_at: onboarding.created_at,
+              total_tokens: 0,
+              used_tokens: 0,
+              source: 'onboarding'
+            };
+            userMap.set(onboarding.user_id, user);
+          }
+        });
+      }
+
+      // 4. Try to get additional user info from token_transactions
+      const { data: transactionData, error: transactionError } = await supabase
+        .from('token_transactions')
+        .select('user_id, email, created_at')
+        .order('created_at', { ascending: false });
+
+      console.log('Transaction data:', { transactionData, transactionError });
+
+      if (transactionData && !transactionError) {
+        transactionData.forEach(transaction => {
+          const userId = transaction.user_id || transaction.email;
+          if (!userMap.has(userId) && transaction.email) {
+            const user: User = {
+              id: userId,
+              email: transaction.email,
+              created_at: transaction.created_at,
+              last_sign_in_at: transaction.created_at,
+              business_name: transaction.email.split('@')[0],
+              email_confirmed_at: transaction.created_at,
+              total_tokens: 0,
+              used_tokens: 0,
+              source: 'tokens'
+            };
+            userMap.set(userId, user);
+          } else if (userMap.has(userId) && transaction.email) {
+            // Update email if we have it
+            const existing = userMap.get(userId)!;
+            userMap.set(userId, {
+              ...existing,
+              email: transaction.email
             });
           }
         });
@@ -102,23 +171,24 @@ const UserManagement = () => {
 
       const combinedUsers = Array.from(userMap.values());
       
-      console.log('Combined users:', combinedUsers);
+      // Clean up email display for UUID-based emails
+      const cleanedUsers = combinedUsers.map(user => ({
+        ...user,
+        email: user.email.includes('@') ? user.email : `${user.email.substring(0, 8)}...@unknown`,
+        business_name: user.business_name || 'Not specified'
+      }));
 
-      if (combinedUsers.length === 0) {
-        if (businessError || tokenError) {
-          throw new Error(`Data access error: ${businessError?.message || tokenError?.message}`);
-        } else {
-          setError('No users found. This might be due to Row Level Security policies.');
-        }
-      }
+      console.log('Final combined users:', cleanedUsers);
 
-      setUsers(combinedUsers);
-      setTotalUsers(combinedUsers.length);
-      
-      if (combinedUsers.length > 0) {
+      if (cleanedUsers.length === 0) {
+        setError('No users found. This might be due to Row Level Security policies or the users haven\'t performed any tracked actions yet.');
+      } else {
+        setUsers(cleanedUsers);
+        setTotalUsers(cleanedUsers.length);
+        
         toast({
           title: "Success",
-          description: `Loaded ${combinedUsers.length} users successfully`,
+          description: `Loaded ${cleanedUsers.length} users from multiple sources`,
         });
       }
     } catch (error: any) {
@@ -175,6 +245,34 @@ const UserManagement = () => {
         </div>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-2xl font-bold text-blue-600">{users.filter(u => u.source === 'business_profile').length}</div>
+            <div className="text-sm text-gray-600">Business Profiles</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-2xl font-bold text-green-600">{users.filter(u => u.source === 'tokens').length}</div>
+            <div className="text-sm text-gray-600">Token Users</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-2xl font-bold text-purple-600">{users.filter(u => u.source === 'onboarding').length}</div>
+            <div className="text-sm text-gray-600">Onboarding Users</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-2xl font-bold text-orange-600">{totalUsers}</div>
+            <div className="text-sm text-gray-600">Total Users</div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Error Display */}
       {error && (
         <Card className="border-red-200 bg-red-50">
@@ -185,7 +283,7 @@ const UserManagement = () => {
                 <h3 className="font-medium text-red-800">Data Access Issue</h3>
                 <p className="text-red-700 mt-1">{error}</p>
                 <p className="text-sm text-red-600 mt-2">
-                  This might be due to Row Level Security policies. You may need to configure admin access permissions in Supabase.
+                  Note: This system can only see users who have interacted with tracked features (business profiles, tokens, onboarding, transactions).
                 </p>
               </div>
             </div>
@@ -200,13 +298,13 @@ const UserManagement = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search users by email..."
+                placeholder="Search users by email or business name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
-            <Button variant="outline">Filter</Button>
+            <Button variant="outline">Filter by Source</Button>
             <Button variant="outline">Export</Button>
           </div>
         </CardContent>
@@ -223,6 +321,7 @@ const UserManagement = () => {
               <TableRow>
                 <TableHead>Email</TableHead>
                 <TableHead>Business Name</TableHead>
+                <TableHead>Source</TableHead>
                 <TableHead>Total Tokens</TableHead>
                 <TableHead>Used Tokens</TableHead>
                 <TableHead>Status</TableHead>
@@ -239,7 +338,10 @@ const UserManagement = () => {
                       {user.email}
                     </div>
                   </TableCell>
-                  <TableCell>{user.business_name || 'Not specified'}</TableCell>
+                  <TableCell>{user.business_name}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{user.source}</Badge>
+                  </TableCell>
                   <TableCell>{user.total_tokens?.toLocaleString() || '0'}</TableCell>
                   <TableCell>{user.used_tokens?.toLocaleString() || '0'}</TableCell>
                   <TableCell>
@@ -270,7 +372,7 @@ const UserManagement = () => {
               ))}
               {filteredUsers.length === 0 && !error && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                     {users.length === 0 ? 'No users found in the system.' : 'No users found matching your search criteria.'}
                   </TableCell>
                 </TableRow>
