@@ -21,8 +21,40 @@ const Index = () => {
   const { businessProfile, loading: profileLoading } = useBusinessProfile();
   const navigate = useNavigate();
   const location = useLocation();
-  const [viewMode, setViewMode] = useState('landing'); // 'landing', 'onboarding', or 'dashboard'
+  const [viewMode, setViewMode] = useState('landing');
   const [activeModule, setActiveModule] = useState('dashboard');
+  const [isPageReady, setIsPageReady] = useState(false);
+
+  // Ensure page starts at top and prevent bottom loading
+  useEffect(() => {
+    // Immediately scroll to top
+    window.scrollTo(0, 0);
+    
+    // Set scroll restoration to manual to prevent browser auto-scroll
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    
+    // Mark page as ready after a brief delay to ensure DOM is stable
+    const timer = setTimeout(() => {
+      setIsPageReady(true);
+    }, 100);
+    
+    return () => {
+      clearTimeout(timer);
+      // Restore scroll behavior on cleanup
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'auto';
+      }
+    };
+  }, []);
+
+  // Scroll to top when view mode changes
+  useEffect(() => {
+    if (isPageReady) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [viewMode, isPageReady]);
 
   // Debug logging
   useEffect(() => {
@@ -82,7 +114,7 @@ const Index = () => {
     setViewMode('dashboard');
   };
 
-  if (loading || profileLoading) {
+  if (loading || profileLoading || !isPageReady) {
     return <LoadingScreen />;
   }
 
@@ -124,7 +156,7 @@ const Index = () => {
 
   console.log('Rendering landing page');
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" style={{ scrollBehavior: 'smooth' }}>
       <Navbar onAuthClick={handleAuthClick} />
       <LandingHero />
       <LandingFeatures />
