@@ -17,12 +17,76 @@ import {
 } from 'lucide-react';
 import TokenBalance from '@/components/tokens/TokenBalance';
 
-const Dashboard = () => {
+interface DashboardProps {
+  onModuleChange?: (module: string) => void;
+}
+
+const Dashboard = ({ onModuleChange }: DashboardProps) => {
+  const handleQuickAction = (action: string) => {
+    console.log(`Quick action clicked: ${action}`);
+    switch (action) {
+      case 'register':
+        onModuleChange?.('compliance');
+        break;
+      case 'invoice':
+        onModuleChange?.('operations');
+        break;
+      case 'employee':
+        onModuleChange?.('hr');
+        break;
+      case 'tax':
+        onModuleChange?.('compliance');
+        break;
+      default:
+        console.log('Unknown action:', action);
+    }
+  };
+
+  const handleViewAllActivity = () => {
+    console.log('View all activity clicked');
+    onModuleChange?.('operations');
+  };
+
+  const handleViewAllTasks = () => {
+    console.log('View all tasks clicked');
+    onModuleChange?.('operations');
+  };
+
+  const handleComplianceCheck = () => {
+    console.log('Compliance check clicked');
+    onModuleChange?.('compliance');
+  };
+
+  const handleViewNotifications = () => {
+    console.log('View notifications clicked');
+    // Could open a notifications panel or navigate to notifications
+  };
+
   const quickActions = [
-    { title: 'Register New Business', icon: Building2, color: 'bg-blue-900 hover:bg-blue-800' },
-    { title: 'Generate Invoice', icon: FileText, color: 'bg-emerald-600 hover:bg-emerald-700' },
-    { title: 'Add Employee', icon: Users, color: 'bg-purple-600 hover:bg-purple-700' },
-    { title: 'File Tax Return', icon: TrendingUp, color: 'bg-orange-600 hover:bg-orange-700' },
+    { 
+      title: 'Register New Business', 
+      icon: Building2, 
+      color: 'bg-blue-900 hover:bg-blue-800',
+      action: 'register'
+    },
+    { 
+      title: 'Generate Invoice', 
+      icon: FileText, 
+      color: 'bg-emerald-600 hover:bg-emerald-700',
+      action: 'invoice'
+    },
+    { 
+      title: 'Add Employee', 
+      icon: Users, 
+      color: 'bg-purple-600 hover:bg-purple-700',
+      action: 'employee'
+    },
+    { 
+      title: 'File Tax Return', 
+      icon: TrendingUp, 
+      color: 'bg-orange-600 hover:bg-orange-700',
+      action: 'tax'
+    },
   ];
 
   const recentActivity = [
@@ -51,7 +115,7 @@ const Dashboard = () => {
             <Badge variant="outline" className="text-emerald-600 border-emerald-200">
               All systems operational
             </Badge>
-            <Button size="sm">
+            <Button size="sm" onClick={handleViewNotifications}>
               <Bell size={16} className="mr-2" />
               View Notifications
             </Button>
@@ -121,7 +185,11 @@ const Dashboard = () => {
         <CardContent>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action, index) => (
-              <Button key={index} className={`${action.color} h-auto p-4 flex flex-col items-center gap-2`}>
+              <Button 
+                key={index} 
+                className={`${action.color} h-auto p-4 flex flex-col items-center gap-2`}
+                onClick={() => handleQuickAction(action.action)}
+              >
                 <action.icon size={24} />
                 <span className="text-sm font-medium text-center">{action.title}</span>
               </Button>
@@ -150,7 +218,7 @@ const Dashboard = () => {
                 </Badge>
               </div>
             ))}
-            <Button variant="ghost" className="w-full">
+            <Button variant="ghost" className="w-full" onClick={handleViewAllActivity}>
               View all activity <ArrowRight size={16} className="ml-2" />
             </Button>
           </CardContent>
@@ -173,7 +241,7 @@ const Dashboard = () => {
                 </Badge>
               </div>
             ))}
-            <Button variant="ghost" className="w-full">
+            <Button variant="ghost" className="w-full" onClick={handleViewAllTasks}>
               View all tasks <ArrowRight size={16} className="ml-2" />
             </Button>
           </CardContent>
@@ -203,7 +271,7 @@ const Dashboard = () => {
                 <AlertCircle className="text-red-600" size={20} />
               </div>
             </div>
-            <Button variant="outline" className="w-full mt-4">
+            <Button variant="outline" className="w-full mt-4" onClick={handleComplianceCheck}>
               Run Full Compliance Check
             </Button>
           </CardContent>

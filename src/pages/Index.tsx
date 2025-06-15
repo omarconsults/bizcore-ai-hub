@@ -72,7 +72,7 @@ const Index = () => {
       <div className="min-h-screen bg-gray-50 flex">
         <DashboardSidebar activeModule={activeModule} setActiveModule={setActiveModule} />
         <div className="flex-1 overflow-auto">
-          <DashboardContent activeModule={activeModule} />
+          <DashboardContent activeModule={activeModule} onModuleChange={setActiveModule} />
         </div>
         <AICopilot />
         <UserIndicator user={user} onExit={() => setViewMode('landing')} />

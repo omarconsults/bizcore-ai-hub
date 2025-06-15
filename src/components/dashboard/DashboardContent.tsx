@@ -12,13 +12,14 @@ import DigitalPresenceAnalyzer from '@/components/DigitalPresenceAnalyzer';
 
 interface DashboardContentProps {
   activeModule: string;
+  onModuleChange?: (module: string) => void;
 }
 
-const DashboardContent = ({ activeModule }: DashboardContentProps) => {
+const DashboardContent = ({ activeModule, onModuleChange }: DashboardContentProps) => {
   const renderContent = () => {
     switch (activeModule) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard onModuleChange={onModuleChange} />;
       case 'operations':
         return <Operations />;
       case 'compliance':
@@ -43,7 +44,7 @@ const DashboardContent = ({ activeModule }: DashboardContentProps) => {
           </div>
         );
       default:
-        return <Dashboard />;
+        return <Dashboard onModuleChange={onModuleChange} />;
     }
   };
 
