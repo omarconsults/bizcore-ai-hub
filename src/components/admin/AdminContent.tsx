@@ -11,6 +11,7 @@ import TokenManagement from './TokenManagement';
 import EmailManagement from './EmailManagement';
 import SystemMonitoring from './SystemMonitoring';
 import ActivityTracking from './ActivityTracking';
+import KnowledgeManagement from './KnowledgeManagement';
 
 interface AdminContentProps {
   activeModule: string;
@@ -39,6 +40,8 @@ const AdminContent = ({ activeModule }: AdminContentProps) => {
         return <SystemMonitoring />;
       case 'activity':
         return <ActivityTracking />;
+      case 'knowledge':
+        return <KnowledgeManagement />;
       case 'settings':
         return <AdminSettings />;
       default:

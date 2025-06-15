@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
@@ -14,7 +15,8 @@ import {
   X,
   Mail,
   Monitor,
-  Activity
+  Activity,
+  BookOpen
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -35,6 +37,7 @@ const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
     { id: 'subscriptions', name: 'Subscriptions', icon: CreditCard },
     { id: 'payments', name: 'Payments', icon: FileText },
     { id: 'tokens', name: 'Token Management', icon: Coins },
+    { id: 'knowledge', name: 'Knowledge Management', icon: BookOpen },
     { id: 'email', name: 'Email Management', icon: Mail },
     { id: 'monitoring', name: 'System Monitoring', icon: Monitor },
     { id: 'activity', name: 'Activity Tracking', icon: Activity },
