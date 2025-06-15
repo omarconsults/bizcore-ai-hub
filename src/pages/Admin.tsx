@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
@@ -16,7 +15,8 @@ const Admin = () => {
     user.user_metadata?.role === 'admin' ||
     user.app_metadata?.role === 'admin' ||
     // Add your admin email here for testing
-    user.email === 'jaanservicesmail@gmail.com'
+    user.email === 'jaanservicesmail@gmail.com' ||
+    user.email === 'shafogrin@gmail.com'
   );
 
   if (loading) {
