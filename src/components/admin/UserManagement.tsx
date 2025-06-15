@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, Plus, Edit, Trash2, MoreHorizontal, RefreshCw, Mail, Calendar } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, MoreHorizontal, RefreshCw, Mail, Calendar, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -26,52 +26,109 @@ const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
+      setError(null);
       
-      // Fetch user data from user_tokens table which has user info
+      console.log('Fetching users data...');
+      
+      // Try multiple approaches to get user data
+      
+      // First, try to get users from business_profiles (this should work for registered users)
+      const { data: businessProfiles, error: businessError } = await supabase
+        .from('business_profiles')
+        .select('user_id, business_name, created_at')
+        .order('created_at', { ascending: false });
+
+      console.log('Business profiles data:', { businessProfiles, businessError });
+
+      // Then get token data for additional user info
       const { data: tokenData, error: tokenError } = await supabase
         .from('user_tokens')
         .select('user_id, email, created_at, total_tokens, used_tokens')
         .order('created_at', { ascending: false });
 
-      if (tokenError) {
-        console.error('Error fetching users:', tokenError);
-        throw tokenError;
+      console.log('Token data:', { tokenData, tokenError });
+
+      // Combine the data sources
+      const userMap = new Map();
+
+      // Add users from business profiles
+      if (businessProfiles && !businessError) {
+        businessProfiles.forEach(profile => {
+          userMap.set(profile.user_id, {
+            id: profile.user_id,
+            email: profile.user_id, // We'll try to get actual email from tokens
+            created_at: profile.created_at,
+            last_sign_in_at: profile.created_at,
+            business_name: profile.business_name,
+            email_confirmed_at: profile.created_at,
+            total_tokens: 0,
+            used_tokens: 0
+          });
+        });
       }
 
-      if (!tokenData) {
-        setUsers([]);
-        setTotalUsers(0);
-        return;
+      // Enhance with token data
+      if (tokenData && !tokenError) {
+        tokenData.forEach(token => {
+          const userId = token.user_id || token.email;
+          if (userMap.has(userId)) {
+            const existing = userMap.get(userId);
+            userMap.set(userId, {
+              ...existing,
+              email: token.email,
+              total_tokens: token.total_tokens,
+              used_tokens: token.used_tokens
+            });
+          } else {
+            // Add users who exist in tokens but not in business profiles
+            userMap.set(userId, {
+              id: userId,
+              email: token.email,
+              created_at: token.created_at,
+              last_sign_in_at: token.created_at,
+              business_name: token.email.split('@')[0],
+              email_confirmed_at: token.created_at,
+              total_tokens: token.total_tokens,
+              used_tokens: token.used_tokens
+            });
+          }
+        });
       }
 
-      // Transform the data to match our User interface
-      const transformedUsers = tokenData.map(user => ({
-        id: user.user_id || user.email || 'unknown',
-        email: user.email,
-        created_at: user.created_at,
-        last_sign_in_at: user.created_at, // Using created_at as fallback
-        business_name: user.email.split('@')[0], // Extract business name from email
-        email_confirmed_at: user.created_at,
-        total_tokens: user.total_tokens,
-        used_tokens: user.used_tokens
-      }));
+      const combinedUsers = Array.from(userMap.values());
+      
+      console.log('Combined users:', combinedUsers);
 
-      setUsers(transformedUsers);
-      setTotalUsers(transformedUsers.length);
+      if (combinedUsers.length === 0) {
+        if (businessError || tokenError) {
+          throw new Error(`Data access error: ${businessError?.message || tokenError?.message}`);
+        } else {
+          setError('No users found. This might be due to Row Level Security policies.');
+        }
+      }
+
+      setUsers(combinedUsers);
+      setTotalUsers(combinedUsers.length);
+      
+      if (combinedUsers.length > 0) {
+        toast({
+          title: "Success",
+          description: `Loaded ${combinedUsers.length} users successfully`,
+        });
+      }
+    } catch (error: any) {
+      console.error('Error fetching users:', error);
+      const errorMessage = error.message || 'Failed to fetch users';
+      setError(errorMessage);
       
       toast({
-        title: "Success",
-        description: "Users data loaded successfully",
-      });
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      toast({
         title: "Error",
-        description: "Failed to fetch users",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -117,6 +174,24 @@ const UserManagement = () => {
           </Button>
         </div>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="text-red-600 mt-1" size={20} />
+              <div>
+                <h3 className="font-medium text-red-800">Data Access Issue</h3>
+                <p className="text-red-700 mt-1">{error}</p>
+                <p className="text-sm text-red-600 mt-2">
+                  This might be due to Row Level Security policies. You may need to configure admin access permissions in Supabase.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Search and Filters */}
       <Card>
@@ -193,10 +268,10 @@ const UserManagement = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {filteredUsers.length === 0 && (
+              {filteredUsers.length === 0 && !error && (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                    No users found matching your search criteria.
+                    {users.length === 0 ? 'No users found in the system.' : 'No users found matching your search criteria.'}
                   </TableCell>
                 </TableRow>
               )}
