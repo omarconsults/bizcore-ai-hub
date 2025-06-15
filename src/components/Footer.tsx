@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Mail, Phone, MapPin, Twitter, Linkedin, Facebook, Instagram } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -43,8 +42,8 @@ const Footer = () => {
   const legalLinks = [
     { name: 'Privacy Policy', href: '/privacy' },
     { name: 'Terms of Service', href: '/terms' },
-    { name: 'Cookie Policy', href: '#cookies' },
-    { name: 'NDPR Compliance', href: '#ndpr' },
+    { name: 'Cookie Policy', href: '/cookies' },
+    { name: 'NDPR Compliance', href: '/ndpr' },
   ];
 
   const socialLinks = [

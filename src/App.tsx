@@ -12,6 +12,8 @@ import Contact from "./pages/Contact";
 import HowItWorks from "./pages/HowItWorks";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/Terms";
+import CookiePolicy from "./pages/CookiePolicy";
+import NDPRCompliance from "./pages/NDPRCompliance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +33,8 @@ const App = () => (
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/cookies" element={<CookiePolicy />} />
+            <Route path="/ndpr" element={<NDPRCompliance />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
