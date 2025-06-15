@@ -18,7 +18,7 @@ import BusinessSetupForm from '@/components/onboarding/BusinessSetupForm';
 
 const Index = () => {
   const { user, loading } = useAuth();
-  const { businessProfile, loading: profileLoading } = useBusinessProfile();
+  const { businessProfile, loading: profileLoading, refetch } = useBusinessProfile();
   const navigate = useNavigate();
   const location = useLocation();
   const [viewMode, setViewMode] = useState('landing');
@@ -56,13 +56,16 @@ const Index = () => {
     }
   }, [viewMode, isPageReady]);
 
-  // Debug logging
+  // Debug logging for better troubleshooting
   useEffect(() => {
-    console.log('Index component - user:', user);
-    console.log('Index component - loading:', loading);
-    console.log('Index component - businessProfile:', businessProfile);
-    console.log('Index component - profileLoading:', profileLoading);
-    console.log('Index component - viewMode:', viewMode);
+    console.log('Index component state:', {
+      user: user ? `${user.email} (${user.id})` : null,
+      loading,
+      businessProfile: businessProfile ? `${businessProfile.business_name}` : null,
+      profileLoading,
+      viewMode,
+      userEmailVerified: user?.email_confirmed_at || 'Not confirmed',
+    });
   }, [user, loading, businessProfile, profileLoading, viewMode]);
 
   // Handle navigation from footer product links
@@ -79,15 +82,16 @@ const Index = () => {
   useEffect(() => {
     if (!loading && !profileLoading) {
       if (user) {
+        console.log('User authenticated, checking business profile...');
         if (businessProfile) {
           console.log('User has business profile, switching to dashboard');
           setViewMode('dashboard');
         } else {
-          console.log('User needs to complete business setup');
+          console.log('User authenticated but no business profile - showing onboarding');
           setViewMode('onboarding');
         }
       } else {
-        console.log('User is not authenticated, showing landing page');
+        console.log('User not authenticated, showing landing page');
         setViewMode('landing');
       }
     }
@@ -110,17 +114,23 @@ const Index = () => {
   };
 
   const handleBusinessSetupComplete = (hasExistingBusiness: boolean) => {
-    console.log('Business setup completed, switching to dashboard');
+    console.log('Business setup completed, refreshing profile and switching to dashboard');
+    
+    // Refetch the business profile to get the updated data
+    refetch();
+    
+    // Switch to dashboard view
     setViewMode('dashboard');
   };
 
+  // Show loading screen while authentication and profile data are being fetched
   if (loading || profileLoading || !isPageReady) {
     return <LoadingScreen />;
   }
 
   // Show onboarding flow for authenticated users without business profile
   if (user && viewMode === 'onboarding') {
-    console.log('Rendering business setup onboarding');
+    console.log('Rendering business setup onboarding for user:', user.email);
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-violet-950 to-slate-900 relative overflow-hidden">
         {/* Background Pattern */}
@@ -141,7 +151,7 @@ const Index = () => {
 
   // Show dashboard for authenticated users with business profile
   if (user && businessProfile && viewMode === 'dashboard') {
-    console.log('Rendering dashboard for user:', user.email);
+    console.log('Rendering dashboard for user:', user.email, 'with business:', businessProfile.business_name);
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <DashboardSidebar activeModule={activeModule} setActiveModule={setActiveModule} />
@@ -154,6 +164,7 @@ const Index = () => {
     );
   }
 
+  // Show landing page for unauthenticated users or when explicitly requested
   console.log('Rendering landing page');
   return (
     <div className="min-h-screen bg-white" style={{ scrollBehavior: 'smooth' }}>

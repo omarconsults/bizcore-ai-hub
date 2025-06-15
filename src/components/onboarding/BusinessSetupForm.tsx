@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, CheckCircle } from 'lucide-react';
+import { Building2, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -21,44 +22,95 @@ const BusinessSetupForm = ({ onComplete }: BusinessSetupFormProps) => {
   const [cacNumber, setCacNumber] = useState('');
   const [registrationDate, setRegistrationDate] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
+  const validateForm = () => {
+    if (!businessName.trim()) {
+      setError('Business name is required');
+      return false;
+    }
+    if (!businessType) {
+      setError('Business type is required');
+      return false;
+    }
+    if (!hasExistingBusiness) {
+      setError('Please select whether you have an existing business');
+      return false;
+    }
+    if (hasExistingBusiness === 'yes') {
+      if (!cacNumber.trim()) {
+        setError('CAC registration number is required for existing businesses');
+        return false;
+      }
+      if (!registrationDate) {
+        setError('Registration date is required for existing businesses');
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    setError(null);
+    
+    if (!user) {
+      setError('User not authenticated. Please try logging in again.');
+      return;
+    }
+
+    if (!validateForm()) {
+      return;
+    }
 
     setLoading(true);
+    
     try {
+      console.log('Creating business profile for user:', user.id);
+      
       const businessProfile = {
         user_id: user.id,
-        business_name: businessName,
+        business_name: businessName.trim(),
         business_type: businessType,
         has_existing_business: hasExistingBusiness === 'yes',
-        cac_registration_number: hasExistingBusiness === 'yes' ? cacNumber : null,
+        cac_registration_number: hasExistingBusiness === 'yes' ? cacNumber.trim() : null,
         registration_date: hasExistingBusiness === 'yes' ? registrationDate : null,
         registration_status: hasExistingBusiness === 'yes' ? 'registered' : 'pending'
       };
 
-      const { error } = await supabase
+      console.log('Inserting business profile:', businessProfile);
+
+      const { data, error } = await supabase
         .from('business_profiles')
-        .insert([businessProfile]);
+        .insert([businessProfile])
+        .select()
+        .single();
 
       if (error) {
+        console.error('Error creating business profile:', error);
         throw error;
       }
 
+      console.log('Business profile created successfully:', data);
+
       toast({
         title: "Business profile created!",
-        description: "Your onboarding has been customized based on your business status.",
+        description: hasExistingBusiness === 'yes' 
+          ? "Your existing business has been registered. Your dashboard is ready!"
+          : "Your business setup guide is ready. We'll help you register your business step by step.",
       });
 
+      // Call completion handler
       onComplete(hasExistingBusiness === 'yes');
-    } catch (error) {
-      console.error('Error creating business profile:', error);
+      
+    } catch (error: any) {
+      console.error('Error in business setup:', error);
+      setError(error.message || 'Failed to create business profile. Please try again.');
       toast({
-        title: "Error",
-        description: "Failed to create business profile. Please try again.",
+        title: "Setup Error",
+        description: error.message || "Failed to create business profile. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -77,6 +129,12 @@ const BusinessSetupForm = ({ onComplete }: BusinessSetupFormProps) => {
           <p className="text-gray-600">
             Help us customize your experience by telling us about your business
           </p>
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+              <AlertCircle className="text-red-600 mt-0.5" size={16} />
+              <p className="text-red-800 text-sm">{error}</p>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -173,7 +231,7 @@ const BusinessSetupForm = ({ onComplete }: BusinessSetupFormProps) => {
               className="w-full bg-blue-900 hover:bg-blue-800"
               disabled={loading || !hasExistingBusiness || !businessName || !businessType}
             >
-              {loading ? 'Setting up...' : 'Complete Setup'}
+              {loading ? 'Setting up your business profile...' : 'Complete Setup'}
             </Button>
           </form>
         </CardContent>

@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
-import BusinessSetupForm from '@/components/onboarding/BusinessSetupForm';
 
 interface RegisterFormProps {
   onToggleMode: () => void;
@@ -17,7 +16,6 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showBusinessSetup, setShowBusinessSetup] = useState(false);
   const { signUp } = useAuth();
   const { toast } = useToast();
 
@@ -35,10 +33,10 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
         });
       } else {
         toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account, then complete your business setup.",
+          title: "Account created successfully!",
+          description: "Please check your email to verify your account if required, then you'll be taken to complete your business setup.",
         });
-        setShowBusinessSetup(true);
+        // Don't show business setup form here - let the main Index component handle the flow
       }
     } catch (error) {
       toast({
@@ -50,20 +48,6 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
       setLoading(false);
     }
   };
-
-  const handleBusinessSetupComplete = (hasExistingBusiness: boolean) => {
-    toast({
-      title: "Welcome to BizCore!",
-      description: hasExistingBusiness 
-        ? "Your dashboard has been customized for your existing business."
-        : "Your dashboard is ready to guide you through business registration.",
-    });
-    // The user will be redirected to dashboard by the auth context
-  };
-
-  if (showBusinessSetup) {
-    return <BusinessSetupForm onComplete={handleBusinessSetupComplete} />;
-  }
 
   return (
     <Card className="w-full max-w-md bg-white/95 backdrop-blur-md border border-white/20 shadow-2xl">
