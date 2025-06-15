@@ -110,16 +110,33 @@ const TokenManagement = () => {
 
   const adjustUserTokens = async (userEmail: string, adjustment: number, reason: string) => {
     try {
+      console.log('Adjusting tokens for:', userEmail, 'by:', adjustment);
+      
+      // First, get the current user data - use maybeSingle() to handle cases where user might not exist
       const { data: currentData, error: fetchError } = await supabase
         .from('user_tokens')
-        .select('total_tokens, user_id')
+        .select('total_tokens, user_id, used_tokens')
         .eq('email', userEmail)
-        .single();
+        .maybeSingle();
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        console.error('Error fetching user data:', fetchError);
+        throw fetchError;
+      }
+
+      if (!currentData) {
+        toast({
+          title: "Error",
+          description: `User with email ${userEmail} not found`,
+          variant: "destructive"
+        });
+        return;
+      }
 
       const newTotal = Math.max(0, currentData.total_tokens + adjustment);
+      console.log('Updating total tokens from', currentData.total_tokens, 'to', newTotal);
 
+      // Update the user's total tokens
       const { error: updateError } = await supabase
         .from('user_tokens')
         .update({ 
@@ -128,7 +145,10 @@ const TokenManagement = () => {
         })
         .eq('email', userEmail);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Error updating tokens:', updateError);
+        throw updateError;
+      }
 
       // Log the transaction
       const { error: transactionError } = await supabase
@@ -142,19 +162,23 @@ const TokenManagement = () => {
           description: reason
         });
 
-      if (transactionError) throw transactionError;
+      if (transactionError) {
+        console.error('Error logging transaction:', transactionError);
+        throw transactionError;
+      }
 
       toast({
         title: "Success",
-        description: `Token balance updated for ${userEmail}`,
+        description: `Token balance updated for ${userEmail}. Added ${adjustment} tokens.`,
       });
 
-      fetchTokenStats();
+      // Refresh the data
+      await fetchTokenStats();
     } catch (error) {
       console.error('Error adjusting tokens:', error);
       toast({
         title: "Error",
-        description: "Failed to adjust token balance",
+        description: "Failed to adjust token balance. Please try again.",
         variant: "destructive"
       });
     }
