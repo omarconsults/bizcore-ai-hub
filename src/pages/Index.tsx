@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import LandingHero from '@/components/LandingHero';
 import LandingFeatures from '@/components/landing/LandingFeatures';
 import LandingCTA from '@/components/landing/LandingCTA';
+import Footer from '@/components/Footer';
 import AICopilot from '@/components/AICopilot';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import DashboardContent from '@/components/dashboard/DashboardContent';
@@ -74,6 +75,7 @@ const Index = () => {
       <LandingHero />
       <LandingFeatures />
       <LandingCTA onStartDemo={handleStartDemo} user={user} />
+      <Footer />
       <AICopilot />
     </div>
   );
