@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import ComplianceHeader from './compliance/ComplianceHeader';
 import ComplianceStats from './compliance/ComplianceStats';
@@ -8,15 +7,12 @@ import DocumentGenerator from './compliance/DocumentGenerator';
 import ComplianceCalendar from './compliance/ComplianceCalendar';
 import DocumentVault from './compliance/DocumentVault';
 import ComplianceSetupForm from './compliance/ComplianceSetupForm';
-import DocumentGeneratorForm from './compliance/DocumentGeneratorForm';
 import FileUploadForm from './compliance/FileUploadForm';
 import { useToast } from '@/hooks/use-toast';
 
 const ComplianceHub = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showComplianceSetup, setShowComplianceSetup] = useState(false);
-  const [showDocumentGenerator, setShowDocumentGenerator] = useState(false);
-  const [selectedDocumentType, setSelectedDocumentType] = useState('');
   const [showFileUpload, setShowFileUpload] = useState(false);
   const { toast } = useToast();
 
@@ -55,11 +51,6 @@ const ComplianceHub = () => {
     }
   ];
 
-  const handleDocumentGenerate = (templateName: string) => {
-    setSelectedDocumentType(templateName);
-    setShowDocumentGenerator(true);
-  };
-
   const handleFilesUploaded = (files: File[]) => {
     toast({
       title: "Files Uploaded",
@@ -92,7 +83,7 @@ const ComplianceHub = () => {
             )}
 
             {activeTab === 'documents' && (
-              <DocumentGenerator onDocumentGenerate={handleDocumentGenerate} />
+              <DocumentGenerator />
             )}
 
             {activeTab === 'calendar' && (
@@ -110,12 +101,6 @@ const ComplianceHub = () => {
       <ComplianceSetupForm
         isOpen={showComplianceSetup}
         onClose={() => setShowComplianceSetup(false)}
-      />
-
-      <DocumentGeneratorForm
-        isOpen={showDocumentGenerator}
-        onClose={() => setShowDocumentGenerator(false)}
-        documentType={selectedDocumentType}
       />
 
       <FileUploadForm
