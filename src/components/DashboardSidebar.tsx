@@ -157,13 +157,15 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - only show when sidebar is closed */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-blue-900 text-white rounded-lg shadow-lg hover:bg-blue-800 transition-colors"
+        className={`lg:hidden fixed top-4 left-4 z-40 p-2 bg-blue-900 text-white rounded-lg shadow-lg hover:bg-blue-800 transition-all duration-300 ${
+          isMobileMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
         aria-label="Toggle sidebar"
       >
-        {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        <Menu size={20} />
       </button>
 
       {/* Mobile Overlay with improved interaction */}
