@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,8 +17,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, Calendar as CalendarIcon, Download } from 'lucide-react';
+import { useEmailService } from '@/hooks/useEmailService';
+import { FileText, Calendar as CalendarIcon, Download, Mail, Send } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ContractData, RecentContract } from './types';
@@ -33,12 +40,50 @@ export const ContractsTab: React.FC<ContractsTabProps> = ({
   setContractData
 }) => {
   const { toast } = useToast();
+  const { sendEmail, loading: emailLoading } = useEmailService();
+  const [generatedContract, setGeneratedContract] = useState<string | null>(null);
+  const [showContractModal, setShowContractModal] = useState(false);
+  const [recipientEmail, setRecipientEmail] = useState('');
 
   const recentContracts: RecentContract[] = [
     { name: 'Musa Bello.pdf', type: 'Full-time', date: '2024-03-10' },
     { name: 'Freelance_Tobi.docx', type: 'Freelance', date: '2024-03-08' },
     { name: 'Intern_Sarah.pdf', type: 'Internship', date: '2024-03-05' },
   ];
+
+  const generateContractContent = (data: ContractData) => {
+    const today = new Date().toLocaleDateString();
+    const startDateStr = data.startDate ? format(data.startDate, 'PPP') : 'TBD';
+    
+    return `
+EMPLOYMENT CONTRACT
+
+Contract Type: ${data.type.toUpperCase()}
+Generated on: ${today}
+
+ARTICLE I - POSITION AND DUTIES
+The Employee shall serve as ${data.role} and shall perform such duties and responsibilities as are customarily associated with this position.
+
+ARTICLE II - COMPENSATION
+${data.salary ? `Salary: ${data.salary} per annum` : 'Compensation to be determined'}
+
+ARTICLE III - COMMENCEMENT
+This agreement shall commence on ${startDateStr}.
+
+ARTICLE IV - TERMS AND CONDITIONS
+This contract is governed by the laws of Nigeria and applicable labor regulations.
+
+[Additional clauses and terms would be included based on contract type and specific requirements]
+
+SIGNATURES
+Employer: _________________________ Date: _________
+
+Employee: _________________________ Date: _________
+
+---
+This contract was generated using BizCore HR Tools and should be reviewed by legal counsel before execution.
+    `.trim();
+  };
 
   const handleGenerateContract = () => {
     if (!contractData.type || !contractData.role) {
@@ -50,18 +95,66 @@ export const ContractsTab: React.FC<ContractsTabProps> = ({
       return;
     }
 
-    console.log('Generating contract with data:', contractData);
+    const contractContent = generateContractContent(contractData);
+    setGeneratedContract(contractContent);
+    setShowContractModal(true);
+    
     toast({
       title: "Contract Generated",
-      description: "Contract generation started! You will receive an email when ready."
+      description: "Your contract has been generated successfully!"
     });
+  };
+
+  const handleExportContract = () => {
+    if (!generatedContract) return;
+
+    const blob = new Blob([generatedContract], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${contractData.role.replace(/\s+/g, '_')}_Contract.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Contract Exported",
+      description: "Contract has been downloaded successfully."
+    });
+  };
+
+  const handleEmailContract = async () => {
+    if (!generatedContract || !recipientEmail) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter a recipient email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const emailData = {
+      to: recipientEmail,
+      subject: `Employment Contract - ${contractData.role}`,
+      html: `
+        <h2>Employment Contract</h2>
+        <p>Please find your employment contract below:</p>
+        <pre style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; white-space: pre-wrap;">${generatedContract}</pre>
+        <p>Best regards,<br>HR Department</p>
+      `,
+      text: `Employment Contract\n\n${generatedContract}\n\nBest regards,\nHR Department`
+    };
+
+    const result = await sendEmail(emailData);
     
-    setContractData({
-      type: '',
-      role: '',
-      salary: '',
-      startDate: undefined
-    });
+    if (result.success) {
+      setRecipientEmail('');
+      toast({
+        title: "Contract Sent",
+        description: `Contract has been sent to ${recipientEmail}`
+      });
+    }
   };
 
   const downloadContract = (contractName: string) => {
@@ -178,6 +271,63 @@ export const ContractsTab: React.FC<ContractsTabProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* Contract Preview Modal */}
+      <Dialog open={showContractModal} onOpenChange={setShowContractModal}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Generated Contract
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <pre className="text-sm whitespace-pre-wrap font-mono">
+                {generatedContract}
+              </pre>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <Label htmlFor="email">Send to Email</Label>
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="recipient@company.com"
+                    value={recipientEmail}
+                    onChange={(e) => setRecipientEmail(e.target.value)}
+                  />
+                  <Button 
+                    onClick={handleEmailContract}
+                    disabled={emailLoading || !recipientEmail}
+                    className="shrink-0"
+                  >
+                    {emailLoading ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    ) : (
+                      <Mail className="h-4 w-4 mr-2" />
+                    )}
+                    Send
+                  </Button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-between pt-4 border-t">
+              <Button variant="outline" onClick={() => setShowContractModal(false)}>
+                Close
+              </Button>
+              <Button onClick={handleExportContract} className="bg-blue-900 hover:bg-blue-800">
+                <Download className="h-4 w-4 mr-2" />
+                Export Contract
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
