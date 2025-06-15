@@ -8,6 +8,7 @@ import Strategy from '@/components/Strategy';
 import Marketing from '@/components/Marketing';
 import KnowledgeHub from '@/components/KnowledgeHub';
 import Settings from '@/components/Settings';
+import DigitalPresenceAnalyzer from '@/components/DigitalPresenceAnalyzer';
 
 interface DashboardContentProps {
   activeModule: string;
@@ -30,8 +31,17 @@ const DashboardContent = ({ activeModule }: DashboardContentProps) => {
         return <Marketing />;
       case 'knowledge':
         return <KnowledgeHub />;
+      case 'presence':
+        return <DigitalPresenceAnalyzer />;
       case 'settings':
         return <Settings />;
+      case 'help':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Help & Support</h1>
+            <p className="text-gray-600">Need help? Contact our support team or browse our knowledge base.</p>
+          </div>
+        );
       default:
         return <Dashboard />;
     }

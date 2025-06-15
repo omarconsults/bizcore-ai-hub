@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Home, 
@@ -20,7 +21,7 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
     { id: 'dashboard', name: 'Dashboard', icon: Home },
     { id: 'compliance', name: 'Compliance Hub', icon: Shield },
     { id: 'operations', name: 'Operations', icon: Calculator },
-    { id: 'team', name: 'HR & Team', icon: Users },
+    { id: 'hr', name: 'HR & Team', icon: Users },
     { id: 'marketing', name: 'Marketing', icon: Megaphone },
     { id: 'strategy', name: 'Strategy', icon: Target },
     { id: 'presence', name: 'Digital Presence', icon: Search },
