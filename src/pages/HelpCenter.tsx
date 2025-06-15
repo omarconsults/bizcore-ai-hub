@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { Search, Book, MessageCircle, Phone, Mail, ChevronRight } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 const HelpCenter = () => {
   const categories = [
@@ -128,6 +128,8 @@ const HelpCenter = () => {
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };

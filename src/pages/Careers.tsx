@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { MapPin, Clock, Users, Heart, Zap, Globe } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 const Careers = () => {
   const openRoles = [
@@ -196,6 +196,8 @@ const Careers = () => {
           </button>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };
