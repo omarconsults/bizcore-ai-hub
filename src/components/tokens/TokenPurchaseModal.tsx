@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CheckCircle, Coins, CreditCard, Zap } from 'lucide-react';
+import { usePaystack } from '@/hooks/usePaystack';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 interface TokenPurchaseModalProps {
@@ -13,7 +15,8 @@ interface TokenPurchaseModalProps {
 
 const TokenPurchaseModal = ({ onClose }: TokenPurchaseModalProps) => {
   const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+  const { initiatePayment, loading } = usePaystack();
+  const { user } = useAuth();
 
   const tokenPackages = [
     {
@@ -59,30 +62,39 @@ const TokenPurchaseModal = ({ onClose }: TokenPurchaseModalProps) => {
   ];
 
   const handlePurchase = async (packageData: any) => {
-    setLoading(true);
-    try {
-      // Simulate payment process - in real implementation, integrate with Paystack
+    if (!user) {
       toast({
-        title: "Payment Processing",
-        description: "Redirecting to payment gateway...",
+        title: "Authentication required",
+        description: "Please log in to purchase tokens",
+        variant: "destructive"
       });
-      
-      // Simulate successful purchase
-      setTimeout(() => {
-        toast({
-          title: "Purchase Successful!",
-          description: `${packageData.tokens} tokens have been added to your account.`,
-        });
-        onClose();
-      }, 2000);
+      return;
+    }
+
+    const paymentData = {
+      amount: packageData.price,
+      email: user.email || '',
+      invoiceId: `token_purchase_${Date.now()}`,
+      metadata: {
+        userId: user.id,
+        businessName: user.user_metadata?.business_name || 'Token Purchase',
+        packageName: packageData.name,
+        tokens: packageData.tokens,
+        type: 'token_purchase'
+      }
+    };
+
+    try {
+      await initiatePayment(paymentData);
+      // Payment window will open, close the modal
+      onClose();
     } catch (error) {
+      console.error('Payment initiation failed:', error);
       toast({
-        title: "Purchase Failed",
+        title: "Payment Failed",
         description: "There was an error processing your payment. Please try again.",
         variant: "destructive"
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -130,7 +142,7 @@ const TokenPurchaseModal = ({ onClose }: TokenPurchaseModalProps) => {
                     disabled={loading}
                   >
                     <CreditCard className="mr-2" size={16} />
-                    Purchase Now
+                    {loading ? 'Processing...' : 'Purchase Now'}
                   </Button>
                 </CardContent>
               </Card>
