@@ -1,37 +1,51 @@
 
 import React from 'react';
 import { Mail, Phone, MapPin, Twitter, Linkedin, Facebook, Instagram } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const currentYear = new Date().getFullYear();
 
+  const handleProductLink = (module: string) => {
+    if (user) {
+      // User is logged in, navigate to dashboard with specific module
+      navigate('/', { state: { activeModule: module } });
+    } else {
+      // User not logged in, navigate to auth
+      navigate('/auth');
+    }
+  };
+
   const companyLinks = [
-    { name: 'About Us', href: '#about' },
-    { name: 'How It Works', href: '#how-it-works' },
+    { name: 'About Us', href: '/about' },
+    { name: 'How It Works', href: '/how-it-works' },
     { name: 'Success Stories', href: '#success-stories' },
     { name: 'Careers', href: '#careers' },
     { name: 'Press Kit', href: '#press' },
   ];
 
   const productLinks = [
-    { name: 'Business Registration', href: '#registration' },
-    { name: 'Compliance Management', href: '#compliance' },
-    { name: 'Financial Tools', href: '#finance' },
-    { name: 'HR Management', href: '#hr' },
-    { name: 'Marketing Suite', href: '#marketing' },
+    { name: 'Business Registration', module: 'dashboard' },
+    { name: 'Compliance Management', module: 'compliance' },
+    { name: 'Financial Tools', module: 'operations' },
+    { name: 'HR Management', module: 'team' },
+    { name: 'Marketing Suite', module: 'marketing' },
   ];
 
   const supportLinks = [
     { name: 'Help Center', href: '#help' },
     { name: 'API Documentation', href: '#api' },
     { name: 'Video Tutorials', href: '#tutorials' },
-    { name: 'Contact Support', href: '#support' },
+    { name: 'Contact Support', href: '/contact' },
     { name: 'System Status', href: '#status' },
   ];
 
   const legalLinks = [
-    { name: 'Privacy Policy', href: '#privacy' },
-    { name: 'Terms of Service', href: '#terms' },
+    { name: 'Privacy Policy', href: '/privacy' },
+    { name: 'Terms of Service', href: '/terms' },
     { name: 'Cookie Policy', href: '#cookies' },
     { name: 'NDPR Compliance', href: '#ndpr' },
   ];
@@ -42,6 +56,15 @@ const Footer = () => {
     { icon: Facebook, href: '#facebook', label: 'Facebook' },
     { icon: Instagram, href: '#instagram', label: 'Instagram' },
   ];
+
+  const handleLinkClick = (href: string) => {
+    if (href.startsWith('#')) {
+      // Handle anchor links or show coming soon
+      console.log('Feature coming soon:', href);
+    } else {
+      navigate(href);
+    }
+  };
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -97,9 +120,12 @@ const Footer = () => {
               <ul className="space-y-3">
                 {companyLinks.map((link, index) => (
                   <li key={index}>
-                    <a href={link.href} className="text-gray-300 hover:text-emerald-400 transition-colors">
+                    <button 
+                      onClick={() => handleLinkClick(link.href)}
+                      className="text-gray-300 hover:text-emerald-400 transition-colors text-left"
+                    >
                       {link.name}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -111,9 +137,12 @@ const Footer = () => {
               <ul className="space-y-3">
                 {productLinks.map((link, index) => (
                   <li key={index}>
-                    <a href={link.href} className="text-gray-300 hover:text-emerald-400 transition-colors">
+                    <button 
+                      onClick={() => handleProductLink(link.module)}
+                      className="text-gray-300 hover:text-emerald-400 transition-colors text-left"
+                    >
                       {link.name}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -125,9 +154,12 @@ const Footer = () => {
               <ul className="space-y-3 mb-6">
                 {supportLinks.map((link, index) => (
                   <li key={index}>
-                    <a href={link.href} className="text-gray-300 hover:text-emerald-400 transition-colors">
+                    <button 
+                      onClick={() => handleLinkClick(link.href)}
+                      className="text-gray-300 hover:text-emerald-400 transition-colors text-left"
+                    >
                       {link.name}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -136,9 +168,12 @@ const Footer = () => {
               <ul className="space-y-3">
                 {legalLinks.map((link, index) => (
                   <li key={index}>
-                    <a href={link.href} className="text-gray-300 hover:text-emerald-400 transition-colors">
+                    <button 
+                      onClick={() => handleLinkClick(link.href)}
+                      className="text-gray-300 hover:text-emerald-400 transition-colors text-left"
+                    >
                       {link.name}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>

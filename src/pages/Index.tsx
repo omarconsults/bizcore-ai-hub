@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
 import LandingHero from '@/components/LandingHero';
@@ -16,6 +16,7 @@ import LoadingScreen from '@/components/LoadingScreen';
 const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [viewMode, setViewMode] = useState('landing'); // 'landing' or 'dashboard'
   const [activeModule, setActiveModule] = useState('dashboard');
 
@@ -26,6 +27,16 @@ const Index = () => {
     console.log('Index component - viewMode:', viewMode);
     console.log('Index component - activeModule:', activeModule);
   }, [user, loading, viewMode, activeModule]);
+
+  // Handle navigation from footer product links
+  useEffect(() => {
+    if (location.state?.activeModule && user) {
+      setActiveModule(location.state.activeModule);
+      setViewMode('dashboard');
+      // Clear the state to prevent issues on refresh
+      navigate('/', { replace: true });
+    }
+  }, [location.state, user, navigate]);
 
   // Redirect authenticated users to dashboard
   useEffect(() => {
