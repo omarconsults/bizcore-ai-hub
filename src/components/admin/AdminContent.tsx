@@ -2,6 +2,7 @@
 import React from 'react';
 import AdminDashboard from './AdminDashboard';
 import UserManagement from './UserManagement';
+import FormManagement from './FormManagement';
 import SubscriptionManagement from './SubscriptionManagement';
 import PaymentTracking from './PaymentTracking';
 import AdminAnalytics from './AdminAnalytics';
@@ -24,6 +25,8 @@ const AdminContent = ({ activeModule }: AdminContentProps) => {
         return <AdminDashboard />;
       case 'users':
         return <UserManagement />;
+      case 'forms':
+        return <FormManagement />;
       case 'subscriptions':
         return <SubscriptionManagement />;
       case 'payments':
