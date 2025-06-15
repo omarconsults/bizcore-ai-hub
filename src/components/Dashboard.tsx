@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +15,7 @@ import {
   Plus
 } from 'lucide-react';
 import TokenBalance from '@/components/tokens/TokenBalance';
+import InteractiveChecklist from '@/components/dashboard/InteractiveChecklist';
 
 interface DashboardProps {
   onModuleChange?: (module: string) => void;
@@ -198,8 +198,11 @@ const Dashboard = ({ onModuleChange }: DashboardProps) => {
         </CardContent>
       </Card>
 
-      {/* Dashboard Content Grid */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      {/* Dashboard Content Grid - Updated to include Interactive Checklist */}
+      <div className="grid lg:grid-cols-4 gap-6">
+        {/* Interactive Checklist - Takes full column */}
+        <InteractiveChecklist />
+
         {/* Recent Activity */}
         <Card className="border-0 shadow-sm">
           <CardHeader>
