@@ -48,6 +48,51 @@ export type Database = {
         }
         Relationships: []
       }
+      knowledge_resources: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          duration: string | null
+          id: string
+          rating: number | null
+          source: string | null
+          tags: string[] | null
+          title: string
+          type: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          id?: string
+          rating?: number | null
+          source?: string | null
+          tags?: string[] | null
+          title: string
+          type: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          id?: string
+          rating?: number | null
+          source?: string | null
+          tags?: string[] | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       onboarding_progress: {
         Row: {
           business_profile_id: string

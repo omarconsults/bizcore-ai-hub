@@ -7,8 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus, Edit, Trash2, Search, BookOpen, FileText, Video, GraduationCap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,6 +27,8 @@ interface KnowledgeResource {
   updated_at: string;
 }
 
+type ResourceType = 'guide' | 'template' | 'video' | 'course';
+
 const KnowledgeManagement = () => {
   const [resources, setResources] = useState<KnowledgeResource[]>([]);
   const [filteredResources, setFilteredResources] = useState<KnowledgeResource[]>([]);
@@ -42,7 +43,7 @@ const KnowledgeManagement = () => {
     title: '',
     description: '',
     url: '',
-    type: 'guide' as const,
+    type: 'guide' as ResourceType,
     category: '',
     source: '',
     tags: '',
@@ -60,14 +61,17 @@ const KnowledgeManagement = () => {
   const loadResources = async () => {
     try {
       setLoading(true);
+      // Use raw query since TypeScript types haven't been updated yet
       const { data, error } = await supabase
-        .from('knowledge_resources')
+        .from('knowledge_resources' as any)
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setResources(data || []);
-      setFilteredResources(data || []);
+      
+      const typedData = (data || []) as KnowledgeResource[];
+      setResources(typedData);
+      setFilteredResources(typedData);
     } catch (error) {
       console.error('Error loading resources:', error);
       toast({
@@ -150,7 +154,7 @@ const KnowledgeManagement = () => {
 
       if (editingResource) {
         const { error } = await supabase
-          .from('knowledge_resources')
+          .from('knowledge_resources' as any)
           .update(resourceData)
           .eq('id', editingResource.id);
 
@@ -161,7 +165,7 @@ const KnowledgeManagement = () => {
         });
       } else {
         const { error } = await supabase
-          .from('knowledge_resources')
+          .from('knowledge_resources' as any)
           .insert([{ ...resourceData, created_at: new Date().toISOString() }]);
 
         if (error) throw error;
@@ -188,7 +192,7 @@ const KnowledgeManagement = () => {
 
     try {
       const { error } = await supabase
-        .from('knowledge_resources')
+        .from('knowledge_resources' as any)
         .delete()
         .eq('id', resourceId);
 
@@ -330,7 +334,7 @@ const KnowledgeManagement = () => {
                               <span className="text-xs text-gray-500">{resource.duration}</span>
                             )}
                           </div>
-                          {resource.tags.length > 0 && (
+                          {resource.tags && resource.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-2">
                               {resource.tags.map((tag, index) => (
                                 <Badge key={index} variant="outline" className="text-xs">
@@ -394,7 +398,7 @@ const KnowledgeManagement = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="type">Type</Label>
-                <Select value={formData.type} onValueChange={(value: any) => setFormData({ ...formData, type: value })}>
+                <Select value={formData.type} onValueChange={(value: ResourceType) => setFormData({ ...formData, type: value })}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
