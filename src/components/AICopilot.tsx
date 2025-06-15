@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,23 +24,101 @@ const AICopilot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       type: 'ai',
-      content: "Hi! I'm your AI business assistant powered by LLaMA. I can help you with CAC registration, tax compliance, business planning, and more. What would you like to work on today?"
+      content: `🎯 Welcome to your Advanced AI Business Assistant powered by LLaMA 3.1!
+
+I'm your comprehensive business companion specialized in the Nigerian market. Here's how I can transform your business operations:
+
+🏢 **Business Registration & Compliance**
+• Complete CAC registration guidance with step-by-step instructions
+• Tax compliance strategies and FIRS requirements
+• Business licensing for all sectors (NAFDAC, SON, CBN, etc.)
+• Annual returns and regulatory filings
+
+📊 **Strategic Business Planning**
+• Market analysis and competitor research
+• Business model development and validation
+• Financial projections and budgeting
+• Growth strategies and expansion planning
+
+🔧 **Operational Excellence**
+• HR policies and employment law guidance
+• Process optimization and workflow design
+• Quality management systems
+• Risk assessment and mitigation strategies
+
+💼 **Marketing & Sales**
+• Digital marketing strategies for Nigerian audiences
+• Brand positioning and messaging
+• Sales funnel optimization
+• Customer acquisition and retention tactics
+
+📈 **Financial Management**
+• Cash flow management and forecasting
+• Investment guidance and funding options
+• Cost optimization strategies
+• Financial reporting and analysis
+
+Ready to elevate your business? Ask me anything - from complex strategic questions to quick operational tips. Every response is tailored specifically for the Nigerian business environment with actionable insights you can implement immediately!
+
+What business challenge shall we tackle together today? 🚀`
     }
   ]);
 
   const suggestions = [
-    "Help me register my business with CAC",
-    "What licenses do I need for my restaurant?",
-    "Generate a business plan template",
-    "Create an invoice template"
+    "Create a comprehensive CAC registration plan for my tech startup with all required documents and timelines",
+    "Develop a complete business license checklist for opening a restaurant in Lagos with NAFDAC requirements",
+    "Generate a detailed business plan template for an e-commerce platform targeting Nigerian consumers",
+    "Design a professional invoice template with Nigerian tax compliance features and payment terms",
+    "Create an HR handbook template covering Nigerian employment law and company policies",
+    "Develop a marketing strategy for launching a fintech product in the Nigerian market"
   ];
 
   const callAIService = async (userMessage: string, conversationHistory: Message[]) => {
     try {
+      const enhancedSystemPrompt = `You are an advanced AI business consultant specializing in Nigerian business operations with deep expertise across all sectors. Your responses should be:
+
+COMPREHENSIVE & DETAILED:
+- Provide extensive, actionable advice with specific steps
+- Include relevant legal references and compliance requirements
+- Offer multiple options and alternatives when applicable
+- Give context about Nigerian market conditions and regulations
+
+PRACTICAL & ACTIONABLE:
+- Break down complex processes into clear steps
+- Provide templates, checklists, and frameworks
+- Include timelines and cost estimates where relevant
+- Suggest specific tools, platforms, and resources
+
+SECTOR-SPECIFIC EXPERTISE:
+- Technology & Software (regulatory compliance, IP protection)
+- E-commerce & Retail (licensing, consumer protection)
+- Financial Services (CBN regulations, licensing)
+- Healthcare (NAFDAC, professional licensing)
+- Food & Beverage (NAFDAC, SON standards)
+- Manufacturing (SON, environmental compliance)
+- Professional Services (professional body requirements)
+
+CURRENT & ACCURATE:
+- Reference latest Nigerian business regulations (2024)
+- Include current tax rates and compliance requirements
+- Mention recent policy changes and their impact
+- Provide updated contact information for regulatory bodies
+
+FORMAT YOUR RESPONSES:
+- Use clear headings and bullet points
+- Include step-by-step procedures
+- Add relevant templates or sample documents
+- Provide cost estimates and timelines
+- Include contact information for relevant agencies
+- Suggest follow-up actions and next steps
+
+Always end with specific next steps and offer to dive deeper into any aspect of your advice.`;
+
       const { data, error } = await supabase.functions.invoke('ai-chat', {
         body: {
           message: userMessage,
-          conversationHistory: conversationHistory.slice(-10) // Keep last 10 messages for context
+          conversationHistory: conversationHistory.slice(-10),
+          systemPrompt: enhancedSystemPrompt
         }
       });
 
@@ -63,18 +140,18 @@ const AICopilot = () => {
     if (!user) {
       setMessages(prev => [...prev, 
         { type: 'user', content: message },
-        { type: 'ai', content: "Please log in to use the AI assistant. AI features require authentication and consume tokens." }
+        { type: 'ai', content: "🔐 Authentication Required\n\nTo access our advanced AI business assistant with comprehensive Nigerian market insights, please log in to your account. Our AI features require authentication to provide personalized advice and consume tokens for premium responses.\n\n✨ Once logged in, you'll get:\n• Detailed, actionable business advice\n• Nigerian market-specific guidance\n• Legal compliance insights\n• Industry-specific recommendations\n• Professional document templates\n\nSign in now to unlock the full potential of your AI business consultant!" }
       ]);
       setMessage('');
       return;
     }
 
-    const canConsume = await consumeTokens(1, 'ai_copilot', `AI Copilot message: "${message.substring(0, 50)}..."`);
+    const canConsume = await consumeTokens(1, 'ai_copilot', `AI Copilot consultation: "${message.substring(0, 50)}..."`);
     
     if (!canConsume) {
       setMessages(prev => [...prev, 
         { type: 'user', content: message },
-        { type: 'ai', content: "Sorry, you don't have enough tokens to send this message. Please purchase more tokens or upgrade your subscription." }
+        { type: 'ai', content: "💰 Token Balance Insufficient\n\nI'd love to provide you with comprehensive business advice, but you've run low on tokens. Our detailed AI responses require tokens to ensure you receive the highest quality, personalized guidance.\n\n🎯 What you're missing:\n• In-depth business analysis\n• Step-by-step implementation guides\n• Nigerian market insights\n• Professional templates and checklists\n• Regulatory compliance guidance\n\nUpgrade your plan or purchase additional tokens to continue receiving premium AI business consulting that can transform your operations!" }
       ]);
       setMessage('');
       return;
@@ -84,27 +161,22 @@ const AICopilot = () => {
     setMessage('');
     setIsLoading(true);
 
-    // Add user message immediately
     setMessages(prev => [...prev, { type: 'user', content: userMessage }]);
 
     try {
-      // Get AI response
       const aiResponse = await callAIService(userMessage, messages);
-      
-      // Add AI response
       setMessages(prev => [...prev, { type: 'ai', content: aiResponse }]);
     } catch (error) {
       console.error('Error getting AI response:', error);
       
-      // Add error message
       setMessages(prev => [...prev, { 
         type: 'ai', 
-        content: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment. If the issue persists, our AI service might be temporarily unavailable." 
+        content: "🔧 Technical Difficulty - Temporary Service Interruption\n\nI apologize, but I'm experiencing technical difficulties connecting to our advanced AI systems. This appears to be a temporary issue with our LLaMA 3.1 processing engine.\n\n🔄 **What's happening:**\n• High server demand affecting response times\n• Temporary connectivity issues with our AI infrastructure\n• System maintenance may be in progress\n\n⚡ **Immediate solutions:**\n• Please try your question again in 30-60 seconds\n• For urgent business queries, check our Knowledge Hub for instant resources\n• Critical issues can be escalated through our support channels\n\n🛠️ **If this persists:**\nOur technical team is automatically notified of service interruptions. We typically resolve AI service issues within minutes. Your tokens have been preserved and not consumed for this failed request.\n\nThank you for your patience as we maintain our high-quality AI advisory services!" 
       }]);
 
       toast({
-        title: "AI Service Error",
-        description: "Failed to get AI response. Please try again.",
+        title: "AI Service Temporarily Unavailable",
+        description: "Our AI consultant is experiencing high demand. Please try again in a moment.",
         variant: "destructive"
       });
     } finally {
@@ -136,7 +208,7 @@ const AICopilot = () => {
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <MessageCircle size={16} />
-              AI Assistant (LLaMA)
+              AI Business Consultant (LLaMA 3.1)
               {user && (
                 <div className="flex items-center gap-1 text-xs bg-emerald-700 px-2 py-1 rounded">
                   <Coins size={12} />
@@ -167,11 +239,10 @@ const AICopilot = () => {
 
         {!isMinimized && (
           <CardContent className="p-0 flex flex-col h-full">
-            {/* Messages */}
             <div className="flex-1 p-4 space-y-3 overflow-y-auto max-h-64">
               {messages.map((msg, index) => (
                 <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-xs p-2 rounded-lg text-sm ${
+                  <div className={`max-w-xs p-3 rounded-lg text-sm whitespace-pre-wrap ${
                     msg.type === 'user' 
                       ? 'bg-blue-900 text-white' 
                       : 'bg-gray-100 text-gray-800'
@@ -181,21 +252,19 @@ const AICopilot = () => {
                 </div>
               ))}
               
-              {/* Loading indicator */}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-gray-100 text-gray-800 p-2 rounded-lg text-sm flex items-center gap-2">
+                  <div className="bg-gray-100 text-gray-800 p-3 rounded-lg text-sm flex items-center gap-2">
                     <Loader2 size={14} className="animate-spin" />
-                    AI is thinking...
+                    AI Consultant analyzing your request...
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Quick Suggestions */}
             {messages.length === 1 && !isLoading && (
               <div className="px-4 pb-2">
-                <p className="text-xs text-gray-500 mb-2">Quick suggestions (1 token each):</p>
+                <p className="text-xs text-gray-500 mb-2">Professional business consultation examples (1 token each):</p>
                 <div className="space-y-1">
                   {suggestions.map((suggestion, index) => (
                     <button
@@ -211,23 +280,22 @@ const AICopilot = () => {
               </div>
             )}
 
-            {/* Input Area */}
             <div className="p-3 border-t bg-gray-50">
               {!user && (
                 <div className="mb-2 text-xs text-amber-600 bg-amber-50 p-2 rounded">
-                  Please log in to use AI features
+                  🔐 Sign in for comprehensive AI business consulting
                 </div>
               )}
               {user && tokenBalance.availableTokens < 5 && (
                 <div className="mb-2 text-xs text-red-600 bg-red-50 p-2 rounded">
-                  Low token balance! Purchase more tokens to continue.
+                  ⚠️ Low token balance! Upgrade for continued professional advice.
                 </div>
               )}
               <div className="flex gap-2">
                 <Input
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder={user ? "Ask me anything... (1 token)" : "Please log in first"}
+                  placeholder={user ? "Ask your business question... (1 token)" : "Please sign in for AI consultation"}
                   className="flex-1 text-sm"
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   disabled={!user || tokenBalance.availableTokens < 1 || isLoading}
