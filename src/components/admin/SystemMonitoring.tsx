@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -31,7 +30,7 @@ const SystemMonitoring = () => {
       diskUsage: Math.floor(Math.random() * 20) + 70,
       activeUsers: Math.floor(Math.random() * 100) + 200,
       apiCalls: Math.floor(Math.random() * 5000) + 10000,
-      errorRate: (Math.random() * 2).toFixed(1)
+      errorRate: Math.round((Math.random() * 2) * 10) / 10 // Keep as number, round to 1 decimal
     }));
     setLastUpdated(new Date());
   };
