@@ -16,17 +16,26 @@ import {
 } from 'lucide-react';
 import TokenBalance from '@/components/tokens/TokenBalance';
 import InteractiveChecklist from '@/components/dashboard/InteractiveChecklist';
+import { useBusinessProfile } from '@/hooks/useBusinessProfile';
 
 interface DashboardProps {
   onModuleChange?: (module: string) => void;
 }
 
 const Dashboard = ({ onModuleChange }: DashboardProps) => {
+  const { businessProfile, loading: profileLoading } = useBusinessProfile();
+
   const handleQuickAction = (action: string) => {
     console.log(`Quick action clicked: ${action}`);
     switch (action) {
       case 'register':
         onModuleChange?.('registration');
+        break;
+      case 'import-docs':
+        onModuleChange?.('operations');
+        break;
+      case 'update-business':
+        onModuleChange?.('settings');
         break;
       case 'invoice':
         onModuleChange?.('operations');
@@ -62,32 +71,59 @@ const Dashboard = ({ onModuleChange }: DashboardProps) => {
     // Could open a notifications panel or navigate to notifications
   };
 
-  const quickActions = [
-    { 
-      title: 'Register New Business', 
-      icon: Building2, 
-      color: 'bg-blue-900 hover:bg-blue-800',
-      action: 'register'
-    },
-    { 
-      title: 'Generate Invoice', 
-      icon: FileText, 
-      color: 'bg-emerald-600 hover:bg-emerald-700',
-      action: 'invoice'
-    },
-    { 
-      title: 'Add Employee', 
-      icon: Users, 
-      color: 'bg-purple-600 hover:bg-purple-700',
-      action: 'employee'
-    },
-    { 
-      title: 'File Tax Return', 
-      icon: TrendingUp, 
-      color: 'bg-orange-600 hover:bg-orange-700',
-      action: 'tax'
-    },
-  ];
+  // Dynamic quick actions based on business status
+  const getQuickActions = () => {
+    const baseActions = [
+      { 
+        title: 'Generate Invoice', 
+        icon: FileText, 
+        color: 'bg-emerald-600 hover:bg-emerald-700',
+        action: 'invoice'
+      },
+      { 
+        title: 'Add Employee', 
+        icon: Users, 
+        color: 'bg-purple-600 hover:bg-purple-700',
+        action: 'employee'
+      },
+      { 
+        title: 'File Tax Return', 
+        icon: TrendingUp, 
+        color: 'bg-orange-600 hover:bg-orange-700',
+        action: 'tax'
+      },
+    ];
+
+    if (businessProfile?.has_existing_business) {
+      return [
+        { 
+          title: 'Import Business Documents', 
+          icon: Building2, 
+          color: 'bg-blue-900 hover:bg-blue-800',
+          action: 'import-docs'
+        },
+        { 
+          title: 'Update Business Info', 
+          icon: Building2, 
+          color: 'bg-slate-600 hover:bg-slate-700',
+          action: 'update-business'
+        },
+        ...baseActions
+      ];
+    } else {
+      return [
+        { 
+          title: 'Register New Business', 
+          icon: Building2, 
+          color: 'bg-blue-900 hover:bg-blue-800',
+          action: 'register'
+        },
+        ...baseActions
+      ];
+    }
+  };
+
+  const quickActions = getQuickActions();
 
   const recentActivity = [
     { action: 'CAC Registration', status: 'completed', date: '2 hours ago', icon: CheckCircle, color: 'text-green-600' },
@@ -108,13 +144,31 @@ const Dashboard = ({ onModuleChange }: DashboardProps) => {
       <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Welcome back! 👋</h1>
-            <p className="text-gray-600 mt-1">Here's what's happening with your business today</p>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Welcome back! 👋
+              {businessProfile && (
+                <span className="block text-lg font-normal text-gray-600 mt-1">
+                  {businessProfile.business_name}
+                </span>
+              )}
+            </h1>
+            <p className="text-gray-600 mt-1">
+              {businessProfile?.has_existing_business 
+                ? "Manage your existing business operations and stay compliant"
+                : "Here's what's happening with your business setup today"
+              }
+            </p>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-emerald-600 border-emerald-200">
-              All systems operational
-            </Badge>
+            {businessProfile && (
+              <Badge variant="outline" className={
+                businessProfile.has_existing_business 
+                  ? "text-blue-600 border-blue-200"
+                  : "text-emerald-600 border-emerald-200"
+              }>
+                {businessProfile.has_existing_business ? 'Existing Business' : 'New Business Setup'}
+              </Badge>
+            )}
             <Button size="sm" onClick={handleViewNotifications}>
               <Bell size={16} className="mr-2" />
               View Notifications
@@ -180,6 +234,11 @@ const Dashboard = ({ onModuleChange }: DashboardProps) => {
           <CardTitle className="flex items-center gap-2">
             <Plus className="text-blue-900" size={20} />
             Quick Actions
+            {businessProfile?.has_existing_business && (
+              <span className="text-sm font-normal text-gray-500">
+                (Customized for existing business)
+              </span>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>

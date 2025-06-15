@@ -9,6 +9,89 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      business_profiles: {
+        Row: {
+          business_name: string
+          business_type: string
+          cac_registration_number: string | null
+          created_at: string
+          has_existing_business: boolean
+          id: string
+          registration_date: string | null
+          registration_status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_name: string
+          business_type: string
+          cac_registration_number?: string | null
+          created_at?: string
+          has_existing_business?: boolean
+          id?: string
+          registration_date?: string | null
+          registration_status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_name?: string
+          business_type?: string
+          cac_registration_number?: string | null
+          created_at?: string
+          has_existing_business?: boolean
+          id?: string
+          registration_date?: string | null
+          registration_status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      onboarding_progress: {
+        Row: {
+          business_profile_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          is_completed: boolean
+          is_skipped: boolean
+          step_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_profile_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          is_skipped?: boolean
+          step_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_profile_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          is_completed?: boolean
+          is_skipped?: boolean
+          step_key?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_progress_business_profile_id_fkey"
+            columns: ["business_profile_id"]
+            isOneToOne: false
+            referencedRelation: "business_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       token_packages: {
         Row: {
           created_at: string

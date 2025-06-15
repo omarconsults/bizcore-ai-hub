@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import BusinessSetupForm from '@/components/onboarding/BusinessSetupForm';
 
 interface RegisterFormProps {
   onToggleMode: () => void;
@@ -15,8 +16,8 @@ interface RegisterFormProps {
 const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [businessName, setBusinessName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showBusinessSetup, setShowBusinessSetup] = useState(false);
   const { signUp } = useAuth();
   const { toast } = useToast();
 
@@ -25,7 +26,7 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
     setLoading(true);
 
     try {
-      const { error } = await signUp(email, password, businessName);
+      const { error } = await signUp(email, password, '');
       if (error) {
         toast({
           title: "Registration failed",
@@ -35,9 +36,9 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
       } else {
         toast({
           title: "Account created!",
-          description: "Please check your email to verify your account.",
+          description: "Please check your email to verify your account, then complete your business setup.",
         });
-        onToggleMode(); // Switch to login form
+        setShowBusinessSetup(true);
       }
     } catch (error) {
       toast({
@@ -50,6 +51,20 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
     }
   };
 
+  const handleBusinessSetupComplete = (hasExistingBusiness: boolean) => {
+    toast({
+      title: "Welcome to BizCore!",
+      description: hasExistingBusiness 
+        ? "Your dashboard has been customized for your existing business."
+        : "Your dashboard is ready to guide you through business registration.",
+    });
+    // The user will be redirected to dashboard by the auth context
+  };
+
+  if (showBusinessSetup) {
+    return <BusinessSetupForm onComplete={handleBusinessSetupComplete} />;
+  }
+
   return (
     <Card className="w-full max-w-md bg-white/95 backdrop-blur-md border border-white/20 shadow-2xl">
       <CardHeader className="text-center">
@@ -58,18 +73,6 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
       </CardHeader>
       <CardContent className="space-y-6">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="businessName">Business Name</Label>
-            <Input
-              id="businessName"
-              type="text"
-              value={businessName}
-              onChange={(e) => setBusinessName(e.target.value)}
-              placeholder="Your Business Name"
-              required
-              className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
-            />
-          </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
