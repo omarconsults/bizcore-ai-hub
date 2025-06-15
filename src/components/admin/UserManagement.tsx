@@ -16,6 +16,8 @@ interface User {
   last_sign_in_at: string;
   business_name?: string;
   email_confirmed_at: string;
+  total_tokens?: number;
+  used_tokens?: number;
 }
 
 const UserManagement = () => {
@@ -29,27 +31,42 @@ const UserManagement = () => {
     try {
       setLoading(true);
       
-      // Note: We can't directly access auth.users table through the API
-      // Instead, we'll fetch user data from user_tokens table which has user info
+      // Fetch user data from user_tokens table which has user info
       const { data: tokenData, error: tokenError } = await supabase
         .from('user_tokens')
-        .select('user_id, email, created_at')
+        .select('user_id, email, created_at, total_tokens, used_tokens')
         .order('created_at', { ascending: false });
 
-      if (tokenError) throw tokenError;
+      if (tokenError) {
+        console.error('Error fetching users:', tokenError);
+        throw tokenError;
+      }
+
+      if (!tokenData) {
+        setUsers([]);
+        setTotalUsers(0);
+        return;
+      }
 
       // Transform the data to match our User interface
       const transformedUsers = tokenData.map(user => ({
-        id: user.user_id || 'unknown',
+        id: user.user_id || user.email || 'unknown',
         email: user.email,
         created_at: user.created_at,
         last_sign_in_at: user.created_at, // Using created_at as fallback
         business_name: user.email.split('@')[0], // Extract business name from email
-        email_confirmed_at: user.created_at
+        email_confirmed_at: user.created_at,
+        total_tokens: user.total_tokens,
+        used_tokens: user.used_tokens
       }));
 
       setUsers(transformedUsers);
       setTotalUsers(transformedUsers.length);
+      
+      toast({
+        title: "Success",
+        description: "Users data loaded successfully",
+      });
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -67,7 +84,7 @@ const UserManagement = () => {
   }, []);
 
   const filteredUsers = users.filter(user =>
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (user.business_name && user.business_name.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
@@ -131,9 +148,10 @@ const UserManagement = () => {
               <TableRow>
                 <TableHead>Email</TableHead>
                 <TableHead>Business Name</TableHead>
+                <TableHead>Total Tokens</TableHead>
+                <TableHead>Used Tokens</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Join Date</TableHead>
-                <TableHead>Last Activity</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -147,6 +165,8 @@ const UserManagement = () => {
                     </div>
                   </TableCell>
                   <TableCell>{user.business_name || 'Not specified'}</TableCell>
+                  <TableCell>{user.total_tokens?.toLocaleString() || '0'}</TableCell>
+                  <TableCell>{user.used_tokens?.toLocaleString() || '0'}</TableCell>
                   <TableCell>
                     <Badge variant={user.email_confirmed_at ? 'default' : 'destructive'}>
                       {user.email_confirmed_at ? 'Active' : 'Pending'}
@@ -157,9 +177,6 @@ const UserManagement = () => {
                       <Calendar size={16} className="text-gray-400" />
                       {new Date(user.created_at).toLocaleDateString()}
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'Never'}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -178,7 +195,7 @@ const UserManagement = () => {
               ))}
               {filteredUsers.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                     No users found matching your search criteria.
                   </TableCell>
                 </TableRow>

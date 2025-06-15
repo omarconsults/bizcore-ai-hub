@@ -15,6 +15,8 @@ interface Subscription {
   subscription_tier: string | null;
   subscription_end: string | null;
   created_at: string;
+  total_tokens?: number;
+  used_tokens?: number;
 }
 
 const SubscriptionManagement = () => {
@@ -33,26 +35,51 @@ const SubscriptionManagement = () => {
     try {
       setLoading(true);
       
-      // For now, we'll use the user_tokens table as we don't have a subscribers table yet
-      // In a real implementation, you'd query the subscribers table
+      // Fetch user data from user_tokens table
       const { data, error } = await supabase
         .from('user_tokens')
-        .select('user_id, email, created_at')
+        .select('user_id, email, created_at, total_tokens, used_tokens')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching subscriptions:', error);
+        throw error;
+      }
 
-      // Mock subscription data based on user tokens
-      const mockSubscriptions = data.map((user, index) => ({
-        user_id: user.user_id || 'unknown',
-        email: user.email,
-        subscribed: index % 3 !== 0, // Mock: 2/3 of users are subscribed
-        subscription_tier: index % 3 === 0 ? null : 
-                          index % 3 === 1 ? 'Professional' : 'Basic',
-        subscription_end: index % 3 !== 0 ? 
-          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null,
-        created_at: user.created_at
-      }));
+      if (!data) {
+        setSubscriptions([]);
+        return;
+      }
+
+      // Determine subscription tier based on token allocation
+      const mockSubscriptions = data.map((user, index) => {
+        const totalTokens = user.total_tokens || 0;
+        let subscriptionTier = null;
+        let subscribed = false;
+
+        if (totalTokens >= 5000) {
+          subscriptionTier = 'Enterprise';
+          subscribed = true;
+        } else if (totalTokens >= 1000) {
+          subscriptionTier = 'Professional';
+          subscribed = true;
+        } else if (totalTokens >= 200) {
+          subscriptionTier = 'Basic';
+          subscribed = true;
+        }
+
+        return {
+          user_id: user.user_id || user.email || 'unknown',
+          email: user.email,
+          subscribed,
+          subscription_tier: subscriptionTier,
+          subscription_end: subscribed ? 
+            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null,
+          created_at: user.created_at,
+          total_tokens: user.total_tokens,
+          used_tokens: user.used_tokens
+        };
+      });
 
       setSubscriptions(mockSubscriptions);
 
@@ -69,6 +96,11 @@ const SubscriptionManagement = () => {
         basicCount,
         professionalCount,
         enterpriseCount
+      });
+
+      toast({
+        title: "Success",
+        description: "Subscription data loaded successfully",
       });
 
     } catch (error) {
@@ -202,6 +234,7 @@ const SubscriptionManagement = () => {
               <TableRow>
                 <TableHead>Email</TableHead>
                 <TableHead>Plan</TableHead>
+                <TableHead>Tokens</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Subscription End</TableHead>
                 <TableHead>Join Date</TableHead>
@@ -218,6 +251,12 @@ const SubscriptionManagement = () => {
                     ) : (
                       <Badge variant="secondary">Free</Badge>
                     )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm">
+                      <div>{subscription.total_tokens?.toLocaleString() || '0'} total</div>
+                      <div className="text-gray-500">{subscription.used_tokens?.toLocaleString() || '0'} used</div>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -250,6 +289,13 @@ const SubscriptionManagement = () => {
                   </TableCell>
                 </TableRow>
               ))}
+              {subscriptions.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                    No subscriptions found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>

@@ -60,12 +60,15 @@ const TokenManagement = () => {
     try {
       setLoading(true);
       
-      // Get total users with tokens
+      // Get all user tokens
       const { data: usersData, error: usersError } = await supabase
         .from('user_tokens')
         .select('*');
 
-      if (usersError) throw usersError;
+      if (usersError) {
+        console.error('Error fetching users:', usersError);
+        throw usersError;
+      }
 
       // Get recent transactions
       const { data: transactionsData, error: transactionsError } = await supabase
@@ -74,12 +77,15 @@ const TokenManagement = () => {
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (transactionsError) throw transactionsError;
+      if (transactionsError) {
+        console.error('Error fetching transactions:', transactionsError);
+        throw transactionsError;
+      }
 
       // Calculate stats
-      const totalUsers = usersData.length;
-      const totalTokensIssued = usersData.reduce((sum, user) => sum + user.total_tokens, 0);
-      const totalTokensConsumed = usersData.reduce((sum, user) => sum + user.used_tokens, 0);
+      const totalUsers = usersData?.length || 0;
+      const totalTokensIssued = usersData?.reduce((sum, user) => sum + (user.total_tokens || 0), 0) || 0;
+      const totalTokensConsumed = usersData?.reduce((sum, user) => sum + (user.used_tokens || 0), 0) || 0;
       const averageUsage = totalUsers > 0 ? totalTokensConsumed / totalUsers : 0;
 
       setTokenStats({
@@ -89,8 +95,14 @@ const TokenManagement = () => {
         averageUsage: Math.round(averageUsage)
       });
 
-      setUserTokens(usersData);
-      setRecentTransactions(transactionsData);
+      // Calculate available tokens for each user
+      const processedUserTokens = (usersData || []).map(user => ({
+        ...user,
+        available_tokens: Math.max(0, (user.total_tokens || 0) - (user.used_tokens || 0))
+      }));
+
+      setUserTokens(processedUserTokens);
+      setRecentTransactions(transactionsData || []);
       
       toast({
         title: "Success",
@@ -109,22 +121,31 @@ const TokenManagement = () => {
   };
 
   const adjustUserTokens = async (userEmail: string, adjustment: number, reason: string) => {
+    if (!userEmail || adjustment === 0) {
+      toast({
+        title: "Error",
+        description: "Invalid parameters for token adjustment",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       console.log('Adjusting tokens for:', userEmail, 'by:', adjustment);
       
-      // First, get the current user data - use maybeSingle() to handle cases where user might not exist
-      const { data: currentData, error: fetchError } = await supabase
+      // First, find the user by email
+      const { data: userData, error: fetchError } = await supabase
         .from('user_tokens')
-        .select('total_tokens, user_id, used_tokens')
+        .select('*')
         .eq('email', userEmail)
-        .maybeSingle();
+        .limit(1);
 
       if (fetchError) {
         console.error('Error fetching user data:', fetchError);
         throw fetchError;
       }
 
-      if (!currentData) {
+      if (!userData || userData.length === 0) {
         toast({
           title: "Error",
           description: `User with email ${userEmail} not found`,
@@ -133,8 +154,9 @@ const TokenManagement = () => {
         return;
       }
 
-      const newTotal = Math.max(0, currentData.total_tokens + adjustment);
-      console.log('Updating total tokens from', currentData.total_tokens, 'to', newTotal);
+      const currentUser = userData[0];
+      const newTotal = Math.max(0, (currentUser.total_tokens || 0) + adjustment);
+      console.log('Updating total tokens from', currentUser.total_tokens, 'to', newTotal);
 
       // Update the user's total tokens
       const { error: updateError } = await supabase
@@ -143,7 +165,7 @@ const TokenManagement = () => {
           total_tokens: newTotal,
           updated_at: new Date().toISOString()
         })
-        .eq('email', userEmail);
+        .eq('id', currentUser.id);
 
       if (updateError) {
         console.error('Error updating tokens:', updateError);
@@ -154,7 +176,7 @@ const TokenManagement = () => {
       const { error: transactionError } = await supabase
         .from('token_transactions')
         .insert({
-          user_id: currentData.user_id,
+          user_id: currentUser.user_id,
           email: userEmail,
           transaction_type: adjustment > 0 ? 'purchase' : 'refund',
           amount: adjustment,
@@ -189,14 +211,17 @@ const TokenManagement = () => {
       // Call the reset function
       const { error } = await supabase.rpc('reset_monthly_tokens');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error resetting monthly tokens:', error);
+        throw error;
+      }
       
       toast({
         title: "Success",
         description: "Monthly tokens reset successfully for all users",
       });
       
-      fetchTokenStats();
+      await fetchTokenStats();
     } catch (error) {
       console.error('Error resetting monthly tokens:', error);
       toast({
@@ -212,7 +237,7 @@ const TokenManagement = () => {
   }, []);
 
   const filteredUsers = userTokens.filter(user => 
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -343,18 +368,21 @@ const TokenManagement = () => {
                 </TableHeader>
                 <TableBody>
                   {filteredUsers.map((user) => {
-                    const usagePercent = user.total_tokens > 0 ? (user.used_tokens / user.total_tokens) * 100 : 0;
-                    const isLowBalance = user.available_tokens < 10;
+                    const totalTokens = user.total_tokens || 0;
+                    const usedTokens = user.used_tokens || 0;
+                    const availableTokens = user.available_tokens || 0;
+                    const usagePercent = totalTokens > 0 ? (usedTokens / totalTokens) * 100 : 0;
+                    const isLowBalance = availableTokens < 10;
                     const isHighUsage = usagePercent > 90;
                     
                     return (
                       <TableRow key={user.id}>
                         <TableCell className="font-medium">{user.email}</TableCell>
-                        <TableCell>{user.total_tokens.toLocaleString()}</TableCell>
-                        <TableCell>{user.used_tokens.toLocaleString()}</TableCell>
+                        <TableCell>{totalTokens.toLocaleString()}</TableCell>
+                        <TableCell>{usedTokens.toLocaleString()}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            {user.available_tokens.toLocaleString()}
+                            {availableTokens.toLocaleString()}
                             {isLowBalance && <AlertTriangle size={16} className="text-red-500" />}
                           </div>
                         </TableCell>
@@ -400,6 +428,13 @@ const TokenManagement = () => {
                       </TableRow>
                     );
                   })}
+                  {filteredUsers.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                        No users found matching your search criteria.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
