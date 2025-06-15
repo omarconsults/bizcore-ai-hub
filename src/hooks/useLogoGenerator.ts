@@ -108,73 +108,106 @@ IMPORTANT: Respond ONLY with valid JSON in the exact format specified in your sy
         console.error('Failed to parse AI response:', parseError);
         console.error('Raw response was:', data.response);
         
-        // Create fallback logos if JSON parsing fails
+        // Create enhanced fallback logos with professional design
+        const businessInitials = logoData.businessName
+          .split(' ')
+          .map(word => word.charAt(0))
+          .join('')
+          .toUpperCase()
+          .slice(0, 2);
+
+        const colorSchemes = {
+          'Blue & Professional': { primary: '#2563EB', secondary: '#3B82F6', text: '#1E40AF' },
+          'Green & Growth': { primary: '#059669', secondary: '#10B981', text: '#047857' },
+          'Purple & Creative': { primary: '#7C3AED', secondary: '#8B5CF6', text: '#6D28D9' },
+          'Orange & Energetic': { primary: '#EA580C', secondary: '#FB923C', text: '#C2410C' },
+          'Red & Bold': { primary: '#DC2626', secondary: '#EF4444', text: '#B91C1C' },
+          'Black & Elegant': { primary: '#1F2937', secondary: '#374151', text: '#111827' }
+        };
+
+        const selectedColors = colorSchemes[logoData.colorPreference as keyof typeof colorSchemes] || colorSchemes['Blue & Professional'];
+        
         const fallbackLogos: GeneratedLogo[] = [
           {
             id: 1,
-            style: "Modern Text Logo",
-            description: `Clean and professional text-based logo for ${logoData.businessName}`,
-            colors: {
-              primary: "#2563EB",
-              secondary: "#64748B",
-              text: "#1E293B"
-            },
+            style: "Modern Monogram",
+            description: `Professional monogram logo featuring the initials ${businessInitials}`,
+            colors: selectedColors,
             typography: "Modern Sans-serif",
             svgCode: `<svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-              <text x="100" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#2563EB">
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:${selectedColors.primary};stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:${selectedColors.secondary};stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <circle cx="35" cy="30" r="22" fill="url(#grad1)" stroke="${selectedColors.text}" stroke-width="1"/>
+              <text x="35" y="37" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="white">
+                ${businessInitials}
+              </text>
+              <text x="70" y="35" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="${selectedColors.text}">
                 ${logoData.businessName}
               </text>
             </svg>`,
-            rationale: `Simple, readable design perfect for ${logoData.industry} businesses`
+            rationale: `Combines modern design with professional appeal, perfect for ${logoData.industry} businesses`
           },
           {
             id: 2,
-            style: "Icon + Text Logo",
-            description: `Combination logo with icon element for ${logoData.businessName}`,
-            colors: {
-              primary: "#059669",
-              secondary: "#34D399",
-              text: "#064E3B"
-            },
-            typography: "Professional Sans-serif",
+            style: "Icon Badge Design",
+            description: `Badge-style logo with geometric elements for ${logoData.businessName}`,
+            colors: selectedColors,
+            typography: "Contemporary Sans-serif",
             svgCode: `<svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="30" cy="30" r="12" fill="#059669"/>
-              <text x="55" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#064E3B">
-                ${logoData.businessName}
+              <defs>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:${selectedColors.primary};stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:${selectedColors.secondary};stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect x="8" y="12" width="184" height="36" rx="18" fill="url(#grad2)" stroke="${selectedColors.text}" stroke-width="1"/>
+              <polygon points="25,22 35,18 35,26" fill="white" opacity="0.9"/>
+              <text x="100" y="35" font-family="Arial, sans-serif" font-size="13" font-weight="bold" text-anchor="middle" fill="white">
+                ${logoData.businessName.toUpperCase()}
               </text>
             </svg>`,
-            rationale: `Versatile design with icon element suitable for various applications`
+            rationale: `Strong, memorable badge design that conveys trust and reliability`
           },
           {
             id: 3,
-            style: "Badge Style Logo",
-            description: `Badge-style logo design for ${logoData.businessName}`,
-            colors: {
-              primary: "#7C3AED",
-              secondary: "#A78BFA",
-              text: "#FFFFFF"
-            },
-            typography: "Bold Display Font",
+            style: "Minimalist Wordmark",
+            description: `Clean typography-focused design emphasizing the business name`,
+            colors: selectedColors,
+            typography: "Elegant Sans-serif",
             svgCode: `<svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-              <rect x="10" y="15" width="180" height="30" rx="15" fill="#7C3AED"/>
-              <text x="100" y="35" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#FFFFFF">
+              <defs>
+                <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:${selectedColors.primary};stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:${selectedColors.secondary};stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:${selectedColors.primary};stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect x="20" y="26" width="160" height="3" fill="url(#grad3)" rx="1"/>
+              <text x="100" y="23" font-family="Arial, sans-serif" font-size="16" font-weight="300" text-anchor="middle" fill="${selectedColors.text}">
                 ${logoData.businessName}
               </text>
+              <text x="100" y="42" font-family="Arial, sans-serif" font-size="8" font-weight="400" text-anchor="middle" fill="${selectedColors.secondary}" opacity="0.8">
+                ${logoData.industry.toUpperCase()}
+              </text>
             </svg>`,
-            rationale: `Strong, memorable badge design that works well for branding`
+            rationale: `Sophisticated minimalist approach that emphasizes brand name and industry focus`
           }
         ];
         
         setGeneratedLogos(fallbackLogos);
         setBrandGuidelines({
-          colorPalette: ["#2563EB", "#059669", "#7C3AED"],
-          typography: "Arial, Helvetica, sans-serif",
-          usage: "Use these logos consistently across all brand materials"
+          colorPalette: [selectedColors.primary, selectedColors.secondary, selectedColors.text],
+          typography: "Arial, Helvetica, sans-serif - clean and professional",
+          usage: "Use these logos consistently across all brand materials. Maintain proper spacing and don't alter the proportions."
         });
         
         toast({
-          title: "Logos Generated!",
-          description: `3 professional logo concepts created for ${logoData.businessName}`
+          title: "Professional Logos Generated!",
+          description: `3 high-quality logo concepts created for ${logoData.businessName}`
         });
       }
     } catch (error) {
