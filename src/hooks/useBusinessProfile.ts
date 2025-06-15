@@ -32,15 +32,19 @@ export const useBusinessProfile = () => {
     if (user) {
       fetchBusinessProfile();
       fetchOnboardingSteps();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
   const fetchBusinessProfile = async () => {
+    if (!user) return;
+    
     try {
       const { data, error } = await supabase
         .from('business_profiles')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
@@ -55,11 +59,13 @@ export const useBusinessProfile = () => {
   };
 
   const fetchOnboardingSteps = async () => {
+    if (!user) return;
+    
     try {
       const { data, error } = await supabase
         .from('onboarding_progress')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: true });
 
       if (error) {
@@ -76,6 +82,8 @@ export const useBusinessProfile = () => {
   };
 
   const updateStepProgress = async (stepKey: string, isCompleted: boolean) => {
+    if (!user) return;
+    
     try {
       const { error } = await supabase
         .from('onboarding_progress')
@@ -84,7 +92,7 @@ export const useBusinessProfile = () => {
           completed_at: isCompleted ? new Date().toISOString() : null,
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .eq('step_key', stepKey);
 
       if (error) {
@@ -119,8 +127,10 @@ export const useBusinessProfile = () => {
     updateStepProgress,
     getCompletionPercentage,
     refetch: () => {
-      fetchBusinessProfile();
-      fetchOnboardingSteps();
+      if (user) {
+        fetchBusinessProfile();
+        fetchOnboardingSteps();
+      }
     }
   };
 };
