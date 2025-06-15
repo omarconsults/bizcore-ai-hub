@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle, ArrowRight, Coins } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -25,23 +25,27 @@ const LandingPricing = () => {
 
   const plans = [
     {
-      name: "Starter",
-      price: "₦15,000",
-      description: "Perfect for new entrepreneurs",
+      name: "Pay-as-You-Go",
+      price: "₦50",
+      period: "/token",
+      description: "Perfect flexibility - buy tokens when you need them",
+      tokenPackage: "Start with 100 tokens for ₦5,000",
       features: [
-        "CAC Business Registration",
-        "Basic compliance monitoring",
-        "Simple invoicing (20/month)",
+        "No monthly commitment",
+        "Tokens never expire",
+        "All AI features included",
         "Email support"
       ]
     },
     {
       name: "Professional",
       price: "₦35,000",
-      description: "Ideal for growing businesses",
+      period: "/month",
+      description: "Complete business platform + 1,000 monthly tokens",
       popular: true,
+      tokenPackage: "1,000 AI tokens monthly + business tools",
       features: [
-        "Everything in Starter",
+        "1,000 AI tokens monthly",
         "Advanced compliance automation",
         "Unlimited invoicing",
         "HR management suite",
@@ -51,9 +55,11 @@ const LandingPricing = () => {
     {
       name: "Enterprise",
       price: "₦75,000",
-      description: "Comprehensive business solution",
+      period: "/month",
+      description: "Full platform + 5,000 monthly tokens",
+      tokenPackage: "5,000 AI tokens monthly + premium features",
       features: [
-        "Everything in Professional",
+        "5,000 AI tokens monthly",
         "Unlimited employees",
         "Dedicated account manager",
         "Custom integrations",
@@ -66,15 +72,16 @@ const LandingPricing = () => {
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <Badge className="mb-6 bg-blue-100 text-blue-800 px-4 py-2">
-            💰 Transparent Pricing
+          <Badge className="mb-6 bg-emerald-100 text-emerald-800 px-4 py-2">
+            🎯 Token-Based Pricing
           </Badge>
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Choose Your 
-            <span className="text-blue-900 block">Growth Plan</span>
+            Pay for What 
+            <span className="text-blue-900 block">You Actually Use</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            From startup to enterprise, we have the right plan to accelerate your Nigerian business growth.
+            Choose flexible token packages for AI features or subscription plans with monthly allowances. 
+            Transparent pricing that scales with your business needs.
           </p>
         </div>
 
@@ -91,7 +98,13 @@ const LandingPricing = () => {
                 <CardTitle className="text-xl font-bold text-gray-900">{plan.name}</CardTitle>
                 <div className="mt-4">
                   <span className="text-3xl font-bold text-blue-900">{plan.price}</span>
-                  <span className="text-gray-600">/month</span>
+                  <span className="text-gray-600">{plan.period}</span>
+                </div>
+                <div className="mt-2">
+                  <Badge variant="outline" className="text-emerald-600 border-emerald-200">
+                    <Coins className="mr-1" size={12} />
+                    {plan.tokenPackage}
+                  </Badge>
                 </div>
                 <p className="text-gray-600 mt-2">{plan.description}</p>
               </CardHeader>
@@ -110,7 +123,7 @@ const LandingPricing = () => {
                   className={`w-full py-3 ${plan.popular ? 'bg-blue-900 hover:bg-blue-800' : 'bg-gray-900 hover:bg-gray-800'}`}
                   onClick={() => handleChoosePlan(plan.name.toLowerCase())}
                 >
-                  Choose {plan.name}
+                  {plan.name === "Pay-as-You-Go" ? "Buy Tokens" : `Choose ${plan.name}`}
                   <ArrowRight className="ml-2" size={16} />
                 </Button>
               </CardContent>
@@ -124,7 +137,7 @@ const LandingPricing = () => {
             className="border-2 border-blue-900 text-blue-900 hover:bg-blue-50 px-8 py-3"
             onClick={handleViewPricing}
           >
-            View Detailed Pricing & Services
+            View Detailed Token Pricing
             <ArrowRight className="ml-2" size={16} />
           </Button>
         </div>
