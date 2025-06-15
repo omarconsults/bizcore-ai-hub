@@ -19,8 +19,15 @@ export interface TokenTransaction {
   createdAt: string;
 }
 
+// Input sanitization helper
+const sanitizeInput = (input: string): string => {
+  return input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+              .replace(/javascript:/gi, '')
+              .replace(/on\w+\s*=/gi, '');
+};
+
 export const useTokens = () => {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const [tokenBalance, setTokenBalance] = useState<TokenBalance>({
     totalTokens: 0,
@@ -31,13 +38,13 @@ export const useTokens = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchTokenBalance = async () => {
-    if (!user?.email) return;
+    if (!user?.email || !session) return;
 
     try {
       const { data, error } = await supabase
         .from('user_tokens')
         .select('total_tokens, used_tokens, available_tokens')
-        .eq('email', user.email)
+        .eq('user_id', user.id)
         .single();
 
       if (error && error.code !== 'PGRST116') {
@@ -67,7 +74,7 @@ export const useTokens = () => {
   };
 
   const initializeUserTokens = async () => {
-    if (!user?.email || !user?.id) return;
+    if (!user?.email || !user?.id || !session) return;
 
     try {
       const { error } = await supabase
@@ -100,7 +107,7 @@ export const useTokens = () => {
   };
 
   const consumeTokens = async (amount: number, feature: string, description?: string): Promise<boolean> => {
-    if (!user?.email || !user?.id) {
+    if (!user?.email || !user?.id || !session) {
       toast({
         title: "Authentication required",
         description: "Please log in to use AI features",
@@ -108,6 +115,20 @@ export const useTokens = () => {
       });
       return false;
     }
+
+    // Validate inputs
+    if (amount <= 0 || amount > 1000) {
+      toast({
+        title: "Invalid token amount",
+        description: "Token amount must be between 1 and 1000",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    // Sanitize feature and description
+    const sanitizedFeature = sanitizeInput(feature);
+    const sanitizedDescription = description ? sanitizeInput(description) : undefined;
 
     if (tokenBalance.availableTokens < amount) {
       toast({
@@ -119,18 +140,19 @@ export const useTokens = () => {
     }
 
     try {
-      // Update token balance
+      // Update token balance with proper user validation
       const { error: updateError } = await supabase
         .from('user_tokens')
         .update({ 
           used_tokens: tokenBalance.usedTokens + amount,
           updated_at: new Date().toISOString()
         })
-        .eq('email', user.email);
+        .eq('user_id', user.id)
+        .eq('email', user.email); // Additional validation
 
       if (updateError) throw updateError;
 
-      // Log transaction
+      // Log transaction with proper user validation
       const { error: transactionError } = await supabase
         .from('token_transactions')
         .insert({
@@ -138,8 +160,8 @@ export const useTokens = () => {
           email: user.email,
           transaction_type: 'consume',
           amount: -amount,
-          feature_used: feature,
-          description: description || `Used ${amount} tokens for ${feature}`
+          feature_used: sanitizedFeature,
+          description: sanitizedDescription || `Used ${amount} tokens for ${sanitizedFeature}`
         });
 
       if (transactionError) throw transactionError;
@@ -156,7 +178,7 @@ export const useTokens = () => {
       console.error('Error consuming tokens:', error);
       toast({
         title: "Error",
-        description: "Failed to consume tokens",
+        description: "Failed to consume tokens. Please try again.",
         variant: "destructive"
       });
       return false;
@@ -164,13 +186,13 @@ export const useTokens = () => {
   };
 
   const fetchTransactions = async () => {
-    if (!user?.email) return;
+    if (!user?.email || !session) return;
 
     try {
       const { data, error } = await supabase
         .from('token_transactions')
         .select('*')
-        .eq('email', user.email)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -192,11 +214,11 @@ export const useTokens = () => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user && session) {
       fetchTokenBalance();
       fetchTransactions();
     }
-  }, [user]);
+  }, [user, session]);
 
   return {
     tokenBalance,

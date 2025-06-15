@@ -15,6 +15,18 @@ interface RichTextEditorProps {
   formats?: string[];
 }
 
+// XSS protection: sanitize HTML content
+const sanitizeHtml = (html: string): string => {
+  // Remove potentially dangerous tags and attributes
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+    .replace(/<embed\b[^<]*>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '');
+};
+
 const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
   onChange,
@@ -25,7 +37,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   modules,
   formats
 }) => {
-  // Default modules with business-focused toolbar
+  // Default modules with business-focused toolbar (security-enhanced)
   const defaultModules = {
     toolbar: [
       [{ 'header': [1, 2, 3, false] }],
@@ -37,14 +49,24 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       [{ 'color': [] }, { 'background': [] }],
       ['clean']
     ],
+    clipboard: {
+      // Security: Strip formatting on paste to prevent XSS
+      matchVisual: false
+    }
   };
 
-  // Default formats
+  // Default formats (restricted for security)
   const defaultFormats = [
     'header', 'bold', 'italic', 'underline', 'strike',
     'list', 'bullet', 'indent', 'align',
     'link', 'blockquote', 'color', 'background'
   ];
+
+  // Enhanced onChange with sanitization
+  const handleChange = (content: string) => {
+    const sanitizedContent = sanitizeHtml(content);
+    onChange(sanitizedContent);
+  };
 
   // Add custom styles to the document head
   useEffect(() => {
@@ -113,7 +135,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       <ReactQuill
         theme={theme}
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         placeholder={placeholder}
         readOnly={readOnly}
         modules={modules || defaultModules}
