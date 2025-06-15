@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { 
   Home, 
   Shield, 
@@ -43,17 +43,65 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
   const userEmail = user?.email || '';
   const userInitial = businessName.charAt(0).toUpperCase();
 
-  const handleModuleClick = (moduleId) => {
-    setActiveModule(moduleId);
+  // Enhanced mobile menu close functionality
+  const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const handleModuleClick = (moduleId) => {
+    setActiveModule(moduleId);
+    closeMobileMenu(); // Always close on module selection
+  };
+
+  // Add escape key support and auto-close on route changes
+  useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape' && isMobileMenuOpen) {
+        closeMobileMenu();
+      }
+    };
+
+    const handleResize = () => {
+      // Close mobile menu if screen becomes large
+      if (window.innerWidth >= 1024 && isMobileMenuOpen) {
+        closeMobileMenu();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isMobileMenuOpen]);
+
+  // Auto-close when activeModule changes (route change)
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      closeMobileMenu();
+    }
+  }, [activeModule]);
+
   const SidebarContent = () => (
     <>
-      {/* Logo */}
+      {/* Logo with close button for mobile */}
       <div className="p-4 lg:p-6 border-b border-gray-200">
-        <h1 className="text-xl lg:text-2xl font-bold text-blue-900">BizCore</h1>
-        <p className="text-xs text-emerald-600 font-medium">AI Business OS</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl lg:text-2xl font-bold text-blue-900">BizCore</h1>
+            <p className="text-xs text-emerald-600 font-medium">AI Business OS</p>
+          </div>
+          {/* Close button - only visible on mobile */}
+          <button
+            onClick={closeMobileMenu}
+            className="lg:hidden p-1 rounded-md hover:bg-gray-100 transition-colors"
+            aria-label="Close sidebar"
+          >
+            <X size={20} className="text-gray-600" />
+          </button>
+        </div>
       </div>
 
       {/* Navigation */}
@@ -112,17 +160,21 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-blue-900 text-white rounded-lg shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-blue-900 text-white rounded-lg shadow-lg hover:bg-blue-800 transition-colors"
         aria-label="Toggle sidebar"
       >
         {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* Mobile Overlay */}
+      {/* Mobile Overlay with improved interaction */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={() => setIsMobileMenuOpen(false)}
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 animate-fade-in"
+          onClick={closeMobileMenu}
+          onTouchStart={(e) => {
+            // Prevent scrolling when overlay is touched
+            e.preventDefault();
+          }}
         />
       )}
 
@@ -131,8 +183,8 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
         <SidebarContent />
       </div>
 
-      {/* Mobile Sidebar */}
-      <div className={`lg:hidden fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 z-50 transform transition-transform duration-300 ease-in-out ${
+      {/* Mobile Sidebar with improved animations */}
+      <div className={`lg:hidden fixed left-0 top-0 h-full w-64 bg-white shadow-2xl border-r border-gray-200 z-50 transform transition-transform duration-300 ease-in-out ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       } flex flex-col`}>
         <SidebarContent />

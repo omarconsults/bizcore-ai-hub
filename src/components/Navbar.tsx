@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { useState } from 'react';
@@ -15,25 +15,55 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
+  // Enhanced mobile menu close functionality
+  const closeMobileMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   const handleAuthAction = () => {
     if (user) {
       signOut();
     } else if (onAuthClick) {
       onAuthClick();
     }
+    closeMobileMenu();
   };
 
   const handleNavigation = (path: string) => {
     navigate(path);
-    setIsMenuOpen(false);
+    closeMobileMenu(); // Always close on navigation
   };
+
+  // Add escape key support and auto-close functionality
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isMenuOpen) {
+        closeMobileMenu();
+      }
+    };
+
+    const handleResize = () => {
+      // Close mobile menu if screen becomes large
+      if (window.innerWidth >= 768 && isMenuOpen) {
+        closeMobileMenu();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isMenuOpen]);
 
   return (
     <nav className="bg-slate-950/95 backdrop-blur-md border-b border-white/10 sticky top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center cursor-pointer group" onClick={() => navigate('/')}>
+          <div className="flex items-center cursor-pointer group" onClick={() => handleNavigation('/')}>
             <div className="flex-shrink-0">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center">
@@ -94,10 +124,21 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation with improved functionality */}
         {isMenuOpen && (
           <div className="md:hidden lg:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/10 rounded-b-2xl animate-fade-in">
             <div className="px-2 pt-2 pb-3 space-y-1">
+              {/* Close button inside mobile menu */}
+              <div className="flex justify-end mb-2">
+                <button
+                  onClick={closeMobileMenu}
+                  className="p-2 rounded-md hover:bg-slate-800 transition-colors"
+                  aria-label="Close mobile menu"
+                >
+                  <X size={20} className="text-slate-300" />
+                </button>
+              </div>
+              
               <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Features</button>
               <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Pricing</button>
               <button onClick={() => handleNavigation('/help')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Resources</button>
@@ -107,7 +148,7 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
               <div className="flex flex-col space-y-3 px-3 pt-4 border-t border-white/10 mt-4">
                 {user ? (
                   <>
-                    <div className="text-sm text-slate-300 text-center py-2">
+                    <div className="text-sm text-slate-300 text-center py-2 truncate">
                       Welcome, {user.user_metadata?.business_name || user.email}
                     </div>
                     <Button variant="outline" onClick={handleAuthAction} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
