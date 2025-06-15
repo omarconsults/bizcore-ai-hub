@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
@@ -12,7 +11,10 @@ import {
   Coins,
   Sparkles,
   Menu,
-  X
+  X,
+  Mail,
+  Monitor,
+  Activity
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -33,6 +35,9 @@ const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
     { id: 'subscriptions', name: 'Subscriptions', icon: CreditCard },
     { id: 'payments', name: 'Payments', icon: FileText },
     { id: 'tokens', name: 'Token Management', icon: Coins },
+    { id: 'email', name: 'Email Management', icon: Mail },
+    { id: 'monitoring', name: 'System Monitoring', icon: Monitor },
+    { id: 'activity', name: 'Activity Tracking', icon: Activity },
     { id: 'analytics', name: 'Analytics', icon: BarChart3 },
     { id: 'compliance', name: 'Compliance', icon: Shield },
     { id: 'settings', name: 'Settings', icon: Settings },
@@ -165,13 +170,12 @@ const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
         {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* Mobile Overlay with improved interaction */}
+      {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 animate-fade-in"
           onClick={closeMobileMenu}
           onTouchStart={(e) => {
-            // Prevent scrolling when overlay is touched
             e.preventDefault();
           }}
         />
@@ -182,7 +186,7 @@ const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
         <SidebarContent />
       </div>
 
-      {/* Mobile Sidebar with improved animations */}
+      {/* Mobile Sidebar */}
       <div className={`lg:hidden fixed left-0 top-0 h-full w-64 bg-white shadow-2xl border-r border-gray-200 z-50 transform transition-transform duration-300 ease-in-out ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       } flex flex-col`}>

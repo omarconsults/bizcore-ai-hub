@@ -8,6 +8,9 @@ import AdminAnalytics from './AdminAnalytics';
 import ComplianceOverview from './ComplianceOverview';
 import AdminSettings from './AdminSettings';
 import TokenManagement from './TokenManagement';
+import EmailManagement from './EmailManagement';
+import SystemMonitoring from './SystemMonitoring';
+import ActivityTracking from './ActivityTracking';
 
 interface AdminContentProps {
   activeModule: string;
@@ -30,6 +33,12 @@ const AdminContent = ({ activeModule }: AdminContentProps) => {
         return <ComplianceOverview />;
       case 'tokens':
         return <TokenManagement />;
+      case 'email':
+        return <EmailManagement />;
+      case 'monitoring':
+        return <SystemMonitoring />;
+      case 'activity':
+        return <ActivityTracking />;
       case 'settings':
         return <AdminSettings />;
       default:
