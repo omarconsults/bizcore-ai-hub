@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
 import LandingHero from '@/components/LandingHero';
 import LandingFeatures from '@/components/landing/LandingFeatures';
+import LandingPricing from '@/components/landing/LandingPricing';
 import LandingCTA from '@/components/landing/LandingCTA';
 import Footer from '@/components/Footer';
 import AICopilot from '@/components/AICopilot';
@@ -85,6 +86,7 @@ const Index = () => {
       <Navbar onAuthClick={handleAuthClick} />
       <LandingHero />
       <LandingFeatures />
+      <LandingPricing />
       <LandingCTA onStartDemo={handleStartDemo} user={user} />
       <Footer />
       <AICopilot />
