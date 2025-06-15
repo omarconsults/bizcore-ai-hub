@@ -1,8 +1,16 @@
 import React from 'react';
 import { Search, Book, MessageCircle, Phone, Mail, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 const HelpCenter = () => {
+  const navigate = useNavigate();
+
+  const handleAuthClick = () => {
+    navigate('/auth');
+  };
+
   const categories = [
     {
       title: "Getting Started",
@@ -40,6 +48,8 @@ const HelpCenter = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar onAuthClick={handleAuthClick} />
+      
       {/* Header */}
       <div className="bg-emerald-600 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">

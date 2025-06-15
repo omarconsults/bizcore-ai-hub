@@ -1,8 +1,16 @@
 import React from 'react';
 import { MapPin, Clock, Users, Heart, Zap, Globe } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 const Careers = () => {
+  const navigate = useNavigate();
+
+  const handleAuthClick = () => {
+    navigate('/auth');
+  };
+
   const openRoles = [
     {
       title: "Senior Frontend Developer",
@@ -78,6 +86,8 @@ const Careers = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Navbar onAuthClick={handleAuthClick} />
+      
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">

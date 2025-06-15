@@ -1,10 +1,17 @@
 
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 const NotFound = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleAuthClick = () => {
+    navigate('/auth');
+  };
 
   useEffect(() => {
     console.error(
@@ -15,6 +22,7 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <Navbar onAuthClick={handleAuthClick} />
       <div className="flex items-center justify-center min-h-[80vh]">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">404</h1>
