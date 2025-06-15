@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -118,7 +117,7 @@ const DesignStudio = () => {
       // Convert SVG to PNG using canvas
       const svg = new Blob([logo.svgCode], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(svg);
-      const img = new Image();
+      const img = document.createElement('img') as HTMLImageElement;
       img.onload = () => {
         const canvas = document.createElement('canvas');
         canvas.width = 800;
