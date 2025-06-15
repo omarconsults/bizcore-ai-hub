@@ -1,17 +1,16 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useTokens } from '@/hooks/useTokens';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import RichTextEditor from '@/components/ui/rich-text-editor';
 import { FileText, Download, Zap, Coins } from 'lucide-react';
 
 interface DocumentGeneratorFormProps {
@@ -402,7 +401,12 @@ Create a comprehensive DPA that meets NDPR requirements and international standa
                   <FormItem>
                     <FormLabel>Business Address *</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Enter business address" {...field} />
+                      <RichTextEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Enter your complete business address..."
+                        className="min-h-[100px]"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -414,11 +418,13 @@ Create a comprehensive DPA that meets NDPR requirements and international standa
                 name="specificRequirements"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Specific Requirements</FormLabel>
+                    <FormLabel>Specific Requirements & Customizations</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Any specific clauses, requirements, or customizations for this document..." 
-                        {...field} 
+                      <RichTextEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Enter any specific clauses, requirements, or customizations for this document..."
+                        className="min-h-[150px]"
                       />
                     </FormControl>
                     <FormMessage />

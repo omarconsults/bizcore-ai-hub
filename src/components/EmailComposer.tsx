@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useEmailService } from '@/hooks/useEmailService';
+import RichTextEditor from '@/components/ui/rich-text-editor';
 import { Mail, Send, Loader2, FileText, Briefcase, UserPlus, Calendar } from 'lucide-react';
 
 const EmailComposer = () => {
@@ -22,275 +22,220 @@ const EmailComposer = () => {
       name: 'Business Proposal',
       icon: Briefcase,
       subject: 'Strategic Business Partnership Proposal - [Your Company Name]',
-      content: `Dear [Recipient Name],
+      content: `<h2><strong>Strategic Business Partnership Proposal</strong></h2>
 
-I hope this email finds you well and thriving in your business endeavors.
+<p>Dear [Recipient Name],</p>
 
-I am writing to introduce [Your Company Name] and present an exciting business partnership opportunity that I believe could be mutually beneficial for both our organizations.
+<p>I hope this email finds you well and thriving in your business endeavors.</p>
 
-**About [Your Company Name]:**
-We are a [brief company description] specializing in [your main services/products]. With [number] years of experience in the Nigerian market, we have successfully [key achievement or credential].
+<p>I am writing to introduce <strong>[Your Company Name]</strong> and present an exciting business partnership opportunity that I believe could be mutually beneficial for both our organizations.</p>
 
-**Partnership Opportunity:**
-We have identified a strategic opportunity where our companies can collaborate to:
-• [Benefit 1 - specific value proposition]
-• [Benefit 2 - market expansion opportunity]
-• [Benefit 3 - cost savings or efficiency gains]
-• [Benefit 4 - competitive advantage]
+<h3><strong>About [Your Company Name]:</strong></h3>
+<p>We are a [brief company description] specializing in [your main services/products]. With [number] years of experience in the Nigerian market, we have successfully [key achievement or credential].</p>
 
-**Our Proposal:**
-We propose a [type of partnership - joint venture, strategic alliance, supplier agreement, etc.] that would enable both organizations to:
+<h3><strong>Partnership Opportunity:</strong></h3>
+<p>We have identified a strategic opportunity where our companies can collaborate to:</p>
+<ul>
+<li><strong>Benefit 1</strong> - specific value proposition</li>
+<li><strong>Benefit 2</strong> - market expansion opportunity</li>
+<li><strong>Benefit 3</strong> - cost savings or efficiency gains</li>
+<li><strong>Benefit 4</strong> - competitive advantage</li>
+</ul>
 
-1. **Market Expansion**: Leverage each other's customer base and market presence
-2. **Resource Optimization**: Share expertise, technology, and operational capabilities
-3. **Risk Mitigation**: Diversify business risks through collaborative efforts
-4. **Innovation**: Combine our unique strengths to develop innovative solutions
+<h3><strong>Our Proposal:</strong></h3>
+<p>We propose a [type of partnership] that would enable both organizations to:</p>
+<ol>
+<li><strong>Market Expansion</strong>: Leverage each other's customer base and market presence</li>
+<li><strong>Resource Optimization</strong>: Share expertise, technology, and operational capabilities</li>
+<li><strong>Risk Mitigation</strong>: Diversify business risks through collaborative efforts</li>
+<li><strong>Innovation</strong>: Combine our unique strengths to develop innovative solutions</li>
+</ol>
 
-**Next Steps:**
-I would welcome the opportunity to discuss this proposal in detail and explore how we can create value together. I am available for:
-• A face-to-face meeting at your convenience
-• A virtual presentation of our partnership framework
-• A preliminary discussion via phone call
+<h3><strong>Next Steps:</strong></h3>
+<p>I would welcome the opportunity to discuss this proposal in detail. I am available for:</p>
+<ul>
+<li>A face-to-face meeting at your convenience</li>
+<li>A virtual presentation of our partnership framework</li>
+<li>A preliminary discussion via phone call</li>
+</ul>
 
-**Expected Outcomes:**
-Based on our market analysis, this partnership could potentially:
-• Increase revenue by [percentage/amount] for both parties
-• Reduce operational costs by [percentage/amount]
-• Expand market reach to [new markets/demographics]
-• Accelerate growth timeline by [timeframe]
+<p>Thank you for considering this opportunity. I look forward to your positive response and the possibility of building a strong, profitable partnership.</p>
 
-I have attached a preliminary partnership outline and our company profile for your review. I am confident that together, we can create significant value in the Nigerian market.
-
-Thank you for considering this opportunity. I look forward to your positive response and the possibility of building a strong, profitable partnership.
-
-Best regards,
-
-[Your Full Name]
-[Your Title]
-[Your Company Name]
-[Phone Number]
-[Email Address]
-[Company Website]
-
-P.S. I am also available for an informal coffee meeting to discuss this opportunity in a relaxed setting.`
+<p><strong>Best regards,</strong><br><br>
+[Your Full Name]<br>
+[Your Title]<br>
+[Your Company Name]<br>
+[Phone Number]<br>
+[Email Address]</p>`
     },
     {
       id: 'job_application',
       name: 'Job Application',
       icon: UserPlus,
       subject: 'Application for [Position Title] - [Your Full Name]',
-      content: `Dear Hiring Manager / [Hiring Manager Name],
+      content: `<h2><strong>Job Application</strong></h2>
 
-I am writing to express my strong interest in the [Position Title] position advertised on [where you found the job posting]. With my [number] years of experience in [relevant field] and proven track record in the Nigerian market, I am confident that I would be a valuable addition to your team.
+<p>Dear Hiring Manager,</p>
 
-**Why I'm the Right Fit:**
+<p>I am writing to express my strong interest in the <strong>[Position Title]</strong> position advertised on [where you found the job posting]. With my [number] years of experience in [relevant field] and proven track record in the Nigerian market, I am confident that I would be a valuable addition to your team.</p>
 
-**Professional Experience:**
-In my current role as [Current Position] at [Current Company], I have successfully:
-• [Achievement 1 with specific metrics/results]
-• [Achievement 2 with quantifiable impact]
-• [Achievement 3 demonstrating relevant skills]
-• [Achievement 4 showing growth/leadership]
+<h3><strong>Why I'm the Right Fit:</strong></h3>
 
-**Key Qualifications:**
-✓ [Degree/Certification] in [Field] from [Institution]
-✓ [Number] years of progressive experience in [Industry]
-✓ Expertise in [specific skills/technologies relevant to the role]
-✓ Proven ability to [key requirement from job description]
-✓ Strong understanding of Nigerian market dynamics and business culture
+<h4><strong>Professional Experience:</strong></h4>
+<p>In my current role as [Current Position] at [Current Company], I have successfully:</p>
+<ul>
+<li>Achievement 1 with specific metrics/results</li>
+<li>Achievement 2 with quantifiable impact</li>
+<li>Achievement 3 demonstrating relevant skills</li>
+<li>Achievement 4 showing growth/leadership</li>
+</ul>
 
-**Core Competencies:**
-• **Leadership & Team Management**: Successfully led teams of [number] people, achieving [specific results]
-• **Strategic Planning**: Developed and implemented strategies that resulted in [specific outcomes]
-• **Market Analysis**: Conducted comprehensive market research leading to [business impact]
-• **Project Management**: Delivered [number] projects on time and within budget
-• **Stakeholder Management**: Built strong relationships with clients, vendors, and internal teams
+<h4><strong>Key Qualifications:</strong></h4>
+<ul>
+<li>✓ [Degree/Certification] in [Field] from [Institution]</li>
+<li>✓ [Number] years of progressive experience in [Industry]</li>
+<li>✓ Expertise in [specific skills/technologies relevant to the role]</li>
+<li>✓ Strong understanding of Nigerian market dynamics and business culture</li>
+</ul>
 
-**What I Bring to Your Organization:**
-• Deep knowledge of Nigerian business environment and regulatory landscape
-• Strong network of professional contacts across [relevant industries]
-• Proven ability to drive results in challenging market conditions
-• Innovative approach to problem-solving and process improvement
-• Excellent communication skills in English and [local languages]
+<h4><strong>Core Competencies:</strong></h4>
+<ul>
+<li><strong>Leadership & Team Management</strong>: Successfully led teams of [number] people</li>
+<li><strong>Strategic Planning</strong>: Developed strategies resulting in [specific outcomes]</li>
+<li><strong>Market Analysis</strong>: Conducted research leading to [business impact]</li>
+<li><strong>Project Management</strong>: Delivered [number] projects on time and within budget</li>
+</ul>
 
-**My Vision for This Role:**
-If selected for this position, I plan to:
-1. **First 30 Days**: Conduct thorough assessment of current processes and team dynamics
-2. **First 90 Days**: Implement quick wins while developing comprehensive improvement strategy
-3. **First 6 Months**: Execute strategic initiatives to drive measurable business results
-4. **First Year**: Establish sustainable systems for continued growth and success
+<p>I am particularly excited about [specific aspect of the company/role] and believe my experience in [relevant area] would be immediately beneficial to your organization.</p>
 
-I am particularly excited about [specific aspect of the company/role that interests you] and believe my experience in [relevant area] would be immediately beneficial to your organization.
+<p>I have attached my detailed resume and would welcome the opportunity to discuss how my skills and experience can contribute to your team's success.</p>
 
-I have attached my detailed resume and would welcome the opportunity to discuss how my skills and experience can contribute to your team's success. I am available for an interview at your convenience and can provide additional references upon request.
+<p>Thank you for considering my application. I look forward to hearing from you soon.</p>
 
-Thank you for considering my application. I look forward to hearing from you soon.
-
-Warm regards,
-
-[Your Full Name]
-[Phone Number]
-[Email Address]
-[LinkedIn Profile]
-[Portfolio/Website if applicable]
-
-Attachments: Resume, Portfolio, References (available upon request)`
+<p><strong>Warm regards,</strong><br><br>
+[Your Full Name]<br>
+[Phone Number]<br>
+[Email Address]</p>`
     },
     {
       id: 'meeting_request',
       name: 'Meeting Request',
       icon: Calendar,
       subject: 'Request for Strategic Business Meeting - [Purpose/Topic]',
-      content: `Dear [Recipient Name],
+      content: `<h2><strong>Meeting Request</strong></h2>
 
-I hope this message finds you in good health and high spirits.
+<p>Dear [Recipient Name],</p>
 
-I am reaching out to request a meeting to discuss [specific purpose/opportunity] that I believe could be of mutual interest to both our organizations.
+<p>I hope this message finds you in good health and high spirits.</p>
 
-**Meeting Purpose:**
-The primary objective of this meeting is to:
-• [Objective 1 - specific goal or outcome]
-• [Objective 2 - discussion topic or decision needed]
-• [Objective 3 - collaboration opportunity or business matter]
+<p>I am reaching out to request a meeting to discuss <strong>[specific purpose/opportunity]</strong> that I believe could be of mutual interest to both our organizations.</p>
 
-**Background Context:**
-[Provide brief context about why this meeting is important, any previous interactions, or relevant business developments]
+<h3><strong>Meeting Purpose:</strong></h3>
+<p>The primary objective of this meeting is to:</p>
+<ul>
+<li>Objective 1 - specific goal or outcome</li>
+<li>Objective 2 - discussion topic or decision needed</li>
+<li>Objective 3 - collaboration opportunity or business matter</li>
+</ul>
 
-**Proposed Agenda:**
-1. **Introduction & Company Updates** (10 minutes)
-   - Brief overview of recent developments in both organizations
-   
-2. **Main Discussion Points** (30 minutes)
-   - [Topic 1 with brief description]
-   - [Topic 2 with brief description]
-   - [Topic 3 with brief description]
+<h3><strong>Proposed Agenda:</strong></h3>
+<ol>
+<li><strong>Introduction & Company Updates</strong> (10 minutes)
+   <ul><li>Brief overview of recent developments in both organizations</li></ul>
+</li>
+<li><strong>Main Discussion Points</strong> (30 minutes)
+   <ul>
+   <li>Topic 1 with brief description</li>
+   <li>Topic 2 with brief description</li>
+   <li>Topic 3 with brief description</li>
+   </ul>
+</li>
+<li><strong>Opportunities & Next Steps</strong> (15 minutes)
+   <ul><li>Identification of potential collaboration areas and follow-up actions</li></ul>
+</li>
+</ol>
 
-3. **Opportunities & Next Steps** (15 minutes)
-   - Identification of potential collaboration areas
-   - Discussion of mutual benefits and value creation
-   - Agreement on follow-up actions and timelines
+<h3><strong>Proposed Meeting Details:</strong></h3>
+<ul>
+<li><strong>Duration</strong>: Approximately 1 hour</li>
+<li><strong>Suggested Dates</strong>: 
+  <ul>
+  <li>Option 1: [Date] at [Time]</li>
+  <li>Option 2: [Date] at [Time]</li>
+  <li>Option 3: [Date] at [Time]</li>
+  </ul>
+</li>
+<li><strong>Format</strong>: [In-person / Virtual / Hybrid]</li>
+<li><strong>Location</strong>: [Specific address if in-person]</li>
+</ul>
 
-4. **Q&A Session** (5 minutes)
-   - Open discussion for any additional questions or concerns
+<p>I understand your time is valuable, and I am committed to making this meeting worthwhile and productive. I am flexible with timing and can adjust to accommodate your schedule.</p>
 
-**Proposed Meeting Details:**
-• **Duration**: Approximately 1 hour
-• **Suggested Dates**: 
-  - Option 1: [Date] at [Time]
-  - Option 2: [Date] at [Time]
-  - Option 3: [Date] at [Time]
-• **Format**: [In-person at your office / Virtual via Zoom/Teams / Hybrid]
-• **Location**: [Specific address if in-person]
+<p>Please let me know your availability, and I will send a calendar invitation with all relevant details.</p>
 
-**Value Proposition:**
-This meeting could lead to:
-• [Benefit 1 - specific value for the recipient]
-• [Benefit 2 - business opportunity]
-• [Benefit 3 - strategic advantage]
+<p>Thank you for considering this request. I look forward to our productive discussion.</p>
 
-**Preparation:**
-To make our time together as productive as possible, I will:
-• Prepare detailed presentation materials
-• Bring relevant data and market analysis
-• Share agenda in advance for your review
-
-I understand your time is valuable, and I am committed to making this meeting worthwhile and productive. I am flexible with timing and can adjust to accommodate your schedule.
-
-Please let me know your availability, and I will send a calendar invitation with all relevant details.
-
-Thank you for considering this request. I look forward to our productive discussion and the potential for future collaboration.
-
-Best regards,
-
-[Your Full Name]
-[Your Title]
-[Your Company Name]
-[Direct Phone Number]
-[Email Address]
-
-P.S. If you prefer to discuss this opportunity via phone first, I am available at [phone number] during business hours.`
+<p><strong>Best regards,</strong><br><br>
+[Your Full Name]<br>
+[Your Title]<br>
+[Your Company Name]<br>
+[Phone Number]</p>`
     },
     {
       id: 'invoice_follow_up',
       name: 'Invoice Follow-up',
       icon: FileText,
       subject: 'Friendly Reminder: Invoice #[Invoice Number] Payment Due',
-      content: `Dear [Client Name],
+      content: `<h2><strong>Payment Reminder</strong></h2>
 
-I hope this email finds you well and that your business is thriving.
+<p>Dear [Client Name],</p>
 
-I am writing to follow up on Invoice #[Invoice Number] dated [Invoice Date] for services rendered to [Client Company Name]. According to our records, this invoice has a payment due date of [Due Date] and remains outstanding.
+<p>I hope this email finds you well and that your business is thriving.</p>
 
-**Invoice Details:**
-• Invoice Number: #[Invoice Number]
-• Invoice Date: [Date]
-• Due Date: [Due Date]
-• Amount Due: ₦[Amount]
-• Services Provided: [Brief description of services/products]
+<p>I am writing to follow up on <strong>Invoice #[Invoice Number]</strong> dated [Invoice Date] for services rendered to [Client Company Name]. According to our records, this invoice has a payment due date of [Due Date] and remains outstanding.</p>
 
-**Payment Terms Reminder:**
-As per our service agreement, payment terms are [payment terms, e.g., "Net 30 days"]. We understand that business operations can be complex, and occasional delays in payment processing can occur.
+<h3><strong>Invoice Details:</strong></h3>
+<ul>
+<li><strong>Invoice Number</strong>: #[Invoice Number]</li>
+<li><strong>Invoice Date</strong>: [Date]</li>
+<li><strong>Due Date</strong>: [Due Date]</li>
+<li><strong>Amount Due</strong>: ₦[Amount]</li>
+<li><strong>Services Provided</strong>: [Brief description]</li>
+</ul>
 
-**Outstanding Amount:**
-The current outstanding balance is ₦[Amount]. This amount includes:
-• [Service/Product 1]: ₦[Amount]
-• [Service/Product 2]: ₦[Amount]
-• [Any applicable taxes]: ₦[Amount]
-• **Total Amount Due**: ₦[Total Amount]
+<h3><strong>Payment Options:</strong></h3>
+<ol>
+<li><strong>Bank Transfer</strong> (Preferred Method)
+   <ul>
+   <li>Account Name: [Company Name]</li>
+   <li>Account Number: [Account Number]</li>
+   <li>Bank: [Bank Name]</li>
+   </ul>
+</li>
+<li><strong>Mobile Money Transfer</strong>: [Mobile Money Details]</li>
+<li><strong>Check Payment</strong>: Payable to [Company Name]</li>
+</ol>
 
-**Payment Options:**
-For your convenience, we offer multiple payment methods:
+<h3><strong>Important Notes:</strong></h3>
+<ul>
+<li>Please include Invoice #[Invoice Number] as reference for all payments</li>
+<li>Send payment confirmation to [email] for immediate account updating</li>
+<li>Contact us immediately if there are any discrepancies</li>
+</ul>
 
-1. **Bank Transfer** (Preferred Method)
-   - Account Name: [Company Name]
-   - Account Number: [Account Number]
-   - Bank: [Bank Name]
-   - Sort Code: [Sort Code]
+<p>If payment has already been made, please accept our apologies for this reminder and kindly send us the payment confirmation details.</p>
 
-2. **Mobile Money Transfer**
-   - [Mobile Money Details]
+<p>We greatly value our business relationship and want to ensure continued smooth operations. Your prompt attention to this matter would be greatly appreciated.</p>
 
-3. **Check Payment**
-   - Payable to: [Company Name]
-   - Mail to: [Company Address]
+<p>If you have any questions about this invoice, please don't hesitate to contact me directly.</p>
 
-4. **Online Payment**
-   - Payment Portal: [Website/Platform]
-   - Reference: Invoice #[Invoice Number]
+<p>Thank you for your prompt attention to this matter.</p>
 
-**Important Notes:**
-• Please include Invoice #[Invoice Number] as reference for all payments
-• Send payment confirmation to [email] for immediate account updating
-• Contact us immediately if there are any discrepancies with the invoice
-
-**Next Steps:**
-If payment has already been made, please accept our apologies for this reminder and kindly send us the payment confirmation details for our records.
-
-If you are experiencing any challenges with payment, please do not hesitate to contact us. We are open to discussing:
-• Alternative payment arrangements
-• Payment plan options
-• Any concerns about the invoice or services provided
-
-**Late Payment Policy:**
-Please note that as per our terms and conditions, a late payment fee of [percentage]% per month may apply to overdue invoices. We prefer to work with our valued clients to resolve payment matters amicably.
-
-**Relationship Value:**
-We greatly value our business relationship and want to ensure continued smooth operations. Your prompt attention to this matter would be greatly appreciated and will help us maintain the high level of service you've come to expect.
-
-If you have any questions about this invoice or need additional documentation, please don't hesitate to contact me directly at [phone number] or [email address].
-
-Thank you for your prompt attention to this matter. We look forward to your payment and to continuing our successful business partnership.
-
-Best regards,
-
-[Your Full Name]
-[Your Title]
-[Company Name]
-[Direct Phone Number]
-[Email Address]
-[Company Website]
-
-**Attachment**: Invoice #[Invoice Number] (PDF)`
+<p><strong>Best regards,</strong><br><br>
+[Your Full Name]<br>
+[Your Title]<br>
+[Company Name]<br>
+[Phone Number]</p>`
     }
   ];
 
@@ -321,8 +266,8 @@ Best regards,
             </h1>
           </div>
           
-          <div style="line-height: 1.6; color: #374151; white-space: pre-wrap; font-size: 16px;">
-${message}
+          <div style="line-height: 1.6; color: #374151; font-size: 16px;">
+            ${message}
           </div>
           
           <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; background-color: #f9fafb; padding: 20px; border-radius: 8px;">
@@ -333,7 +278,7 @@ ${message}
           </div>
         </div>
       `,
-      text: message,
+      text: message.replace(/<[^>]*>/g, ''), // Strip HTML for text version
     };
 
     const result = await sendEmail(emailData);
@@ -400,13 +345,11 @@ ${message}
           
           <div className="space-y-2">
             <Label htmlFor="message">Email Content</Label>
-            <Textarea
-              id="message"
+            <RichTextEditor
+              value={message}
+              onChange={setMessage}
               placeholder="Compose your professional message here..."
               className="min-h-[300px]"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              required
             />
           </div>
           

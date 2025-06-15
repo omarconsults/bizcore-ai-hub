@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useTokens } from '@/hooks/useTokens';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import RichTextEditor from '@/components/ui/rich-text-editor';
 import { UserPlus, Copy, Download, Zap, Coins, Loader2 } from 'lucide-react';
 
 export const HiringAssistant: React.FC = () => {
@@ -246,21 +246,21 @@ Format the output as a complete, ready-to-post job description that would be com
 
           <div>
             <Label htmlFor="key-skills">Key Skills Required</Label>
-            <Textarea 
-              id="key-skills"
-              placeholder="List the essential skills, technologies, and qualifications required for this role..."
+            <RichTextEditor
               value={keySkills}
-              onChange={(e) => setKeySkills(e.target.value)}
+              onChange={setKeySkills}
+              placeholder="List the essential skills, technologies, and qualifications required for this role..."
+              className="min-h-[120px]"
             />
           </div>
 
           <div>
             <Label htmlFor="specific-requirements">Specific Requirements & Additional Details</Label>
-            <Textarea 
-              id="specific-requirements"
-              placeholder="Any specific requirements, company culture notes, or additional details about the role..."
+            <RichTextEditor
               value={specificRequirements}
-              onChange={(e) => setSpecificRequirements(e.target.value)}
+              onChange={setSpecificRequirements}
+              placeholder="Any specific requirements, company culture notes, or additional details about the role..."
+              className="min-h-[120px]"
             />
           </div>
 
