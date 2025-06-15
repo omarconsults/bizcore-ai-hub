@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,7 +11,7 @@ export interface TokenBalance {
 
 export interface TokenTransaction {
   id: string;
-  transactionType: 'consume' | 'purchase' | 'refund' | 'reset';
+  transactionType: 'consume' | 'purchase' | 'refund' | 'reset' | 'monthly_bonus';
   amount: number;
   featureUsed?: string;
   description?: string;
@@ -75,11 +74,24 @@ export const useTokens = () => {
         .insert({
           user_id: user.id,
           email: user.email,
-          total_tokens: 50, // Free tier gets 50 tokens
+          total_tokens: 10, // New users get 10 free tokens
           used_tokens: 0
         });
 
       if (error) throw error;
+
+      // Log the welcome bonus transaction
+      await supabase
+        .from('token_transactions')
+        .insert({
+          user_id: user.id,
+          email: user.email,
+          transaction_type: 'monthly_bonus',
+          amount: 10,
+          feature_used: 'welcome_bonus',
+          description: 'Welcome! 10 free tokens to get you started'
+        });
+
       await fetchTokenBalance();
     } catch (error) {
       console.error('Error initializing user tokens:', error);

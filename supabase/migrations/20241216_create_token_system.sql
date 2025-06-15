@@ -17,7 +17,7 @@ CREATE TABLE public.token_transactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
-  transaction_type TEXT NOT NULL, -- 'consume', 'purchase', 'refund', 'reset'
+  transaction_type TEXT NOT NULL, -- 'consume', 'purchase', 'refund', 'reset', 'monthly_bonus'
   amount INTEGER NOT NULL, -- negative for consumption, positive for addition
   feature_used TEXT, -- 'ai_copilot', 'document_generation', 'business_plan', etc.
   description TEXT,
@@ -77,14 +77,14 @@ INSERT INTO public.token_packages (name, tokens, price_naira, is_active) VALUES
   ('Enterprise Pack', 1500, 50000, true), -- ₦500 for 1500 tokens
   ('Premium Pack', 3000, 90000, true); -- ₦900 for 3000 tokens
 
--- Create function to reset monthly tokens based on subscription
+-- Create function to reset monthly tokens based on subscription + give 10 free tokens to all users
 CREATE OR REPLACE FUNCTION reset_monthly_tokens()
 RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-  -- Reset tokens for users based on their subscription tier
+  -- Reset tokens for users based on their subscription tier + 10 free tokens for everyone
   UPDATE public.user_tokens 
   SET 
     used_tokens = 0,
@@ -94,23 +94,35 @@ BEGIN
         WHERE s.user_id = user_tokens.user_id 
         AND s.subscribed = true 
         AND s.subscription_tier = 'Starter'
-      ) THEN GREATEST(total_tokens, 200)
+      ) THEN GREATEST(total_tokens, 210) -- 200 subscription + 10 free
       WHEN EXISTS (
         SELECT 1 FROM public.subscribers s 
         WHERE s.user_id = user_tokens.user_id 
         AND s.subscribed = true 
         AND s.subscription_tier = 'Professional'
-      ) THEN GREATEST(total_tokens, 1000)
+      ) THEN GREATEST(total_tokens, 1010) -- 1000 subscription + 10 free
       WHEN EXISTS (
         SELECT 1 FROM public.subscribers s 
         WHERE s.user_id = user_tokens.user_id 
         AND s.subscribed = true 
         AND s.subscription_tier = 'Enterprise'
-      ) THEN GREATEST(total_tokens, 5000)
-      ELSE GREATEST(total_tokens, 50) -- Free tier gets 50 tokens
+      ) THEN GREATEST(total_tokens, 5010) -- 5000 subscription + 10 free
+      ELSE GREATEST(total_tokens, 10) -- Free tier gets 10 tokens monthly
     END,
     last_reset_date = CURRENT_DATE,
     updated_at = now()
   WHERE last_reset_date < CURRENT_DATE - INTERVAL '30 days';
+
+  -- Log the monthly bonus transactions
+  INSERT INTO public.token_transactions (user_id, email, transaction_type, amount, feature_used, description)
+  SELECT 
+    ut.user_id, 
+    ut.email, 
+    'monthly_bonus', 
+    10, 
+    'monthly_free_tokens', 
+    'Monthly free token bonus'
+  FROM public.user_tokens ut
+  WHERE ut.last_reset_date = CURRENT_DATE;
 END;
 $$;

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Coins, Plus, RefreshCw, ShoppingCart } from 'lucide-react';
+import { Coins, Plus, RefreshCw, ShoppingCart, Gift } from 'lucide-react';
 import { useTokens } from '@/hooks/useTokens';
 import TokenPurchaseModal from './TokenPurchaseModal';
 
@@ -72,6 +72,16 @@ const TokenBalance = () => {
           className="w-full h-2"
         />
 
+        <div className="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+          <div className="flex items-center gap-2 text-emerald-700 text-sm font-medium mb-1">
+            <Gift size={14} />
+            Monthly Free Tokens
+          </div>
+          <p className="text-emerald-600 text-xs">
+            You get 10 free tokens every month! Perfect for trying our AI features.
+          </p>
+        </div>
+
         <div className="flex gap-2">
           <Dialog open={showPurchaseModal} onOpenChange={setShowPurchaseModal}>
             <DialogTrigger asChild>
@@ -88,7 +98,7 @@ const TokenBalance = () => {
             </DialogContent>
           </Dialog>
           
-          {tokenBalance.availableTokens < 10 && (
+          {tokenBalance.availableTokens < 5 && (
             <Badge variant="destructive" className="text-xs">
               Low balance
             </Badge>
