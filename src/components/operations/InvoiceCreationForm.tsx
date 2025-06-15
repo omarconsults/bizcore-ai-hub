@@ -1,12 +1,13 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { X, Plus, Trash2 } from 'lucide-react';
+import { X } from 'lucide-react';
+import ClientInformationSection from './forms/ClientInformationSection';
+import InvoiceDetailsSection from './forms/InvoiceDetailsSection';
+import InvoiceItemsSection, { InvoiceItem } from './forms/InvoiceItemsSection';
+import NotesSection from './forms/NotesSection';
 
 interface InvoiceCreationFormProps {
   isOpen: boolean;
@@ -14,14 +15,11 @@ interface InvoiceCreationFormProps {
   onInvoiceCreated: (invoice: any) => void;
 }
 
-interface InvoiceItem {
-  description: string;
-  quantity: number;
-  rate: number;
-  amount: number;
-}
-
-const InvoiceCreationForm: React.FC<InvoiceCreationFormProps> = ({ isOpen, onClose, onInvoiceCreated }) => {
+const InvoiceCreationForm: React.FC<InvoiceCreationFormProps> = ({ 
+  isOpen, 
+  onClose, 
+  onInvoiceCreated 
+}) => {
   const [formData, setFormData] = useState({
     clientName: '',
     clientEmail: '',
@@ -132,146 +130,30 @@ const InvoiceCreationForm: React.FC<InvoiceCreationFormProps> = ({ isOpen, onClo
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Client Information */}
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Client Information</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="clientName">Client Name *</Label>
-                <Input
-                  id="clientName"
-                  value={formData.clientName}
-                  onChange={(e) => handleInputChange('clientName', e.target.value)}
-                  placeholder="Enter client name"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="clientEmail">Client Email *</Label>
-                <Input
-                  id="clientEmail"
-                  type="email"
-                  value={formData.clientEmail}
-                  onChange={(e) => handleInputChange('clientEmail', e.target.value)}
-                  placeholder="client@example.com"
-                  required
-                />
-              </div>
-            </div>
-          </div>
+          <ClientInformationSection
+            clientName={formData.clientName}
+            clientEmail={formData.clientEmail}
+            onInputChange={handleInputChange}
+          />
 
-          {/* Invoice Details */}
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Invoice Details</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="invoiceType">Invoice Type *</Label>
-                <Select onValueChange={(value) => handleInputChange('invoiceType', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="service">Service Invoice</SelectItem>
-                    <SelectItem value="product">Product Invoice</SelectItem>
-                    <SelectItem value="consultation">Consultation</SelectItem>
-                    <SelectItem value="recurring">Recurring Invoice</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="dueDate">Due Date *</Label>
-                <Input
-                  id="dueDate"
-                  type="date"
-                  value={formData.dueDate}
-                  onChange={(e) => handleInputChange('dueDate', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          </div>
+          <InvoiceDetailsSection
+            invoiceType={formData.invoiceType}
+            dueDate={formData.dueDate}
+            onInputChange={handleInputChange}
+          />
 
-          {/* Invoice Items */}
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h4 className="font-medium text-gray-900">Invoice Items</h4>
-              <Button type="button" onClick={addItem} size="sm" variant="outline">
-                <Plus size={16} className="mr-1" />
-                Add Item
-              </Button>
-            </div>
-            
-            <div className="space-y-3">
-              {items.map((item, index) => (
-                <div key={index} className="grid grid-cols-12 gap-2 items-end">
-                  <div className="col-span-5">
-                    <Label>Description</Label>
-                    <Input
-                      value={item.description}
-                      onChange={(e) => handleItemChange(index, 'description', e.target.value)}
-                      placeholder="Item description"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <Label>Qty</Label>
-                    <Input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => handleItemChange(index, 'quantity', parseInt(e.target.value) || 0)}
-                      min="1"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <Label>Rate (₦)</Label>
-                    <Input
-                      type="number"
-                      value={item.rate}
-                      onChange={(e) => handleItemChange(index, 'rate', parseInt(e.target.value) || 0)}
-                      min="0"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <Label>Amount</Label>
-                    <Input
-                      value={`₦${item.amount.toLocaleString()}`}
-                      readOnly
-                      className="bg-gray-50"
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeItem(index)}
-                      disabled={items.length === 1}
-                      className="p-2"
-                    >
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="text-right">
-              <div className="text-lg font-semibold">
-                Total: ₦{calculateTotal().toLocaleString()}
-              </div>
-            </div>
-          </div>
+          <InvoiceItemsSection
+            items={items}
+            onItemChange={handleItemChange}
+            onAddItem={addItem}
+            onRemoveItem={removeItem}
+            calculateTotal={calculateTotal}
+          />
 
-          {/* Notes */}
-          <div>
-            <Label htmlFor="notes">Notes (Optional)</Label>
-            <Textarea
-              id="notes"
-              value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
-              placeholder="Additional notes or terms..."
-              rows={3}
-            />
-          </div>
+          <NotesSection
+            notes={formData.notes}
+            onInputChange={handleInputChange}
+          />
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
