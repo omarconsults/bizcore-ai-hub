@@ -76,15 +76,20 @@ const LandingPricing = () => {
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden">
-      {/* Enhanced background elements */}
+      {/* Enhanced background elements with more animations */}
       <div className="absolute inset-0">
         <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-64 sm:w-96 h-64 sm:h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 sm:bottom-20 right-10 sm:right-20 w-64 sm:w-96 h-64 sm:h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        
+        {/* Animated pricing decorations */}
+        <div className="absolute top-1/4 left-1/6 text-indigo-400/10 text-6xl animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}>💰</div>
+        <div className="absolute bottom-1/4 right-1/5 text-purple-400/10 text-5xl animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}>💎</div>
+        <div className="absolute top-2/3 left-2/3 text-emerald-400/10 text-4xl animate-bounce" style={{ animationDelay: '3s', animationDuration: '6s' }}>⚡</div>
       </div>
       
       {/* Grid overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] animate-pulse" style={{ animationDuration: '10s' }}></div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16 sm:mb-20">
@@ -106,11 +111,15 @@ const LandingPricing = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
           {plans.map((plan, index) => (
-            <Card key={index} className={`relative group bg-gradient-to-br ${plan.gradient} backdrop-blur-md border ${plan.borderColor} hover:border-opacity-70 transition-all duration-500 hover:scale-105 hover:shadow-2xl ${plan.popular ? 'scale-105 border-indigo-400/60 shadow-2xl shadow-indigo-500/20' : 'hover:shadow-indigo-500/10'}`}>
+            <Card 
+              key={index} 
+              className={`relative group bg-gradient-to-br ${plan.gradient} backdrop-blur-md border ${plan.borderColor} hover:border-opacity-70 transition-all duration-500 hover:scale-105 hover:shadow-2xl animate-fade-in ${plan.popular ? 'scale-105 border-indigo-400/60 shadow-2xl shadow-indigo-500/20' : 'hover:shadow-indigo-500/10'}`}
+              style={{ animationDelay: `${index * 0.15}s` }}
+            >
               {plan.popular && (
-                <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2 z-10">
+                <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2 z-10 animate-bounce" style={{ animationDuration: '2s' }}>
                   <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 sm:px-6 py-1 sm:py-2 shadow-lg">
-                    <Sparkles className="mr-1" size={12} />
+                    <Sparkles className="mr-1 animate-pulse" size={12} />
                     Most Popular
                   </Badge>
                 </div>

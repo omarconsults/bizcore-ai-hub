@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, ArrowRight, Zap, Clock, Shield, Sparkles, TrendingUp } from 'lucide-react';
@@ -23,20 +22,33 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
 
   return (
     <section className="relative py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-slate-950 via-violet-950 to-slate-900 overflow-hidden">
-      {/* Background Pattern */}
+      {/* Enhanced Background Pattern with more dynamic animations */}
       <div className="absolute inset-0">
         <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-64 sm:w-96 h-64 sm:h-96 bg-violet-500/15 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 sm:bottom-20 right-10 sm:right-20 w-64 sm:w-96 h-64 sm:h-96 bg-cyan-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-1/2 left-1/3 w-48 sm:w-64 h-48 sm:h-64 bg-emerald-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        
+        {/* Additional animated elements */}
+        <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl animate-bounce" style={{ animationDelay: '1s', animationDuration: '6s' }}></div>
+        <div className="absolute bottom-1/3 left-1/5 w-24 h-24 bg-pink-500/10 rounded-full blur-xl animate-bounce" style={{ animationDelay: '3s', animationDuration: '8s' }}></div>
+        
+        {/* Floating CTA decorations */}
+        <div className="absolute top-1/5 left-1/6 text-violet-400/20 text-5xl animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}>🚀</div>
+        <div className="absolute bottom-1/5 right-1/5 text-cyan-400/20 text-4xl animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}>⭐</div>
+        <div className="absolute top-2/3 right-2/3 text-emerald-400/20 text-6xl animate-bounce" style={{ animationDelay: '3s', animationDuration: '6s' }}>💎</div>
+        
+        {/* Pulsing rings */}
+        <div className="absolute top-1/4 left-1/3 w-40 h-40 border border-violet-500/10 rounded-full animate-ping" style={{ animationDelay: '2s', animationDuration: '6s' }}></div>
+        <div className="absolute bottom-1/4 right-1/3 w-32 h-32 border border-cyan-500/10 rounded-full animate-ping" style={{ animationDelay: '4s', animationDuration: '8s' }}></div>
       </div>
 
       {/* Grid overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] sm:bg-[size:50px_50px]"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] sm:bg-[size:50px_50px] animate-pulse" style={{ animationDuration: '12s' }}></div>
 
       <div className="relative z-10 max-w-6xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-        {/* Urgency Banner */}
-        <div className="inline-flex items-center bg-gradient-to-r from-violet-500/20 to-orange-500/20 backdrop-blur-sm text-violet-300 px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm font-semibold mb-8 sm:mb-12 border border-violet-500/30 animate-pulse">
-          <Sparkles className="mr-2" size={16} />
+        {/* Urgency Banner with enhanced animation */}
+        <div className="inline-flex items-center bg-gradient-to-r from-violet-500/20 to-orange-500/20 backdrop-blur-sm text-violet-300 px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm font-semibold mb-8 sm:mb-12 border border-violet-500/30 animate-bounce" style={{ animationDuration: '2s' }}>
+          <Sparkles className="mr-2 animate-pulse" size={16} />
           🔥 Limited Time: 50% Off Setup Fees This Month
         </div>
 
@@ -52,26 +64,27 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
           <span className="text-white font-semibold"> Start your journey today and be operational by week's end.</span>
         </p>
 
-        {/* Stats Bar */}
-        <div className="bg-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 sm:mb-12 border border-white/20 shadow-2xl">
+        {/* Stats Bar with staggered animations */}
+        <div className="bg-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-6 sm:p-8 mb-8 sm:mb-12 border border-white/20 shadow-2xl animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-center">
             {urgencyStats.map((stat, index) => (
-              <div key={index} className="text-white group">
-                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300">✨</div>
+              <div key={index} className="text-white group animate-fade-in" style={{ animationDelay: `${index * 0.2}s` }}>
+                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300 animate-bounce" style={{ animationDelay: `${index * 0.5}s`, animationDuration: '3s' }}>✨</div>
                 <div className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">{stat}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Main CTA */}
+        {/* Main CTA with enhanced hover effects */}
         <div className="mb-8 sm:mb-12">
           <Button 
             onClick={onStartDemo}
-            className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white px-12 sm:px-16 py-6 sm:py-8 rounded-2xl sm:rounded-3xl text-lg sm:text-xl lg:text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl hover:shadow-violet-500/25 duration-300 w-full sm:w-auto"
+            className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 text-white px-12 sm:px-16 py-6 sm:py-8 rounded-2xl sm:rounded-3xl text-lg sm:text-xl lg:text-2xl font-bold transition-all transform hover:scale-105 shadow-2xl hover:shadow-violet-500/25 duration-300 w-full sm:w-auto animate-pulse"
+            style={{ animationDuration: '3s' }}
           >
             {user ? 'Enter Your Dashboard →' : 'Start Your Business Journey →'}
-            <ArrowRight className="ml-3 sm:ml-4" size={24} />
+            <ArrowRight className="ml-3 sm:ml-4 animate-bounce" size={24} style={{ animationDelay: '1s' }} />
           </Button>
           
           <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
@@ -85,13 +98,13 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
           </div>
         </div>
 
-        {/* Guarantees */}
-        <div className="bg-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-8 sm:p-10 border border-white/20 shadow-2xl">
-          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">Our Ironclad Guarantees</h3>
+        {/* Guarantees with staggered entrance animations */}
+        <div className="bg-white/5 backdrop-blur-md rounded-2xl sm:rounded-3xl p-8 sm:p-10 border border-white/20 shadow-2xl animate-fade-in" style={{ animationDelay: '0.5s' }}>
+          <h3 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8 animate-fade-in" style={{ animationDelay: '0.7s' }}>Our Ironclad Guarantees</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {guarantees.map((guarantee, index) => (
-              <div key={index} className="flex flex-col items-center text-center space-y-3 sm:space-y-4 group">
-                <div className="p-3 sm:p-4 bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl group-hover:from-white/20 group-hover:to-white/10 transition-all duration-300">
+              <div key={index} className="flex flex-col items-center text-center space-y-3 sm:space-y-4 group animate-fade-in" style={{ animationDelay: `${index * 0.2 + 0.9}s` }}>
+                <div className="p-3 sm:p-4 bg-gradient-to-br from-white/10 to-white/5 rounded-xl sm:rounded-2xl group-hover:from-white/20 group-hover:to-white/10 transition-all duration-300 animate-bounce" style={{ animationDelay: `${index * 0.5 + 1}s`, animationDuration: '2s' }}>
                   <guarantee.icon className="text-violet-400 group-hover:text-violet-300 transition-colors" size={28} />
                 </div>
                 <p className="text-white font-medium leading-relaxed group-hover:text-violet-300 transition-colors text-sm sm:text-base">{guarantee.text}</p>

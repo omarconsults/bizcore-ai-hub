@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const LandingFeatures = () => {
@@ -76,10 +75,31 @@ const LandingFeatures = () => {
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-slate-950 relative overflow-hidden">
-      {/* Background elements */}
+      {/* Enhanced background elements with animations */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-violet-500/8 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-cyan-500/8 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-violet-500/8 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
+        <div className="absolute bottom-0 right-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-cyan-500/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s', animationDuration: '6s' }}></div>
+        
+        {/* Additional animated elements */}
+        <div className="absolute top-1/2 left-1/6 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl animate-bounce" style={{ animationDelay: '1s', animationDuration: '8s' }}></div>
+        <div className="absolute bottom-1/4 right-1/3 w-24 h-24 bg-pink-500/5 rounded-full blur-xl animate-bounce" style={{ animationDelay: '3s', animationDuration: '10s' }}></div>
+        
+        {/* Animated grid overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:40px_40px] animate-pulse" style={{ animationDuration: '12s' }}></div>
+        
+        {/* Floating particles */}
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-0.5 h-0.5 bg-white/10 rounded-full animate-pulse"
+            style={{
+              top: `${10 + Math.random() * 80}%`,
+              left: `${10 + Math.random() * 80}%`,
+              animationDelay: `${Math.random() * 6}s`,
+              animationDuration: `${4 + Math.random() * 6}s`
+            }}
+          />
+        ))}
       </div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,10 +121,14 @@ const LandingFeatures = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16 sm:mb-20">
           {features.map((feature, index) => (
-            <div key={index} className={`group relative bg-gradient-to-br ${feature.gradient} backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/10 hover:border-white/20 transition-all duration-500 hover:scale-105 hover:shadow-2xl`}>
+            <div 
+              key={index} 
+              className={`group relative bg-gradient-to-br ${feature.gradient} backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/10 hover:border-white/20 transition-all duration-500 hover:scale-105 hover:shadow-2xl animate-fade-in`}
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl sm:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative z-10">
-                <div className="text-4xl sm:text-5xl lg:text-6xl mb-4 sm:mb-6 transform group-hover:scale-110 transition-transform duration-300">{feature.icon}</div>
+                <div className="text-4xl sm:text-5xl lg:text-6xl mb-4 sm:mb-6 transform group-hover:scale-110 transition-transform duration-300 animate-bounce" style={{ animationDelay: `${index * 0.5}s`, animationDuration: '2s', animationIterationCount: '3' }}>{feature.icon}</div>
                 <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4 group-hover:text-violet-300 transition-colors">{feature.title}</h3>
                 <p className="text-slate-300 mb-6 sm:mb-8 leading-relaxed group-hover:text-slate-200 transition-colors text-sm sm:text-base">{feature.description}</p>
                 <div className="border-t border-white/20 pt-4 sm:pt-6">
@@ -116,9 +140,15 @@ const LandingFeatures = () => {
           ))}
         </div>
 
-        {/* Success Stories Section */}
+        {/* Enhanced Success Stories Section */}
         <div className="relative bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-md rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-16 border border-white/10">
-          <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 via-cyan-500/10 to-violet-500/10 rounded-2xl sm:rounded-3xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 via-cyan-500/10 to-violet-500/10 rounded-2xl sm:rounded-3xl animate-pulse" style={{ animationDuration: '6s' }}></div>
+          
+          {/* Floating testimonial decorations */}
+          <div className="absolute top-4 left-4 text-violet-400/20 text-2xl animate-bounce" style={{ animationDelay: '1s', animationDuration: '3s' }}>💬</div>
+          <div className="absolute top-4 right-4 text-cyan-400/20 text-2xl animate-bounce" style={{ animationDelay: '2s', animationDuration: '4s' }}>⭐</div>
+          <div className="absolute bottom-4 left-1/2 text-emerald-400/20 text-2xl animate-bounce" style={{ animationDelay: '3s', animationDuration: '5s' }}>🎯</div>
+          
           <div className="relative z-10">
             <div className="text-center mb-12 sm:mb-16">
               <h3 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-4 sm:mb-6">Real Success Stories from Real Entrepreneurs</h3>
@@ -127,7 +157,11 @@ const LandingFeatures = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-white/5 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/20 hover:bg-white/10 transition-all duration-300 group">
+                <div 
+                  key={index} 
+                  className="bg-white/5 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/20 hover:bg-white/10 transition-all duration-300 group animate-fade-in hover:scale-105"
+                  style={{ animationDelay: `${index * 0.2 + 0.5}s` }}
+                >
                   <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <div className="text-2xl sm:text-3xl lg:text-4xl">{testimonial.avatar}</div>
                     <div className="flex text-yellow-400 text-base sm:text-lg lg:text-xl">
