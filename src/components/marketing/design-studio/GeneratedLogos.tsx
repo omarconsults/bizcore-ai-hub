@@ -89,6 +89,35 @@ const GeneratedLogos: React.FC<GeneratedLogosProps> = ({
     });
   };
 
+  const renderLogo = (logo: GeneratedLogo) => {
+    // Clean up the SVG code and ensure it's properly formatted
+    let cleanSvg = logo.svgCode.trim();
+    
+    // Ensure the SVG has proper namespace and attributes
+    if (!cleanSvg.includes('xmlns=')) {
+      cleanSvg = cleanSvg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+    }
+    
+    // Ensure viewBox is set for proper scaling
+    if (!cleanSvg.includes('viewBox=')) {
+      cleanSvg = cleanSvg.replace('<svg', '<svg viewBox="0 0 200 60"');
+    }
+    
+    // Add width and height for proper display
+    if (!cleanSvg.includes('width=') && !cleanSvg.includes('height=')) {
+      cleanSvg = cleanSvg.replace('<svg', '<svg width="100%" height="100%"');
+    }
+
+    console.log('Rendering logo SVG:', cleanSvg);
+    
+    return (
+      <div 
+        className="w-full h-full flex items-center justify-center"
+        dangerouslySetInnerHTML={{ __html: cleanSvg }}
+      />
+    );
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -98,11 +127,8 @@ const GeneratedLogos: React.FC<GeneratedLogosProps> = ({
         <div className="grid md:grid-cols-3 gap-4">
           {generatedLogos.map((logo) => (
             <div key={logo.id} className="border rounded-lg p-4 space-y-3">
-              <div className="h-20 flex items-center justify-center bg-gray-50 rounded">
-                <div 
-                  dangerouslySetInnerHTML={{ __html: logo.svgCode }} 
-                  className="max-w-full max-h-full"
-                />
+              <div className="h-20 bg-white border rounded flex items-center justify-center overflow-hidden">
+                {renderLogo(logo)}
               </div>
               <div>
                 <h3 className="font-semibold">{logo.style}</h3>
