@@ -1,3 +1,4 @@
+
 // This service handles resource management
 export interface FetchedResource {
   id: string;
@@ -7,6 +8,9 @@ export interface FetchedResource {
   category: string;
   description?: string;
   created_at: string;
+  source?: string;
+  rating?: string;
+  duration?: string;
 }
 
 // Mock service for now - can be replaced with actual API calls
