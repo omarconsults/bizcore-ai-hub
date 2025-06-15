@@ -1,9 +1,11 @@
 
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export const useEmailService = () => {
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   const sendEmail = async (emailData: {
     to: string;
@@ -11,6 +13,7 @@ export const useEmailService = () => {
     html: string;
     text: string;
   }) => {
+    setLoading(true);
     try {
       console.log('Sending email:', emailData);
 
@@ -46,8 +49,10 @@ export const useEmailService = () => {
       });
       
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
-  return { sendEmail };
+  return { sendEmail, loading };
 };
