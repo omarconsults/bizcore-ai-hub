@@ -9,7 +9,8 @@ import {
   BarChart3,
   Shield,
   LogOut,
-  Coins
+  Coins,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +21,7 @@ interface AdminSidebarProps {
 }
 
 const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
 
   const modules = [
@@ -39,12 +40,26 @@ const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
     navigate('/');
   };
 
+  const handleBackToDashboard = () => {
+    navigate('/');
+  };
+
   return (
     <div className="w-64 bg-white shadow-lg border-r border-gray-200 h-screen flex flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-red-600">Admin Portal</h1>
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+            <Shield className="text-white" size={18} />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-red-600">Admin Portal</h1>
+          </div>
+        </div>
         <p className="text-xs text-gray-600 font-medium">BizCore Management</p>
+        <div className="mt-2 text-xs text-gray-500">
+          Logged in as: {user?.email}
+        </div>
       </div>
 
       {/* Navigation */}
@@ -65,8 +80,15 @@ const AdminSidebar = ({ activeModule, setActiveModule }: AdminSidebarProps) => {
         ))}
       </nav>
 
-      {/* Sign Out */}
-      <div className="p-4 border-t border-gray-200">
+      {/* Bottom Actions */}
+      <div className="p-4 border-t border-gray-200 space-y-2">
+        <button
+          onClick={handleBackToDashboard}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors text-blue-600 hover:bg-blue-50"
+        >
+          <Sparkles size={20} />
+          <span className="font-medium">Back to Dashboard</span>
+        </button>
         <button
           onClick={handleSignOut}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors text-gray-600 hover:bg-gray-100"

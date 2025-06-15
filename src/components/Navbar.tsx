@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, Sparkles, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,14 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  // Check if user is admin
+  const isAdmin = user && (
+    user.email?.includes('admin') || 
+    user.user_metadata?.role === 'admin' ||
+    user.app_metadata?.role === 'admin' ||
+    user.email === 'jaanservicesmail@gmail.com'
+  );
 
   const handleAuthAction = () => {
     if (user) {
@@ -56,6 +64,12 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
               <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Pricing</button>
               <button onClick={() => handleNavigation('/help')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Resources</button>
               <button onClick={() => handleNavigation('/contact')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm lg:text-base">Contact</button>
+              {isAdmin && (
+                <button onClick={() => handleNavigation('/admin')} className="text-red-400 hover:text-red-300 transition-colors duration-200 font-medium text-sm lg:text-base flex items-center gap-1">
+                  <Shield size={16} />
+                  Admin
+                </button>
+              )}
             </div>
           </div>
 
@@ -64,6 +78,12 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
             {user ? (
               <>
                 <span className="text-sm text-slate-300 max-w-32 lg:max-w-none truncate">Welcome, {user.user_metadata?.business_name || user.email}</span>
+                {isAdmin && (
+                  <Button variant="outline" onClick={() => handleNavigation('/admin')} className="border-red-600 text-red-400 hover:bg-red-800 hover:text-white transition-all duration-200 text-sm px-3 py-2">
+                    <Shield className="mr-1" size={14} />
+                    Admin
+                  </Button>
+                )}
                 <Button variant="outline" onClick={handleAuthAction} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 text-sm px-3 py-2">
                   Sign Out
                 </Button>
@@ -99,11 +119,25 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
               <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Pricing</button>
               <button onClick={() => handleNavigation('/help')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Resources</button>
               <button onClick={() => handleNavigation('/contact')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Contact</button>
+              {isAdmin && (
+                <button onClick={() => handleNavigation('/admin')} className="block w-full text-left px-3 py-3 text-red-400 hover:text-red-300 hover:bg-slate-800 rounded-lg transition-all duration-200 flex items-center gap-2">
+                  <Shield size={16} />
+                  Admin Portal
+                </button>
+              )}
               <div className="flex flex-col space-y-3 px-3 pt-4 border-t border-white/10 mt-4">
                 {user ? (
-                  <Button variant="outline" onClick={handleAuthAction} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
-                    Sign Out
-                  </Button>
+                  <>
+                    {isAdmin && (
+                      <Button variant="outline" onClick={() => handleNavigation('/admin')} className="w-full border-red-600 text-red-400 hover:bg-red-800">
+                        <Shield className="mr-2" size={16} />
+                        Admin Portal
+                      </Button>
+                    )}
+                    <Button variant="outline" onClick={handleAuthAction} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
+                      Sign Out
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Button variant="outline" onClick={onAuthClick} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
