@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -82,6 +81,7 @@ const InvoiceCreationForm: React.FC<InvoiceCreationFormProps> = ({ isOpen, onClo
     const newInvoice = {
       id: `INV-${String(Date.now()).slice(-6)}`,
       client: formData.clientName,
+      clientEmail: formData.clientEmail,
       amount: calculateTotal(),
       dueDate: formData.dueDate,
       status: 'pending',
@@ -147,13 +147,14 @@ const InvoiceCreationForm: React.FC<InvoiceCreationFormProps> = ({ isOpen, onClo
                 />
               </div>
               <div>
-                <Label htmlFor="clientEmail">Client Email</Label>
+                <Label htmlFor="clientEmail">Client Email *</Label>
                 <Input
                   id="clientEmail"
                   type="email"
                   value={formData.clientEmail}
                   onChange={(e) => handleInputChange('clientEmail', e.target.value)}
                   placeholder="client@example.com"
+                  required
                 />
               </div>
             </div>

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Receipt, Download, Plus, Eye } from 'lucide-react';
+import PaymentButton from './PaymentButton';
 
 interface Invoice {
   id: string;
@@ -11,6 +12,7 @@ interface Invoice {
   amount: number;
   dueDate: string;
   status: string;
+  clientEmail?: string;
 }
 
 interface InvoicingTabProps {
@@ -70,6 +72,13 @@ const InvoicingTab: React.FC<InvoicingTabProps> = ({
                     <Eye className="mr-1" size={14} />
                     View
                   </Button>
+                  <PaymentButton
+                    invoiceId={invoice.id}
+                    amount={invoice.amount}
+                    clientEmail={invoice.clientEmail}
+                    size="sm"
+                    variant="outline"
+                  />
                   <Button 
                     size="sm" 
                     variant="outline"
@@ -84,7 +93,7 @@ const InvoicingTab: React.FC<InvoicingTabProps> = ({
         </div>
       </div>
 
-      {/* Invoice Templates */}
+      {/* Quick Actions */}
       <Card className="border-0 shadow-sm">
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
