@@ -65,7 +65,7 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
           {/* Logo */}
           <div className="flex items-center cursor-pointer group" onClick={() => handleNavigation('/')}>
               <div className="flex items-center gap-2">
-                <img src="/bizcore png logo.png" alt="BizCore Logo" className="h-8 w-auto" /> {/* Added logo */}
+                <img src="/lovable-uploads/6a0e5efd-2366-477b-8fd2-53d719319ed6.png" alt="BizCore Logo" className="h-8 w-auto" />
               </div>
             </div>
 

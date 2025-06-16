@@ -13,7 +13,7 @@ const CompanyInfo = () => {
   return (
     <div className="lg:col-span-2">
       <div className="mb-6">
-        <img src="/bizcore png logo.png" alt="BizCore Logo" className="h-8 w-auto mb-4" />
+        <img src="/lovable-uploads/6a0e5efd-2366-477b-8fd2-53d719319ed6.png" alt="BizCore Logo" className="h-8 w-auto mb-4" />
         <p className="text-gray-300 leading-relaxed mb-6">
           The complete AI-powered business operating system that helps Nigerian entrepreneurs 
           launch, manage, and scale compliant businesses faster than ever before.
