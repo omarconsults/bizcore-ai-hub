@@ -17,11 +17,6 @@ const LandingHeroContent = () => {
     }
   };
 
-  const handleWatchDemo = () => {
-    // For now, navigate to how-it-works page as demo
-    navigate('/how-it-works');
-  };
-
   const features = [
     "Complete CAC registration & business setup in 5 days",
     "Automated NDPR, FIRS & state compliance monitoring",
@@ -92,8 +87,8 @@ const LandingHeroContent = () => {
         ))}
       </div>
 
-      {/* CTA Buttons with final animation */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4 animate-fade-in"
+      {/* CTA Button with final animation */}
+      <div className="pt-4 animate-fade-in"
            style={{ animationDelay: '1.1s', animationFillMode: 'both' }}>
         <Button 
           onClick={handleStartBusiness}
@@ -101,13 +96,6 @@ const LandingHeroContent = () => {
         >
           Start Your Business Today
           <ArrowRight className="ml-3" size={20} />
-        </Button>
-        <Button 
-          variant="outline" 
-          onClick={handleWatchDemo}
-          className="border-2 border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white px-8 sm:px-10 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-2xl backdrop-blur-sm transition-all duration-300 w-full sm:w-auto"
-        >
-          Watch Demo (3 min)
         </Button>
       </div>
 
