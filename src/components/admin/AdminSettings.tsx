@@ -26,7 +26,7 @@ const AdminSettings = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="support-email">Support Email</Label>
-              <Input id="support-email" defaultValue="support@bizcore.ng" />
+              <Input id="support-email" defaultValue="bizcore@omarconsults.ng" />
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="maintenance-mode">Maintenance Mode</Label>

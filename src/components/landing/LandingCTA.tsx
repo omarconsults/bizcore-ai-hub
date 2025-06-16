@@ -9,7 +9,7 @@ interface LandingCTAProps {
 
 const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
   const guarantees = [
-    { icon: Zap, text: "Business registered in 48-72 hours or money back" },
+    { icon: Zap, text: "Business registered in 5-7 days or money back" },
     { icon: Shield, text: "100% compliance guarantee - we handle all violations" },
     { icon: Clock, text: "24/7 expert support included in all plans" }
   ];
@@ -60,7 +60,7 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
         </h2>
         
         <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-slate-300 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
-          Join 15,000+ Nigerian entrepreneurs who've transformed their ideas into thriving, compliant businesses with BizCore. 
+          Join Startups and Entrepreneurs who've transformed their ideas into thriving, compliant businesses with BizCore. 
           <span className="text-white font-semibold"> Start your journey today and be operational by week's end.</span>
         </p>
 
@@ -125,7 +125,7 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
               <span className="font-medium text-sm sm:text-base">4.9/5 from 3,200+ reviews</span>
             </div>
             <div className="hidden md:block w-px h-4 sm:h-6 bg-white/30"></div>
-            <div className="font-medium text-sm sm:text-base">Featured in TechCrunch Nigeria & BusinessDay</div>
+            <div className="font-medium text-sm sm:text-base">Featured in Top Business and Tech Media</div>
             <div className="hidden md:block w-px h-4 sm:h-6 bg-white/30"></div>
             <div className="font-medium text-sm sm:text-base">SOC 2 Compliant • Bank-level security</div>
           </div>

@@ -59,33 +59,23 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
   }, [isMenuOpen]);
 
   return (
-    <nav className="bg-slate-950/95 backdrop-blur-md border-b border-white/10 sticky top-0 z-50 shadow-lg">
+    <nav className="bg-white backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center cursor-pointer group" onClick={() => handleNavigation('/')}>
-            <div className="flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                  <Sparkles className="text-white" size={18} />
-                </div>
-                <div className="hidden xs:block">
-                  <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent group-hover:from-violet-400 group-hover:to-cyan-400 transition-all duration-300">
-                    BizCore
-                  </h1>
-                  <p className="text-xs text-cyan-400 font-medium -mt-1 hidden sm:block">Powered by AI</p>
-                </div>
+                <img src="/bizcore png logo.png" alt="BizCore Logo" className="h-8 w-auto" /> {/* Added logo */}
               </div>
             </div>
-          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:block">
             <div className="ml-10 flex items-baseline space-x-4 xl:space-x-8">
-              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm xl:text-base">Features</button>
-              <button onClick={() => handleNavigation('/')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm xl:text-base">Pricing</button>
-              <button onClick={() => handleNavigation('/help')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm xl:text-base">Resources</button>
-              <button onClick={() => handleNavigation('/contact')} className="text-slate-300 hover:text-white transition-colors duration-200 font-medium text-sm xl:text-base">Contact</button>
+              <button onClick={() => handleNavigation('#')} className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Features</button>
+              <button onClick={() => handleNavigation('/pricing')} className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Pricing</button>
+              <button onClick={() => handleNavigation('/help')} className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Resources</button>
+              <button onClick={() => handleNavigation('/contact')} className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Contact</button>
             </div>
           </div>
 
@@ -93,16 +83,16 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
           <div className="hidden md:flex items-center space-x-2 lg:space-x-4">
             {user ? (
               <>
-                <span className="text-xs lg:text-sm text-slate-300 max-w-24 lg:max-w-32 xl:max-w-none truncate">
+                <span className="text-xs lg:text-sm text-gray-700 max-w-24 lg:max-w-32 xl:max-w-none truncate">
                   Welcome, {user.user_metadata?.business_name || user.email}
                 </span>
-                <Button variant="outline" onClick={handleAuthAction} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 text-xs lg:text-sm px-2 lg:px-3 py-2">
+                <Button variant="outline" onClick={handleAuthAction} className="border-gray-400 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 text-xs lg:text-sm px-2 lg:px-3 py-2">
                   Sign Out
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="outline" onClick={onAuthClick} className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white transition-all duration-200 text-xs lg:text-sm px-2 lg:px-3 py-2">
+                <Button variant="outline" onClick={onAuthClick} className="border-gray-400 text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 text-xs lg:text-sm px-2 lg:px-3 py-2">
                   Sign In
                 </Button>
                 <Button onClick={onAuthClick} className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white font-semibold px-3 lg:px-4 xl:px-6 py-2 rounded-xl transition-all duration-200 shadow-lg hover:shadow-violet-500/25 text-xs lg:text-sm">
@@ -138,8 +128,8 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
                   <X size={20} className="text-slate-300" />
                 </button>
               </div>
-              
-              <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Features</button>
+
+              <button onClick={() => handleNavigation('/#features')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Features</button>
               <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Pricing</button>
               <button onClick={() => handleNavigation('/help')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Resources</button>
               <button onClick={() => handleNavigation('/contact')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Contact</button>

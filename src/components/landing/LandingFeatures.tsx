@@ -4,9 +4,9 @@ const LandingFeatures = () => {
   const features = [
     {
       title: "Lightning-Fast Business Setup",
-      description: "Complete CAC registration, TIN application, and business permits in 48-72 hours. Our AI handles all paperwork, compliance checks, and government submissions automatically.",
+      description: "Complete CAC registration, TIN application, and business permits in 5-7 days. Our AI handles all paperwork, compliance checks, and government submissions automatically.",
       icon: "⚡",
-      stats: "48hrs avg setup",
+      stats: "72hrs avg setup",
       highlight: "10x faster than traditional methods",
       gradient: "from-amber-500/20 to-orange-500/20"
     },
@@ -74,7 +74,7 @@ const LandingFeatures = () => {
   ];
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-slate-950 relative overflow-hidden">
+    <section id="features" className="py-16 sm:py-20 lg:py-24 bg-slate-950 relative overflow-hidden">
       {/* Enhanced background elements with animations */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/4 w-64 sm:w-96 h-64 sm:h-96 bg-violet-500/8 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>

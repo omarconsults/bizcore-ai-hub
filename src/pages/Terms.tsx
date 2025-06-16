@@ -104,8 +104,8 @@ const Terms = () => {
             </p>
             <div className="bg-gray-50 rounded-lg p-4 mt-4">
               <p className="text-gray-700">
-                <strong>Email:</strong> legal@bizcore.ng<br />
-                <strong>Phone:</strong> +234 (0) 800 BIZCORE<br />
+                <strong>Email:</strong> bizcore@omarconsults.ng<br />
+                <strong>Phone:</strong> +2349066414474<br />
                 <strong>Address:</strong> Lagos, Nigeria
               </p>
             </div>

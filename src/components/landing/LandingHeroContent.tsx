@@ -23,7 +23,7 @@ const LandingHeroContent = () => {
   };
 
   const features = [
-    "Complete CAC registration & business setup in 48 hours",
+    "Complete CAC registration & business setup in 5 days",
     "Automated NDPR, FIRS & state compliance monitoring",
     "AI-powered invoicing, bookkeeping & financial management",
     "Full HR suite with payroll, contracts & performance tracking",
@@ -31,7 +31,7 @@ const LandingHeroContent = () => {
   ];
 
   const achievements = [
-    { icon: Award, text: "Featured in TechCrunch Nigeria" },
+    { icon: Award, text: "Featured in Tech and Business Media" },
     { icon: Zap, text: "45% faster business growth vs manual methods" },
     { icon: Shield, text: "Zero compliance violations in 2024" }
   ];
@@ -42,7 +42,7 @@ const LandingHeroContent = () => {
       <div className="inline-flex items-center bg-gradient-to-r from-violet-500/20 to-cyan-500/20 backdrop-blur-sm text-violet-300 px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold border border-violet-500/30 animate-fade-in"
            style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
         <Sparkles className="mr-2" size={14} />
-        🇳🇬 #1 Business Platform in Nigeria • 15,000+ Users
+        🇳🇬 #AI-powered business OS • 
       </div>
       
       {/* Main heading with staggered animation */}
@@ -60,7 +60,7 @@ const LandingHeroContent = () => {
         
         <p className="text-base sm:text-lg lg:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">
           The complete AI-powered business operating system that handles everything from CAC registration to IPO preparation. 
-          <span className="text-white font-semibold"> Join 15,000+ Nigerian entrepreneurs</span> building compliant, profitable businesses.
+          <span className="text-white font-semibold"> Join Startups and Entrepreneurs</span> building compliant, profitable businesses.
         </p>
       </div>
 

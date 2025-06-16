@@ -13,8 +13,7 @@ const CompanyInfo = () => {
   return (
     <div className="lg:col-span-2">
       <div className="mb-6">
-        <h3 className="text-2xl font-bold text-white mb-2">BizCore</h3>
-        <p className="text-blue-200 text-sm font-medium mb-4">Powered by AI • Built for Nigeria</p>
+        <img src="/bizcore png logo.png" alt="BizCore Logo" className="h-8 w-auto mb-4" />
         <p className="text-gray-300 leading-relaxed mb-6">
           The complete AI-powered business operating system that helps Nigerian entrepreneurs 
           launch, manage, and scale compliant businesses faster than ever before.
@@ -25,15 +24,15 @@ const CompanyInfo = () => {
       <div className="space-y-3 mb-6">
         <div className="flex items-center gap-3 text-gray-300">
           <Mail size={18} className="text-emerald-400" />
-          <span>hello@bizcore.ng</span>
+          <span>bizcore@omarconsults.ng</span>
         </div>
         <div className="flex items-center gap-3 text-gray-300">
           <Phone size={18} className="text-emerald-400" />
-          <span>+234 (0) 800 BIZCORE</span>
+          <span>+2349066414474</span>
         </div>
         <div className="flex items-center gap-3 text-gray-300">
           <MapPin size={18} className="text-emerald-400" />
-          <span>Lagos, Nigeria</span>
+          <span>34, VI, Lagos, Nigeria</span>
         </div>
       </div>
 

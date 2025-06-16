@@ -41,13 +41,13 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email Support',
-      details: 'hello@bizcore.ng',
+      details: 'bizcore@omarconsults.ng',
       description: 'Send us an email anytime'
     },
     {
       icon: Phone,
       title: 'Phone Support',
-      details: '+234 (0) 800 BIZCORE',
+      details: '+2349066414474',
       description: 'Mon-Fri 9AM-6PM WAT'
     },
     {

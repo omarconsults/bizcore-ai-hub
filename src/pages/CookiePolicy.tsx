@@ -80,8 +80,8 @@ const CookiePolicy = () => {
             </p>
             <div className="bg-gray-50 rounded-lg p-4 mt-4">
               <p className="text-gray-700">
-                <strong>Email:</strong> privacy@bizcore.ng<br />
-                <strong>Phone:</strong> +234 (0) 800 BIZCORE
+                <strong>Email:</strong> bizcore@omarconsults.ng<br />
+                <strong>Phone:</strong> +2349066414474
               </p>
             </div>
           </section>
