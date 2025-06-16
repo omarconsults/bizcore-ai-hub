@@ -1,10 +1,9 @@
-
 import React from 'react';
-import { Mail, Phone, MapPin, Twitter, Linkedin, Facebook, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, X, Linkedin, Facebook, Instagram } from 'lucide-react';
 
 const CompanyInfo = () => {
   const socialLinks = [
-    { icon: Twitter, href: '#twitter', label: 'Twitter' },
+    { icon: X, href: '#twitter', label: 'X (Twitter)' },
     { icon: Linkedin, href: '#linkedin', label: 'LinkedIn' },
     { icon: Facebook, href: '#facebook', label: 'Facebook' },
     { icon: Instagram, href: '#instagram', label: 'Instagram' },
