@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 
 interface RegisterFormProps {
   onToggleMode: () => void;
@@ -19,29 +19,85 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
   const { signUp } = useAuth();
   const { toast } = useToast();
 
+  const getErrorMessage = (error: any) => {
+    console.log('Full error object:', error);
+    
+    // Handle timeout errors specifically
+    if (error?.status === 504 || error?.name === 'AuthRetryableFetchError') {
+      return "Server is temporarily overloaded. Please try again in a few moments.";
+    }
+    
+    // Handle other specific auth errors
+    if (error?.message) {
+      if (error.message.includes('already registered')) {
+        return "This email is already registered. Try signing in instead.";
+      }
+      if (error.message.includes('invalid email')) {
+        return "Please enter a valid email address.";
+      }
+      if (error.message.includes('password')) {
+        return "Password must be at least 6 characters long.";
+      }
+      return error.message;
+    }
+    
+    return "Registration failed. Please check your connection and try again.";
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Missing information",
+        description: "Please enter both email and password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { error } = await signUp(email, password, '');
+      
       if (error) {
+        const errorMessage = getErrorMessage(error);
         toast({
           title: "Registration failed",
-          description: error.message,
+          description: errorMessage,
           variant: "destructive",
         });
+        
+        // If it's a timeout error, suggest trying again
+        if (error?.status === 504) {
+          setTimeout(() => {
+            toast({
+              title: "Try again",
+              description: "The server should be less busy now. You can try registering again.",
+            });
+          }, 3000);
+        }
       } else {
         toast({
           title: "Account created successfully!",
           description: "Please check your email to verify your account if required, then you'll be taken to complete your business setup.",
         });
-        // Don't show business setup form here - let the main Index component handle the flow
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Unexpected registration error:', error);
       toast({
         title: "Registration failed",
-        description: "An unexpected error occurred.",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -56,6 +112,15 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
         <p className="text-slate-600">Create your BizCore account</p>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Show a warning if there are known server issues */}
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+          <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-amber-800">
+            <p className="font-medium">Server Status</p>
+            <p>If registration fails, our servers might be busy. Please wait a moment and try again.</p>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -67,6 +132,7 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
               placeholder="you@company.com"
               required
               className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+              disabled={loading}
             />
           </div>
           <div className="space-y-2">
@@ -80,7 +146,9 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
               required
               minLength={6}
               className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+              disabled={loading}
             />
+            <p className="text-xs text-slate-500">Must be at least 6 characters long</p>
           </div>
           <Button 
             type="submit" 
@@ -88,7 +156,7 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
             disabled={loading}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Account
+            {loading ? 'Creating Account...' : 'Create Account'}
           </Button>
         </form>
         <div className="text-center mt-4">
@@ -97,6 +165,7 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
             <button
               onClick={onToggleMode}
               className="text-violet-600 hover:text-violet-800 hover:underline font-medium transition-colors"
+              disabled={loading}
             >
               Sign in
             </button>
