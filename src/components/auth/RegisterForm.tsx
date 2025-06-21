@@ -90,7 +90,7 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
       } else {
         toast({
           title: "Account created successfully!",
-          description: "Please check your email to verify your account if required, then you'll be taken to complete your business setup.",
+          description: "Please check your email to verify your account before you can proceed.",
         });
       }
     } catch (error: any) {
@@ -112,7 +112,16 @@ const RegisterForm = ({ onToggleMode }: RegisterFormProps) => {
         <p className="text-slate-600">Create your BizCore account</p>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Show a warning if there are known server issues */}
+        {/* Show a warning about email verification */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+          <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-blue-800">
+            <p className="font-medium">Email Verification Required</p>
+            <p>You'll need to verify your email address before you can access your account.</p>
+          </div>
+        </div>
+
+        {/* Show server status warning */}
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
           <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
           <div className="text-sm text-amber-800">

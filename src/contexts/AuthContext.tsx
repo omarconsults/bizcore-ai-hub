@@ -7,10 +7,12 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  isEmailVerified: boolean;
   signUp: (email: string, password: string, businessName: string) => Promise<any>;
   signIn: (email: string, password: string) => Promise<any>;
   signInWithGoogle: () => Promise<any>;
   signOut: () => Promise<void>;
+  resendVerification: () => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,6 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   useEffect(() => {
     console.log('AuthProvider initializing...');
@@ -28,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Auth state changed:', { _event, session });
       setSession(session);
       setUser(session?.user ?? null);
+      setIsEmailVerified(!!session?.user?.email_confirmed_at);
       setLoading(false);
     });
 
@@ -36,6 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('Initial session check:', { session, error });
       setSession(session);
       setUser(session?.user ?? null);
+      setIsEmailVerified(!!session?.user?.email_confirmed_at);
       setLoading(false);
     });
 
@@ -90,17 +95,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
     setSession(null);
     setUser(null);
+    setIsEmailVerified(false);
     setLoading(false);
+  };
+
+  const resendVerification = async () => {
+    if (!user?.email) return { error: 'No user email found' };
+    
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: user.email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/`
+      }
+    });
+    
+    return { error };
   };
 
   const value = {
     user,
     session,
     loading,
+    isEmailVerified,
     signUp,
     signIn,
     signInWithGoogle,
     signOut,
+    resendVerification,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

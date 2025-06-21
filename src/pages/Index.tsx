@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,6 +14,7 @@ import DashboardContent from '@/components/dashboard/DashboardContent';
 import UserIndicator from '@/components/dashboard/UserIndicator';
 import LoadingScreen from '@/components/LoadingScreen';
 import BusinessSetupForm from '@/components/onboarding/BusinessSetupForm';
+import EmailVerificationPrompt from '@/components/auth/EmailVerificationPrompt';
 
 const Index = () => {
   const { user, loading } = useAuth();
