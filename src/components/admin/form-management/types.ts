@@ -35,9 +35,7 @@ export interface FormReviewAction {
 export interface FormFilters {
   status?: string;
   form_type?: string;
-  date_range?: {
-    start: string;
-    end: string;
-  };
+  date_from?: string;
+  date_to?: string;
   search_term?: string;
 }
