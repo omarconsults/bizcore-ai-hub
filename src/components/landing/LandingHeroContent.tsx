@@ -111,7 +111,7 @@ const LandingHeroContent = () => {
             4.9/5 rating
           </span>
           <span className="hidden sm:inline">•</span>
-          <span>Free 30-day trial</span>
+          <span>Free 100-day trial</span>
           <span className="hidden sm:inline">•</span>
           <span>No setup fees</span>
         </div>
