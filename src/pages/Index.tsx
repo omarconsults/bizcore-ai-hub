@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBusinessProfile } from '@/hooks/useBusinessProfile';
 import Navbar from '@/components/Navbar';
 import LandingHero from '@/components/LandingHero';
+import LandingFeaturesSection from '@/components/landing/LandingFeaturesSection';
 import LandingFeatures from '@/components/landing/LandingFeatures';
 import LandingPricing from '@/components/landing/LandingPricing';
 import LandingCTA from '@/components/landing/LandingCTA';
@@ -180,6 +182,7 @@ const Index = () => {
     <div className="min-h-screen bg-white" style={{ scrollBehavior: 'smooth' }}>
       <Navbar onAuthClick={handleAuthClick} />
       <LandingHero />
+      <LandingFeaturesSection />
       <LandingFeatures />
       <LandingPricing />
       <LandingCTA onStartDemo={handleStartDemo} user={user} />

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 interface NavbarProps {
   onAuthClick?: () => void;
@@ -14,6 +14,7 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Enhanced mobile menu close functionality
   const closeMobileMenu = () => {
@@ -30,8 +31,27 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
   };
 
   const handleNavigation = (path: string) => {
-    navigate(path);
-    closeMobileMenu(); // Always close on navigation
+    if (path.startsWith('#')) {
+      // Handle scroll to section on same page
+      if (location.pathname === '/') {
+        const element = document.querySelector(path);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // Navigate to home first, then scroll
+        navigate('/');
+        setTimeout(() => {
+          const element = document.querySelector(path);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
+    } else {
+      navigate(path);
+    }
+    closeMobileMenu();
   };
 
   // Add escape key support and auto-close functionality
@@ -63,19 +83,19 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center cursor-pointer group" onClick={() => handleNavigation('/')}>
-              <div className="flex items-center gap-2">
-                <img src="/lovable-uploads/6a0e5efd-2366-477b-8fd2-53d719319ed6.png" alt="BizCore Logo" className="h-8 w-auto" />
-              </div>
+          <Link to="/" className="flex items-center cursor-pointer group">
+            <div className="flex items-center gap-2">
+              <img src="/lovable-uploads/6a0e5efd-2366-477b-8fd2-53d719319ed6.png" alt="BizCore Logo" className="h-8 w-auto" />
             </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:block">
             <div className="ml-10 flex items-baseline space-x-4 xl:space-x-8">
-              <button onClick={() => handleNavigation('#')} className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Features</button>
-              <button onClick={() => handleNavigation('/pricing')} className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Pricing</button>
-              <button onClick={() => handleNavigation('/help')} className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Resources</button>
-              <button onClick={() => handleNavigation('/contact')} className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Contact</button>
+              <button onClick={() => handleNavigation('#features')} className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Features</button>
+              <Link to="/pricing" className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Pricing</Link>
+              <Link to="/help" className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Resources</Link>
+              <Link to="/contact" className="text-gray-700 hover:text-gray-900 transition-colors duration-200 font-medium text-sm xl:text-base">Contact</Link>
             </div>
           </div>
 
@@ -107,7 +127,7 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
           <div className="md:hidden lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-slate-300 hover:text-white p-2 transition-colors duration-200 rounded-lg hover:bg-slate-800"
+              className="text-gray-700 hover:text-gray-900 p-2 transition-colors duration-200 rounded-lg hover:bg-gray-100"
               aria-label="Toggle mobile menu"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -117,38 +137,38 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
 
         {/* Mobile Navigation with improved functionality */}
         {isMenuOpen && (
-          <div className="md:hidden lg:hidden bg-slate-900/95 backdrop-blur-md border-t border-white/10 rounded-b-2xl animate-fade-in">
+          <div className="md:hidden lg:hidden bg-white border-t border-gray-200 rounded-b-2xl shadow-lg animate-fade-in">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {/* Close button inside mobile menu */}
               <div className="flex justify-end mb-2">
                 <button
                   onClick={closeMobileMenu}
-                  className="p-2 rounded-md hover:bg-slate-800 transition-colors"
+                  className="p-2 rounded-md hover:bg-gray-100 transition-colors"
                   aria-label="Close mobile menu"
                 >
-                  <X size={20} className="text-slate-300" />
+                  <X size={20} className="text-gray-600" />
                 </button>
               </div>
 
-              <button onClick={() => handleNavigation('/#features')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Features</button>
-              <button onClick={() => handleNavigation('/pricing')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Pricing</button>
-              <button onClick={() => handleNavigation('/help')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Resources</button>
-              <button onClick={() => handleNavigation('/contact')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Contact</button>
+              <button onClick={() => handleNavigation('#features')} className="block w-full text-left px-3 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200">Features</button>
+              <Link to="/pricing" onClick={closeMobileMenu} className="block w-full text-left px-3 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200">Pricing</Link>
+              <Link to="/help" onClick={closeMobileMenu} className="block w-full text-left px-3 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200">Resources</Link>
+              <Link to="/contact" onClick={closeMobileMenu} className="block w-full text-left px-3 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200">Contact</Link>
               
               {/* Mobile CTA Buttons */}
-              <div className="flex flex-col space-y-3 px-3 pt-4 border-t border-white/10 mt-4">
+              <div className="flex flex-col space-y-3 px-3 pt-4 border-t border-gray-200 mt-4">
                 {user ? (
                   <>
-                    <div className="text-sm text-slate-300 text-center py-2 truncate">
+                    <div className="text-sm text-gray-700 text-center py-2 truncate">
                       Welcome, {user.user_metadata?.business_name || user.email}
                     </div>
-                    <Button variant="outline" onClick={handleAuthAction} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
+                    <Button variant="outline" onClick={handleAuthAction} className="w-full border-gray-400 text-gray-700 hover:bg-gray-100">
                       Sign Out
                     </Button>
                   </>
                 ) : (
                   <>
-                    <Button variant="outline" onClick={onAuthClick} className="w-full border-slate-600 text-slate-300 hover:bg-slate-800">
+                    <Button variant="outline" onClick={onAuthClick} className="w-full border-gray-400 text-gray-700 hover:bg-gray-100">
                       Sign In
                     </Button>
                     <Button onClick={onAuthClick} className="w-full bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white font-semibold">

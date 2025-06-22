@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import FooterSection from './FooterSection';
 
@@ -16,18 +16,10 @@ const FooterLinks = () => {
     }
   };
 
-  const handleLinkClick = (href: string) => {
-    if (href.startsWith('#')) {
-      console.log('Feature coming soon:', href);
-    } else {
-      navigate(href);
-    }
-  };
-
   const companyLinks = [
     { name: 'About Us', href: '/about' },
     { name: 'How It Works', href: '/how-it-works' },
-    { name: 'Success Stories', href: '#success-stories' },
+    { name: 'Success Stories', href: '/about#success-stories' },
     { name: 'Careers', href: '/careers' },
   ];
 
@@ -58,12 +50,12 @@ const FooterLinks = () => {
         <ul className="space-y-3">
           {companyLinks.map((link, index) => (
             <li key={index}>
-              <button 
-                onClick={() => handleLinkClick(link.href)}
-                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm"
+              <Link 
+                to={link.href}
+                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm block"
               >
                 {link.name}
-              </button>
+              </Link>
             </li>
           ))}
         </ul>
@@ -90,12 +82,12 @@ const FooterLinks = () => {
         <ul className="space-y-3">
           {supportLinks.map((link, index) => (
             <li key={index}>
-              <button 
-                onClick={() => handleLinkClick(link.href)}
-                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm"
+              <Link 
+                to={link.href}
+                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm block"
               >
                 {link.name}
-              </button>
+              </Link>
             </li>
           ))}
         </ul>
@@ -106,12 +98,12 @@ const FooterLinks = () => {
         <ul className="space-y-3">
           {legalLinks.map((link, index) => (
             <li key={index}>
-              <button 
-                onClick={() => handleLinkClick(link.href)}
-                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm"
+              <Link 
+                to={link.href}
+                className="text-gray-300 hover:text-emerald-400 transition-colors text-left text-sm block"
               >
                 {link.name}
-              </button>
+              </Link>
             </li>
           ))}
         </ul>
