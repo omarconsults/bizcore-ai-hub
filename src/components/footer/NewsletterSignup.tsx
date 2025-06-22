@@ -7,7 +7,7 @@ const NewsletterSignup = () => {
       <div className="flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
           <h4 className="font-semibold text-white mb-2">Stay Updated</h4>
-          <p className="text-gray-300 text-sm">Get the latest Nigerian business insights and platform updates</p>
+          <p className="text-gray-300 text-sm">Get the latest business insights and platform updates</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
           <input

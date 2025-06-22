@@ -22,7 +22,7 @@ const LandingFeatures = () => {
       title: "Intelligent Financial Management",
       description: "AI-powered invoicing with payment tracking, automated bookkeeping with bank sync, expense categorization, and real-time financial insights and forecasting.",
       icon: "📊",
-      stats: "₦2.5B+ processed",
+      stats: "₦200M+ processed",
       highlight: "Save 15 hours/week on finances",
       gradient: "from-emerald-500/20 to-teal-500/20"
     },
@@ -54,7 +54,7 @@ const LandingFeatures = () => {
 
   const testimonials = [
     {
-      quote: "BizCore handled my entire CAC registration in 2 days. What used to take weeks now happens automatically. Game changer!",
+      quote: "BizCore handled my entire CAC registration in 3 days. What used to take weeks now happens automatically. Game changer!",
       author: "Kemi Adebayo, Lagos Fashion Designer",
       business: "KemiStyles Fashion",
       avatar: "🌟"

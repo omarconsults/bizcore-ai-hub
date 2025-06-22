@@ -3,10 +3,10 @@ import { Mail, Phone, MapPin, X, Linkedin, Facebook, Instagram } from 'lucide-re
 
 const CompanyInfo = () => {
   const socialLinks = [
-    { icon: X, href: '#twitter', label: 'X (Twitter)' },
-    { icon: Linkedin, href: '#linkedin', label: 'LinkedIn' },
-    { icon: Facebook, href: '#facebook', label: 'Facebook' },
-    { icon: Instagram, href: '#instagram', label: 'Instagram' },
+    { icon: X, href: 'https://x.com/bizcoreX', label: 'X (Twitter)' },
+    { icon: Linkedin, href: 'https://www.linkedin.com/company/bizcore-os/', label: 'LinkedIn' },
+    { icon: Facebook, href: 'https://facebook.com/bizcoreai/', label: 'Facebook' },
+    { icon: Instagram, href: 'https://www.instagram.com/bizcore.site/', label: 'Instagram' },
   ];
 
   return (
@@ -23,7 +23,7 @@ const CompanyInfo = () => {
       <div className="space-y-3 mb-6">
         <div className="flex items-center gap-3 text-gray-300">
           <Mail size={18} className="text-emerald-400" />
-          <span>bizcore@omarconsults.ng</span>
+          <span>Contact@obizcore.site</span>
         </div>
         <div className="flex items-center gap-3 text-gray-300">
           <Phone size={18} className="text-emerald-400" />
@@ -31,7 +31,7 @@ const CompanyInfo = () => {
         </div>
         <div className="flex items-center gap-3 text-gray-300">
           <MapPin size={18} className="text-emerald-400" />
-          <span>34, VI, Lagos, Nigeria</span>
+          <span>Plot 34, Victoria Island, Lagos, Nigeria</span>
         </div>
       </div>
 

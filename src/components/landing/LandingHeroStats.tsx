@@ -4,8 +4,8 @@ import { Users, TrendingUp, Shield, Clock } from 'lucide-react';
 
 const LandingHeroStats = () => {
   const stats = [
-    { number: "15K+", label: "Businesses Launched", icon: Users },
-    { number: "₦2.5B+", label: "Revenue Generated", icon: TrendingUp },
+    { number: "5K+", label: "Businesses Launched", icon: Users },
+    { number: "₦200M+", label: "Revenue Generated", icon: TrendingUp },
     { number: "99.8%", label: "Compliance Success", icon: Shield },
     { number: "72hrs", label: "Avg. Setup Time", icon: Clock }
   ];
