@@ -24,6 +24,31 @@ const LandingHero = () => {
             <LandingHeroDashboard />
           </div>
         </div>
+
+        {/* Trial Information Banner */}
+        <div className="mt-16 text-center animate-fade-in" style={{ animationDelay: '0.6s', animationFillMode: 'both' }}>
+          <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 backdrop-blur-md border border-emerald-500/30 rounded-2xl p-6 max-w-4xl mx-auto">
+            <div className="flex flex-wrap items-center justify-center gap-6 text-white">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🎁</span>
+                <span className="font-semibold">10 Welcome Tokens</span>
+              </div>
+              <div className="hidden sm:block text-emerald-400">+</div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">📅</span>
+                <span className="font-semibold">100-Day Free Trial</span>
+              </div>
+              <div className="hidden sm:block text-emerald-400">+</div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">⚡</span>
+                <span className="font-semibold">25 Daily Tokens</span>
+              </div>
+            </div>
+            <p className="text-slate-300 mt-3 text-sm">
+              Over 2,500 tokens to explore all AI features completely free!
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

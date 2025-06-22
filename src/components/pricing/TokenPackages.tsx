@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Gift } from 'lucide-react';
 
 interface TokenPackagesProps {
   onBuyTokens: (packageName: string) => void;
@@ -52,9 +52,36 @@ const TokenPackages = ({ onBuyTokens }: TokenPackagesProps) => {
   return (
     <section className="py-20">
       <div className="max-w-7xl mx-auto px-4">
+        {/* Trial Banner */}
+        <div className="text-center mb-12">
+          <div className="bg-gradient-to-r from-emerald-500 to-blue-500 text-white p-6 rounded-2xl max-w-4xl mx-auto mb-8">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <Gift className="text-white" size={24} />
+              <h3 className="text-2xl font-bold">Start with Your Free Trial!</h3>
+            </div>
+            <p className="text-emerald-100 mb-4">
+              Get 10 welcome tokens + 25 daily tokens for 100 days = 2,500+ total tokens FREE!
+            </p>
+            <div className="grid md:grid-cols-3 gap-4 text-center">
+              <div className="bg-white/20 rounded-lg p-3">
+                <div className="text-xl font-bold">10</div>
+                <div className="text-sm">Welcome Tokens</div>
+              </div>
+              <div className="bg-white/20 rounded-lg p-3">
+                <div className="text-xl font-bold">25/day</div>
+                <div className="text-sm">Daily Tokens</div>
+              </div>
+              <div className="bg-white/20 rounded-lg p-3">
+                <div className="text-xl font-bold">100 days</div>
+                <div className="text-sm">Trial Period</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">AI Token Packages</h2>
-          <p className="text-xl text-gray-600">Buy tokens to unlock powerful AI features. More tokens = better value.</p>
+          <p className="text-xl text-gray-600">Need more tokens? Buy packages anytime. More tokens = better value.</p>
         </div>
 
         <div className="grid lg:grid-cols-4 gap-6 mb-16">

@@ -95,17 +95,17 @@ const LandingPricing = () => {
         <div className="text-center mb-16 sm:mb-20">
           <Badge className="mb-6 sm:mb-8 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 px-4 sm:px-6 py-2 sm:py-3 border border-indigo-500/30 backdrop-blur-sm">
             <Coins className="mr-2" size={16} />
-            🎯 Token-Based Pricing
+            🎯 Free 100-Day Trial + Token-Based Pricing
           </Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-6 sm:mb-8 leading-tight">
-            Pay for What 
+            Start with 100 Days Free
             <span className="block bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">
-              You Actually Use
+              Then Pay for What You Use
             </span>
           </h2>
           <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-slate-300 max-w-4xl mx-auto mb-6 sm:mb-8 leading-relaxed">
-            Choose flexible token packages for AI features or subscription plans with monthly allowances. 
-            Transparent pricing that scales with your business needs.
+            Begin with 10 welcome bonus tokens + 100-day trial with 25 daily tokens. 
+            Choose flexible packages or subscription plans that scale with your business.
           </p>
         </div>
 
@@ -175,6 +175,30 @@ const LandingPricing = () => {
             View Detailed Token Pricing
             <ArrowRight className="ml-2" size={16} />
           </Button>
+        </div>
+
+        {/* Trial Information Section */}
+        <div className="mt-16 text-center">
+          <div className="bg-gradient-to-r from-emerald-500/20 to-blue-500/20 backdrop-blur-md border border-emerald-500/30 rounded-2xl p-8 max-w-3xl mx-auto">
+            <h3 className="text-2xl font-bold text-white mb-4">🎉 Get Started with Our Free Trial</h3>
+            <div className="grid md:grid-cols-3 gap-6 text-center">
+              <div>
+                <div className="text-3xl font-bold text-emerald-400 mb-2">10</div>
+                <div className="text-slate-300">Welcome Bonus Tokens</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-blue-400 mb-2">100</div>
+                <div className="text-slate-300">Days Free Trial</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-purple-400 mb-2">25</div>
+                <div className="text-slate-300">Daily Tokens During Trial</div>
+              </div>
+            </div>
+            <p className="text-slate-300 mt-6">
+              Start your business journey with 10 bonus tokens plus 25 tokens daily for 100 days - that's over 2,500 tokens to explore all our AI features!
+            </p>
+          </div>
         </div>
       </div>
     </section>

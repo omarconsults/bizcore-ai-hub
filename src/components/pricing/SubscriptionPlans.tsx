@@ -61,6 +61,10 @@ const SubscriptionPlans = ({ onChoosePlan }: SubscriptionPlansProps) => {
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Monthly Subscription Plans</h2>
           <p className="text-xl text-gray-600">Complete business management with monthly token allowances</p>
+          <div className="mt-6 bg-emerald-100 border border-emerald-300 rounded-lg p-4 max-w-2xl mx-auto">
+            <p className="text-emerald-800 font-semibold">💡 Remember: You get 100 days free trial first!</p>
+            <p className="text-emerald-700 text-sm">Try all features with 2,500+ tokens before choosing a plan</p>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">

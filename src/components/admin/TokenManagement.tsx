@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Clock } from 'lucide-react';
 import TokenStatsCards from './token-management/TokenStatsCards';
 import UserTokensTable from './token-management/UserTokensTable';
 import TransactionsTable from './token-management/TransactionsTable';
@@ -18,6 +18,7 @@ const TokenManagement = () => {
     recentTransactions,
     fetchTokenStats,
     adjustUserTokens,
+    resetDailyTokens,
     resetMonthlyTokens
   } = useTokenManagement();
 
@@ -47,6 +48,10 @@ const TokenManagement = () => {
           <p className="text-gray-600">Monitor and manage AI token usage across the platform</p>
         </div>
         <div className="flex gap-2">
+          <Button onClick={resetDailyTokens} variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+            <Clock size={16} className="mr-2" />
+            Reset Daily Tokens
+          </Button>
           <Button onClick={resetMonthlyTokens} variant="outline" className="border-emerald-600 text-emerald-600 hover:bg-emerald-50">
             <RefreshCw size={16} className="mr-2" />
             Reset Monthly Tokens

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, Minus, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Search, Plus, Minus, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { UserToken } from './types';
 
 interface UserTokensTableProps {
@@ -19,6 +19,15 @@ const UserTokensTable = ({ userTokens, searchTerm, onSearchChange, onAdjustToken
   const filteredUsers = userTokens.filter(user => 
     user.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const calculateTrialStatus = (trialEndDate: string | null) => {
+    if (!trialEndDate) return { isActive: false, daysRemaining: 0 };
+    const endDate = new Date(trialEndDate);
+    const currentDate = new Date();
+    const isActive = currentDate <= endDate;
+    const daysRemaining = Math.max(0, Math.ceil((endDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)));
+    return { isActive, daysRemaining };
+  };
 
   return (
     <Card>
@@ -44,6 +53,8 @@ const UserTokensTable = ({ userTokens, searchTerm, onSearchChange, onAdjustToken
               <TableHead>Total Tokens</TableHead>
               <TableHead>Used Tokens</TableHead>
               <TableHead>Available</TableHead>
+              <TableHead>Daily Limit</TableHead>
+              <TableHead>Trial Status</TableHead>
               <TableHead>Usage %</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
@@ -54,9 +65,12 @@ const UserTokensTable = ({ userTokens, searchTerm, onSearchChange, onAdjustToken
               const totalTokens = user.total_tokens || 0;
               const usedTokens = user.used_tokens || 0;
               const availableTokens = user.available_tokens || 0;
+              const dailyTokenLimit = user.daily_token_limit || 25;
+              const dailyTokensUsed = user.daily_tokens_used || 0;
               const usagePercent = totalTokens > 0 ? (usedTokens / totalTokens) * 100 : 0;
               const isLowBalance = availableTokens < 10;
               const isHighUsage = usagePercent > 90;
+              const trialStatus = calculateTrialStatus(user.trial_end_date);
               
               return (
                 <TableRow key={user.id}>
@@ -68,6 +82,25 @@ const UserTokensTable = ({ userTokens, searchTerm, onSearchChange, onAdjustToken
                       {availableTokens.toLocaleString()}
                       {isLowBalance && <AlertTriangle size={16} className="text-red-500" />}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-sm">
+                      <div>{dailyTokensUsed}/{dailyTokenLimit}</div>
+                      <div className="text-gray-500 text-xs">daily used/limit</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {trialStatus.isActive ? (
+                      <div className="flex items-center gap-2">
+                        <Clock size={16} className="text-blue-500" />
+                        <div className="text-sm">
+                          <div className="text-blue-600 font-medium">Active</div>
+                          <div className="text-gray-500 text-xs">{trialStatus.daysRemaining} days left</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <Badge variant="secondary" className="text-xs">Expired</Badge>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge variant={isHighUsage ? 'destructive' : usagePercent > 70 ? 'secondary' : 'default'}>
@@ -113,7 +146,7 @@ const UserTokensTable = ({ userTokens, searchTerm, onSearchChange, onAdjustToken
             })}
             {filteredUsers.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={9} className="text-center py-8 text-gray-500">
                   No users found matching your search criteria.
                 </TableCell>
               </TableRow>

@@ -96,7 +96,8 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
                   Sign In
                 </Button>
                 <Button onClick={onAuthClick} className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white font-semibold px-3 lg:px-4 xl:px-6 py-2 rounded-xl transition-all duration-200 shadow-lg hover:shadow-violet-500/25 text-xs lg:text-sm">
-                  Start Free Trial
+                  <Sparkles className="mr-1" size={14} />
+                  Start 100-Day Trial
                 </Button>
               </>
             )}
@@ -130,7 +131,7 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
               </div>
 
               <button onClick={() => handleNavigation('/#features')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Features</button>
-              <button onClick={() => handleNavigation('/')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Pricing</button>
+              <button onClick={() => handleNavigation('/pricing')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Pricing</button>
               <button onClick={() => handleNavigation('/help')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Resources</button>
               <button onClick={() => handleNavigation('/contact')} className="block w-full text-left px-3 py-3 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200">Contact</button>
               
@@ -151,7 +152,8 @@ const Navbar = ({ onAuthClick }: NavbarProps) => {
                       Sign In
                     </Button>
                     <Button onClick={onAuthClick} className="w-full bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 text-white font-semibold">
-                      Start Free Trial
+                      <Sparkles className="mr-1" size={14} />
+                      Start 100-Day Trial
                     </Button>
                   </>
                 )}
