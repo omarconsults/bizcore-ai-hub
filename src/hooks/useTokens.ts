@@ -8,6 +8,12 @@ export interface TokenBalance {
   totalTokens: number;
   usedTokens: number;
   availableTokens: number;
+  dailyTokenLimit: number;
+  dailyTokensUsed: number;
+  dailyTokensRemaining: number;
+  isTrialActive: boolean;
+  trialEndDate: string | null;
+  daysRemaining: number;
 }
 
 export interface TokenTransaction {
@@ -32,7 +38,13 @@ export const useTokens = () => {
   const [tokenBalance, setTokenBalance] = useState<TokenBalance>({
     totalTokens: 0,
     usedTokens: 0,
-    availableTokens: 0
+    availableTokens: 0,
+    dailyTokenLimit: 0,
+    dailyTokensUsed: 0,
+    dailyTokensRemaining: 0,
+    isTrialActive: false,
+    trialEndDate: null,
+    daysRemaining: 0
   });
   const [transactions, setTransactions] = useState<TokenTransaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,7 +55,7 @@ export const useTokens = () => {
     try {
       const { data, error } = await supabase
         .from('user_tokens')
-        .select('total_tokens, used_tokens, available_tokens')
+        .select('*')
         .eq('user_id', user.id)
         .single();
 
@@ -52,10 +64,21 @@ export const useTokens = () => {
       }
 
       if (data) {
+        const trialEndDate = data.trial_end_date ? new Date(data.trial_end_date) : null;
+        const currentDate = new Date();
+        const isTrialActive = trialEndDate ? currentDate <= trialEndDate : false;
+        const daysRemaining = trialEndDate ? Math.max(0, Math.ceil((trialEndDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24))) : 0;
+
         setTokenBalance({
           totalTokens: data.total_tokens,
           usedTokens: data.used_tokens,
-          availableTokens: data.available_tokens
+          availableTokens: data.available_tokens || (data.total_tokens - data.used_tokens),
+          dailyTokenLimit: data.daily_token_limit || 25,
+          dailyTokensUsed: data.daily_tokens_used || 0,
+          dailyTokensRemaining: Math.max(0, (data.daily_token_limit || 25) - (data.daily_tokens_used || 0)),
+          isTrialActive,
+          trialEndDate: data.trial_end_date,
+          daysRemaining
         });
       } else {
         // Initialize user tokens if not found
@@ -77,13 +100,21 @@ export const useTokens = () => {
     if (!user?.email || !user?.id || !session) return;
 
     try {
+      const trialStartDate = new Date().toISOString().split('T')[0];
+      const trialEndDate = new Date(Date.now() + 100 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
       const { error } = await supabase
         .from('user_tokens')
         .insert({
           user_id: user.id,
           email: user.email,
-          total_tokens: 10, // New users get 10 free tokens
-          used_tokens: 0
+          total_tokens: 10, // Welcome bonus
+          used_tokens: 0,
+          daily_token_limit: 25,
+          daily_tokens_used: 0,
+          trial_start_date: trialStartDate,
+          trial_end_date: trialEndDate,
+          last_daily_reset: trialStartDate
         });
 
       if (error) throw error;
@@ -97,7 +128,7 @@ export const useTokens = () => {
           transaction_type: 'monthly_bonus',
           amount: 10,
           feature_used: 'welcome_bonus',
-          description: 'Welcome! 10 free tokens to get you started'
+          description: 'Welcome! 10 free tokens to get you started + 100-day trial with 25 daily tokens'
         });
 
       await fetchTokenBalance();
@@ -126,10 +157,17 @@ export const useTokens = () => {
       return false;
     }
 
-    // Sanitize feature and description
-    const sanitizedFeature = sanitizeInput(feature);
-    const sanitizedDescription = description ? sanitizeInput(description) : undefined;
+    // Check daily limit during trial
+    if (tokenBalance.isTrialActive && tokenBalance.dailyTokensRemaining < amount) {
+      toast({
+        title: "Daily limit reached",
+        description: `You've reached your daily limit of ${tokenBalance.dailyTokenLimit} tokens. Try again tomorrow or upgrade your plan.`,
+        variant: "destructive"
+      });
+      return false;
+    }
 
+    // Check available tokens
     if (tokenBalance.availableTokens < amount) {
       toast({
         title: "Insufficient tokens",
@@ -139,20 +177,30 @@ export const useTokens = () => {
       return false;
     }
 
+    // Sanitize feature and description
+    const sanitizedFeature = sanitizeInput(feature);
+    const sanitizedDescription = description ? sanitizeInput(description) : undefined;
+
     try {
-      // Update token balance with proper user validation
+      // Update token balance and daily usage
+      const updateData: any = { 
+        used_tokens: tokenBalance.usedTokens + amount,
+        updated_at: new Date().toISOString()
+      };
+
+      if (tokenBalance.isTrialActive) {
+        updateData.daily_tokens_used = tokenBalance.dailyTokensUsed + amount;
+      }
+
       const { error: updateError } = await supabase
         .from('user_tokens')
-        .update({ 
-          used_tokens: tokenBalance.usedTokens + amount,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('user_id', user.id)
-        .eq('email', user.email); // Additional validation
+        .eq('email', user.email);
 
       if (updateError) throw updateError;
 
-      // Log transaction with proper user validation
+      // Log transaction
       const { error: transactionError } = await supabase
         .from('token_transactions')
         .insert({
@@ -170,7 +218,9 @@ export const useTokens = () => {
       setTokenBalance(prev => ({
         ...prev,
         usedTokens: prev.usedTokens + amount,
-        availableTokens: prev.availableTokens - amount
+        availableTokens: prev.availableTokens - amount,
+        dailyTokensUsed: prev.isTrialActive ? prev.dailyTokensUsed + amount : prev.dailyTokensUsed,
+        dailyTokensRemaining: prev.isTrialActive ? Math.max(0, prev.dailyTokensRemaining - amount) : prev.dailyTokensRemaining
       }));
 
       return true;

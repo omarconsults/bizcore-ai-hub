@@ -201,10 +201,15 @@ export type Database = {
         Row: {
           available_tokens: number | null
           created_at: string
+          daily_token_limit: number | null
+          daily_tokens_used: number | null
           email: string
           id: string
+          last_daily_reset: string | null
           last_reset_date: string | null
           total_tokens: number
+          trial_end_date: string | null
+          trial_start_date: string | null
           updated_at: string
           used_tokens: number
           user_id: string | null
@@ -212,10 +217,15 @@ export type Database = {
         Insert: {
           available_tokens?: number | null
           created_at?: string
+          daily_token_limit?: number | null
+          daily_tokens_used?: number | null
           email: string
           id?: string
+          last_daily_reset?: string | null
           last_reset_date?: string | null
           total_tokens?: number
+          trial_end_date?: string | null
+          trial_start_date?: string | null
           updated_at?: string
           used_tokens?: number
           user_id?: string | null
@@ -223,10 +233,15 @@ export type Database = {
         Update: {
           available_tokens?: number | null
           created_at?: string
+          daily_token_limit?: number | null
+          daily_tokens_used?: number | null
           email?: string
           id?: string
+          last_daily_reset?: string | null
           last_reset_date?: string | null
           total_tokens?: number
+          trial_end_date?: string | null
+          trial_start_date?: string | null
           updated_at?: string
           used_tokens?: number
           user_id?: string | null
@@ -238,6 +253,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      reset_daily_tokens: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       reset_monthly_tokens: {
         Args: Record<PropertyKey, never>
         Returns: undefined

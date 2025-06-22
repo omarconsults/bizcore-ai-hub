@@ -17,7 +17,7 @@ import BusinessSetupForm from '@/components/onboarding/BusinessSetupForm';
 import EmailVerificationPrompt from '@/components/auth/EmailVerificationPrompt';
 
 const Index = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, isEmailVerified } = useAuth();
   const { businessProfile, loading: profileLoading, refetch } = useBusinessProfile();
   const navigate = useNavigate();
   const location = useLocation();
@@ -65,8 +65,9 @@ const Index = () => {
       profileLoading,
       viewMode,
       userEmailVerified: user?.email_confirmed_at || 'Not confirmed',
+      isEmailVerified,
     });
-  }, [user, loading, businessProfile, profileLoading, viewMode]);
+  }, [user, loading, businessProfile, profileLoading, viewMode, isEmailVerified]);
 
   // Handle navigation from footer product links
   useEffect(() => {
@@ -82,8 +83,11 @@ const Index = () => {
   useEffect(() => {
     if (!loading && !profileLoading) {
       if (user) {
-        console.log('User authenticated, checking business profile...');
-        if (businessProfile) {
+        console.log('User authenticated, checking email verification...');
+        if (!isEmailVerified) {
+          console.log('User email not verified, showing verification prompt');
+          setViewMode('email-verification');
+        } else if (businessProfile) {
           console.log('User has business profile, switching to dashboard');
           setViewMode('dashboard');
         } else {
@@ -95,7 +99,7 @@ const Index = () => {
         setViewMode('landing');
       }
     }
-  }, [user, loading, businessProfile, profileLoading]);
+  }, [user, loading, businessProfile, profileLoading, isEmailVerified]);
 
   const handleAuthClick = () => {
     navigate('/auth');
@@ -126,6 +130,12 @@ const Index = () => {
   // Show loading screen while authentication and profile data are being fetched
   if (loading || profileLoading || !isPageReady) {
     return <LoadingScreen />;
+  }
+
+  // Show email verification prompt for unverified users
+  if (user && !isEmailVerified && viewMode === 'email-verification') {
+    console.log('Rendering email verification prompt for user:', user.email);
+    return <EmailVerificationPrompt />;
   }
 
   // Show onboarding flow for authenticated users without business profile
