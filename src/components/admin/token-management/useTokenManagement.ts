@@ -12,7 +12,9 @@ export const useTokenManagement = () => {
     totalUsers: 0,
     totalTokensIssued: 0,
     totalTokensConsumed: 0,
-    averageUsage: 0
+    averageUsage: 0,
+    activeTrialUsers: 0,
+    totalDailyTokensUsed: 0
   });
   const [userTokens, setUserTokens] = useState<UserToken[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<TokenTransaction[]>([]);
