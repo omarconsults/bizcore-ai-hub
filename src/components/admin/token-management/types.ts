@@ -8,6 +8,11 @@ export interface UserToken {
   available_tokens: number;
   last_reset_date: string;
   created_at: string;
+  daily_token_limit: number;
+  daily_tokens_used: number;
+  trial_start_date: string | null;
+  trial_end_date: string | null;
+  last_daily_reset: string | null;
 }
 
 export interface TokenTransaction {
@@ -26,4 +31,6 @@ export interface TokenStats {
   totalTokensIssued: number;
   totalTokensConsumed: number;
   averageUsage: number;
+  activeTrialUsers: number;
+  totalDailyTokensUsed: number;
 }
