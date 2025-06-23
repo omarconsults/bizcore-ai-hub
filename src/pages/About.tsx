@@ -13,7 +13,7 @@ const About = () => {
   };
 
   const stats = [
-    { label: 'Businesses Launched', value: '5,000+', icon: Building },
+    { label: 'Businesses Launched', value: '3,000+', icon: Building },
     { label: 'Active Users', value: '1,000+', icon: Users },
     { label: 'Success Rate', value: '99.8%', icon: Award },
     { label: 'Revenue Generated', value: '₦200M+', icon: Target },
