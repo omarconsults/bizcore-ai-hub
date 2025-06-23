@@ -334,7 +334,7 @@ Create a comprehensive DPA that meets NDPR requirements and international standa
                         <SelectContent>
                           <SelectItem value="Limited Liability Company">Limited Liability Company</SelectItem>
                           <SelectItem value="Partnership">Partnership</SelectItem>
-                          <SelectItem value="Sole Proprietorship">Sole Proprietorship</SelectItem>
+                          <SelectItem value="Business Name">Business Name</SelectItem>
                           <SelectItem value="Public Limited Company">Public Limited Company</SelectItem>
                         </SelectContent>
                       </Select>

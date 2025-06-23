@@ -5,7 +5,7 @@ CREATE TABLE public.business_profiles (
   user_id UUID REFERENCES auth.users NOT NULL,
   business_name TEXT NOT NULL,
   cac_registration_number TEXT,
-  business_type TEXT NOT NULL, -- 'LLC', 'LTD', 'Partnership', 'Sole Proprietorship'
+  business_type TEXT NOT NULL, -- 'LLC', 'LTD', 'Partnership', 'Business Name'
   registration_status TEXT NOT NULL DEFAULT 'pending', -- 'pending', 'registered', 'verified'
   registration_date DATE,
   has_existing_business BOOLEAN NOT NULL DEFAULT false,

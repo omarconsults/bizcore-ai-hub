@@ -3,7 +3,7 @@ import { EntityType, LaunchStep } from './types';
 
 export const entityTypes: EntityType[] = [
   {
-    type: 'Sole Proprietorship',
+    type: 'Business Name',
     description: 'Simple structure for individual business owners',
     pros: ['Easy to set up', 'Complete control', 'Simple taxation'],
     cons: ['Unlimited liability', 'Limited funding options'],

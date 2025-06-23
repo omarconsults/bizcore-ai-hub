@@ -158,7 +158,7 @@ const BusinessSetupForm = ({ onComplete }: BusinessSetupFormProps) => {
                   <SelectValue placeholder="Select business type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Sole Proprietorship">Sole Proprietorship</SelectItem>
+                  <SelectItem value="Business Name">Business Name</SelectItem>
                   <SelectItem value="Partnership">Partnership</SelectItem>
                   <SelectItem value="LLC">Limited Liability Company (LLC)</SelectItem>
                   <SelectItem value="LTD">Private Limited Company (LTD)</SelectItem>

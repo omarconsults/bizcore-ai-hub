@@ -129,7 +129,7 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="Sole Proprietorship">Sole Proprietorship</SelectItem>
+                <SelectItem value="Business Name">Business Name</SelectItem>
                 <SelectItem value="Limited Liability Company (LLC)">Limited Liability Company (LLC)</SelectItem>
                 <SelectItem value="Private Limited Company (LTD)">Private Limited Company (LTD)</SelectItem>
                 <SelectItem value="Partnership">Partnership</SelectItem>
