@@ -8,7 +8,7 @@ export const entityTypes: EntityType[] = [
     pros: ['Easy to set up', 'Complete control', 'Simple taxation'],
     cons: ['Unlimited liability', 'Limited funding options'],
     bestFor: 'Freelancers, consultants, small traders',
-    cost: '₦15,000 - ₦30,000'
+    cost: '₦25,000'
   },
   {
     type: 'Limited Liability Company (LLC)',
@@ -16,7 +16,7 @@ export const entityTypes: EntityType[] = [
     pros: ['Limited liability', 'Professional credibility', 'Easy to raise funds'],
     cons: ['More paperwork', 'Higher costs', 'Annual filings required'],
     bestFor: 'Startups, SMEs, businesses seeking investment',
-    cost: '₦50,000 - ₦100,000'
+    cost: '₦60,000'
   },
   {
     type: 'Private Limited Company (LTD)',
@@ -24,7 +24,7 @@ export const entityTypes: EntityType[] = [
     pros: ['Limited liability protection', 'Separate legal entity', 'Transferable shares', 'Tax advantages'],
     cons: ['Complex compliance requirements', 'Higher setup costs', 'Mandatory audits', 'Statutory meetings required'],
     bestFor: 'Medium to large businesses, companies seeking investment, export businesses',
-    cost: '₦75,000 - ₦150,000'
+    cost: '₦60,000'
   },
   {
     type: 'Partnership',
@@ -32,7 +32,7 @@ export const entityTypes: EntityType[] = [
     pros: ['Shared costs', 'Combined expertise', 'Shared liability'],
     cons: ['Potential conflicts', 'Joint liability', 'Profit sharing'],
     bestFor: 'Professional services, joint ventures',
-    cost: '₦25,000 - ₦50,000'
+    cost: '₦₦50,000'
   }
 ];
 
