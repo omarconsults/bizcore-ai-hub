@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, FileText, Shield, Users, Globe, FileCheck, Scale } from 'lucide-react';
+import { Zap, FileText, Shield, Users, Globe, FileCheck, Scale, Heart, Package, Award } from 'lucide-react';
 import DocumentGeneratorForm from './DocumentGeneratorForm';
 
 interface DocumentTemplate {
@@ -52,6 +52,42 @@ const DocumentGenerator: React.FC = () => {
       description: 'NDPR-compliant DPA for data processor relationships', 
       icon: Scale,
       features: ['Data Processing Terms', 'Security Measures', 'Audit Rights', 'International Transfers']
+    },
+    {
+      name: 'Export Documentation Package',
+      description: 'Complete export documentation for NEPC registration and international trade',
+      icon: Globe,
+      features: ['Export Invoices', 'Shipping Documents', 'Certificate of Origin', 'Export Permits']
+    },
+    {
+      name: 'Quality Management System Documents',
+      description: 'ISO and SON compliant quality management documentation',
+      icon: Award,
+      features: ['Quality Manual', 'Process Procedures', 'Work Instructions', 'Quality Records']
+    },
+    {
+      name: 'NAFDAC Product Dossier',
+      description: 'Comprehensive product documentation for NAFDAC registration',
+      icon: Heart,
+      features: ['Product Information', 'Manufacturing Details', 'Quality Specifications', 'Safety Data']
+    },
+    {
+      name: 'Health & Safety Policies',
+      description: 'Workplace health and safety documentation and procedures',
+      icon: Shield,
+      features: ['Safety Policies', 'Risk Assessments', 'Emergency Procedures', 'Training Records']
+    },
+    {
+      name: 'Environmental Compliance Package',
+      description: 'Environmental impact assessment and compliance documentation',
+      icon: Package,
+      features: ['EIA Reports', 'Waste Management Plans', 'Environmental Permits', 'Monitoring Procedures']
+    },
+    {
+      name: 'Professional Services Agreement',
+      description: 'Contracts for professional service providers and consultants',
+      icon: Users,
+      features: ['Service Terms', 'Professional Standards', 'Liability Clauses', 'Intellectual Property']
     }
   ];
 
@@ -122,6 +158,7 @@ const DocumentGenerator: React.FC = () => {
               <li>• Compliance with Nigerian business regulations</li>
               <li>• Customizable based on your specific requirements</li>
               <li>• Ready-to-use documents that save time and legal costs</li>
+              <li>• Industry-specific templates for various regulatory requirements</li>
             </ul>
           </div>
         </div>

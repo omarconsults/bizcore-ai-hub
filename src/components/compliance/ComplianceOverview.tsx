@@ -13,6 +13,9 @@ import NDPRComplianceForm from './forms/NDPRComplianceForm';
 import DataProcessingAgreementForm from './forms/DataProcessingAgreementForm';
 import FireSafetyCertificateForm from './forms/FireSafetyCertificateForm';
 import NAFDACPermitForm from './forms/NAFDACPermitForm';
+import NEPCRegistrationForm from './forms/NEPCRegistrationForm';
+import SONCertificationForm from './forms/SONCertificationForm';
+import NAFDACRegistrationForm from './forms/NAFDACRegistrationForm';
 
 interface ComplianceItem {
   name: string;
@@ -41,6 +44,9 @@ const ComplianceOverview: React.FC<ComplianceOverviewProps> = ({ complianceItems
   const [showDataProcessingAgreementForm, setShowDataProcessingAgreementForm] = useState(false);
   const [showFireSafetyCertificateForm, setShowFireSafetyCertificateForm] = useState(false);
   const [showNAFDACPermitForm, setShowNAFDACPermitForm] = useState(false);
+  const [showNEPCRegistrationForm, setShowNEPCRegistrationForm] = useState(false);
+  const [showSONCertificationForm, setShowSONCertificationForm] = useState(false);
+  const [showNAFDACRegistrationForm, setShowNAFDACRegistrationForm] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -85,6 +91,15 @@ const ComplianceOverview: React.FC<ComplianceOverviewProps> = ({ complianceItems
         break;
       case 'NAFDAC Permit':
         setShowNAFDACPermitForm(true);
+        break;
+      case 'NEPC Registration':
+        setShowNEPCRegistrationForm(true);
+        break;
+      case 'SON Certification':
+        setShowSONCertificationForm(true);
+        break;
+      case 'NAFDAC Registration':
+        setShowNAFDACRegistrationForm(true);
         break;
       default:
         toast({
@@ -168,6 +183,21 @@ const ComplianceOverview: React.FC<ComplianceOverviewProps> = ({ complianceItems
       <NAFDACPermitForm
         isOpen={showNAFDACPermitForm}
         onClose={() => setShowNAFDACPermitForm(false)}
+      />
+
+      <NEPCRegistrationForm
+        isOpen={showNEPCRegistrationForm}
+        onClose={() => setShowNEPCRegistrationForm(false)}
+      />
+
+      <SONCertificationForm
+        isOpen={showSONCertificationForm}
+        onClose={() => setShowSONCertificationForm(false)}
+      />
+
+      <NAFDACRegistrationForm
+        isOpen={showNAFDACRegistrationForm}
+        onClose={() => setShowNAFDACRegistrationForm(false)}
       />
     </>
   );
