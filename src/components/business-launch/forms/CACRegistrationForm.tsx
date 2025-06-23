@@ -131,6 +131,7 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
               <SelectContent>
                 <SelectItem value="Sole Proprietorship">Sole Proprietorship</SelectItem>
                 <SelectItem value="Limited Liability Company (LLC)">Limited Liability Company (LLC)</SelectItem>
+                <SelectItem value="Private Limited Company (LTD)">Private Limited Company (LTD)</SelectItem>
                 <SelectItem value="Partnership">Partnership</SelectItem>
                 <SelectItem value="Public Limited Company">Public Limited Company</SelectItem>
               </SelectContent>
@@ -140,12 +141,12 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
         )}
       />
 
-      {selectedEntityType === 'Limited Liability Company (LLC)' && (
+      {(selectedEntityType === 'Limited Liability Company (LLC)' || selectedEntityType === 'Private Limited Company (LTD)') && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="shareCapital"
-            rules={{ required: "Share capital is required for LLC" }}
+            rules={{ required: "Share capital is required for LLC/LTD" }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Authorized Share Capital (₦) *</FormLabel>
@@ -160,7 +161,7 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
           <FormField
             control={form.control}
             name="numberOfShares"
-            rules={{ required: "Number of shares is required for LLC" }}
+            rules={{ required: "Number of shares is required for LLC/LTD" }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Number of Shares *</FormLabel>
@@ -175,7 +176,7 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
           <FormField
             control={form.control}
             name="parValue"
-            rules={{ required: "Par value is required for LLC" }}
+            rules={{ required: "Par value is required for LLC/LTD" }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Par Value per Share (₦) *</FormLabel>

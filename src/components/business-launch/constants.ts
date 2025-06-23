@@ -19,6 +19,14 @@ export const entityTypes: EntityType[] = [
     cost: '₦50,000 - ₦100,000'
   },
   {
+    type: 'Private Limited Company (LTD)',
+    description: 'Corporate structure with share capital and limited liability',
+    pros: ['Limited liability protection', 'Separate legal entity', 'Transferable shares', 'Tax advantages'],
+    cons: ['Complex compliance requirements', 'Higher setup costs', 'Mandatory audits', 'Statutory meetings required'],
+    bestFor: 'Medium to large businesses, companies seeking investment, export businesses',
+    cost: '₦75,000 - ₦150,000'
+  },
+  {
     type: 'Partnership',
     description: 'Shared ownership and responsibilities',
     pros: ['Shared costs', 'Combined expertise', 'Shared liability'],
