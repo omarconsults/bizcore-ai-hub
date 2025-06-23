@@ -2,15 +2,26 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Building, Users, Award, Target } from 'lucide-react';
 
 const About = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleAuthClick = () => {
     navigate('/auth');
   };
+
+  // Add scroll to section functionality for success stories
+  React.useEffect(() => {
+    if (location.hash === '#success-stories') {
+      const element = document.querySelector('#success-stories');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location.hash]);
 
   const stats = [
     { label: 'Businesses Launched', value: '3,000+', icon: Building },
@@ -63,6 +74,28 @@ const About = () => {
             <p className="leading-relaxed">
               After seeing countless Nigerian entrepreneurs struggle with complex registration processes, compliance requirements, and lack of business guidance, we created BizCore to be the comprehensive solution that handles everything from day one to IPO.
             </p>
+          </div>
+        </div>
+
+        {/* Success Stories Section */}
+        <div id="success-stories" className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-12">Success Stories</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-gray-50 rounded-2xl p-8">
+              <div className="text-4xl mb-4">🚀</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">TechStart Lagos</h3>
+              <p className="text-gray-600">"BizCore helped us register our startup and stay compliant while focusing on growth. We launched 3 months faster than expected."</p>
+            </div>
+            <div className="bg-gray-50 rounded-2xl p-8">
+              <div className="text-4xl mb-4">📈</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">AgriGrow Nigeria</h3>
+              <p className="text-gray-600">"From registration to scaling operations, BizCore's AI tools guided us every step. We're now serving 500+ farmers."</p>
+            </div>
+            <div className="bg-gray-50 rounded-2xl p-8">
+              <div className="text-4xl mb-4">💡</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">EduTech Abuja</h3>
+              <p className="text-gray-600">"The compliance management saved us countless hours. We could focus on our students instead of paperwork."</p>
+            </div>
           </div>
         </div>
 

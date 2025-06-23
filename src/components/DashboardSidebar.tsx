@@ -18,7 +18,12 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 
-const DashboardSidebar = ({ activeModule, setActiveModule }) => {
+interface DashboardSidebarProps {
+  activeModule: string;
+  setActiveModule: (module: string) => void;
+}
+
+const DashboardSidebar = ({ activeModule, setActiveModule }: DashboardSidebarProps) => {
   const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -48,14 +53,14 @@ const DashboardSidebar = ({ activeModule, setActiveModule }) => {
     setIsMobileMenuOpen(false);
   };
 
-  const handleModuleClick = (moduleId) => {
+  const handleModuleClick = (moduleId: string) => {
     setActiveModule(moduleId);
     closeMobileMenu(); // Always close on module selection
   };
 
   // Add escape key support and auto-close on route changes
   useEffect(() => {
-    const handleEscapeKey = (event) => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isMobileMenuOpen) {
         closeMobileMenu();
       }
