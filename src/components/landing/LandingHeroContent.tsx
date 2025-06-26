@@ -23,6 +23,7 @@ const LandingHeroContent = () => {
     "Full HR suite with payroll, contracts & performance tracking"
   ];
 
+
   return (
     <div className="space-y-8 text-center lg:text-left">
       {/* Simplified badge */}
