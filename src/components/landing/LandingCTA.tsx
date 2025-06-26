@@ -89,7 +89,7 @@ const LandingCTA = ({ onStartDemo, user }: LandingCTAProps) => {
           
           <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
             <p className="text-violet-300 text-base sm:text-lg font-medium">
-              30-day free trial • No credit card required • Setup starts immediately
+              100-day free trial • No credit card required • Setup starts immediately
             </p>
             <p className="text-cyan-200 text-sm flex items-center justify-center gap-2">
               <TrendingUp size={16} />
