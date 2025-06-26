@@ -27,15 +27,15 @@ const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   
   const [documents, setDocuments] = useState<Document[]>(initialData?.documents || [
-    { name: 'Memorandum of Association', required: true, uploaded: false },
-    { name: 'Articles of Association', required: true, uploaded: false },
-    { name: 'Form CAC 2.1 (Statement of Share Capital)', required: true, uploaded: false },
-    { name: 'Form CAC 7 (Particulars of Directors)', required: true, uploaded: false },
-    { name: 'Evidence of Payment of Name Search', required: true, uploaded: false },
+    { name: 'Means of Identification', required: true, uploaded: false },
+    { name: 'Signature of Director 1', required: true, uploaded: false },
+    { name: 'Signature of Witness 1', required: true, uploaded: false },
+    { name: 'Mean of Identification of Director 1)', required: true, uploaded: false },
+    { name: 'Other Documents', required: true, uploaded: false },
     { name: 'Passport Photographs of Directors', required: true, uploaded: false },
     { name: 'Valid ID Cards of Directors', required: true, uploaded: false },
-    { name: 'Certified True Copy of Address Verification', required: false, uploaded: false },
-    { name: 'Letter of Consent from Landlord', required: false, uploaded: false },
+    { name: 'Address Verification Document', required: false, uploaded: false },
+    { name: 'Letter of Consent', required: false, uploaded: false },
   ]);
 
   useEffect(() => {
