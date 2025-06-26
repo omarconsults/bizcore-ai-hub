@@ -32,6 +32,54 @@ interface FormData {
   agreeToTerms: boolean;
 }
 
+const nigerianStates = [
+  'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno', 
+  'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT - Abuja', 'Gombe', 
+  'Imo', 'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 
+  'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 
+  'Taraba', 'Yobe', 'Zamfara'
+];
+
+const businessActivities = [
+  'Accounting & Professional Services',
+  'Advertising & Marketing',
+  'Agriculture & Farming',
+  'Art & Entertainment',
+  'Automotive & Transportation',
+  'Banking & Financial Services',
+  'Beauty & Personal Care',
+  'Building & Construction',
+  'Cleaning Services',
+  'Computer & IT Services',
+  'Consulting Services',
+  'E-commerce & Online Sales',
+  'Education & Training',
+  'Engineering Services',
+  'Event Planning & Management',
+  'Fashion & Textiles',
+  'Food & Beverage',
+  'General Trading',
+  'Healthcare & Medical Services',
+  'Hospitality & Tourism',
+  'Import & Export',
+  'Insurance Services',
+  'Legal Services',
+  'Logistics & Supply Chain',
+  'Manufacturing',
+  'Media & Broadcasting',
+  'Mining & Oil Services',
+  'Non-Profit & NGO',
+  'Photography & Videography',
+  'Printing & Publishing',
+  'Real Estate & Property',
+  'Research & Development',
+  'Retail & Wholesale',
+  'Security Services',
+  'Telecommunications',
+  'Waste Management',
+  'Other'
+];
+
 const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
   selectedEntityType,
   onBack,
@@ -241,13 +289,12 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
                     <SelectValue placeholder="Select state" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="Lagos">Lagos</SelectItem>
-                  <SelectItem value="Abuja">Abuja</SelectItem>
-                  <SelectItem value="Kano">Kano</SelectItem>
-                  <SelectItem value="Rivers">Rivers</SelectItem>
-                  <SelectItem value="Oyo">Oyo</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                <SelectContent className="max-h-60 overflow-y-auto">
+                  {nigerianStates.map((state) => (
+                    <SelectItem key={state} value={state}>
+                      {state}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -298,15 +345,12 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
                   <SelectValue placeholder="Select your main business activity" />
                 </SelectTrigger>
               </FormControl>
-              <SelectContent>
-                <SelectItem value="Trading">Trading</SelectItem>
-                <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-                <SelectItem value="Services">Services</SelectItem>
-                <SelectItem value="Technology">Technology</SelectItem>
-                <SelectItem value="Agriculture">Agriculture</SelectItem>
-                <SelectItem value="Construction">Construction</SelectItem>
-                <SelectItem value="Real Estate">Real Estate</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
+              <SelectContent className="max-h-60 overflow-y-auto">
+                {businessActivities.map((activity) => (
+                  <SelectItem key={activity} value={activity}>
+                    {activity}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <FormMessage />
