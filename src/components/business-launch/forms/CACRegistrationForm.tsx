@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,14 +6,15 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Building, Users, FileText } from 'lucide-react';
+import { ArrowLeft, Building, FileText, AlertCircle } from 'lucide-react';
+import { validateCACForm } from '@/utils/formValidation';
 
 interface CACRegistrationFormProps {
   selectedEntityType: string;
   onBack: () => void;
-  onNext: () => void;
+  onNext: (data: any) => void;
+  initialData?: any;
 }
 
 interface FormData {
@@ -83,13 +84,15 @@ const businessActivities = [
 const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
   selectedEntityType,
   onBack,
-  onNext
+  onNext,
+  initialData
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const { toast } = useToast();
   
   const form = useForm<FormData>({
-    defaultValues: {
+    defaultValues: initialData || {
       companyName: '',
       alternativeName: '',
       businessType: selectedEntityType,
@@ -106,17 +109,48 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
     },
   });
 
+  useEffect(() => {
+    if (initialData) {
+      form.reset(initialData);
+    }
+  }, [initialData, form]);
+
   const onSubmit = (data: FormData) => {
+    const validation = validateCACForm(data, 2); // Final validation
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      toast({
+        title: "Form Incomplete",
+        description: "Please fill in all required fields before proceeding.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     console.log('CAC Registration Form Data:', data);
     toast({
-      title: "Registration Submitted",
-      description: "Your CAC business registration has been submitted successfully.",
+      title: "Form Completed",
+      description: "Proceeding to director details.",
     });
-    onNext();
+    onNext(data);
   };
 
   const nextStep = () => {
-    if (currentStep < 3) {
+    const currentData = form.getValues();
+    const validation = validateCACForm(currentData, currentStep);
+    
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      toast({
+        title: "Required Fields Missing",
+        description: "Please complete all required fields in this step.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setValidationErrors([]);
+    if (currentStep < 2) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -124,6 +158,7 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      setValidationErrors([]);
     }
   };
 
@@ -360,47 +395,6 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
     </div>
   );
 
-  const renderStepThree = () => (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Users className="text-blue-900" size={20} />
-        <h3 className="text-lg font-semibold">Review & Submit</h3>
-      </div>
-
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h4 className="font-medium mb-2">Registration Summary:</h4>
-        <div className="space-y-2 text-sm">
-          <p><strong>Company Name:</strong> {form.watch('companyName')}</p>
-          <p><strong>Business Type:</strong> {form.watch('businessType')}</p>
-          <p><strong>Location:</strong> {form.watch('city')}, {form.watch('state')}</p>
-          <p><strong>Business Activity:</strong> {form.watch('principalBusinessActivity')}</p>
-        </div>
-      </div>
-
-      <FormField
-        control={form.control}
-        name="agreeToTerms"
-        rules={{ required: "You must agree to the terms and conditions" }}
-        render={({ field }) => (
-          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-            <FormControl>
-              <Checkbox
-                checked={field.value}
-                onCheckedChange={field.onChange}
-              />
-            </FormControl>
-            <div className="space-y-1 leading-none">
-              <FormLabel>
-                I agree to the terms and conditions and confirm that all information provided is accurate *
-              </FormLabel>
-              <FormMessage />
-            </div>
-          </FormItem>
-        )}
-      />
-    </div>
-  );
-
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
@@ -416,14 +410,14 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
         </div>
         
         <div className="flex items-center gap-2 mb-6">
-          {[1, 2, 3].map((step) => (
+          {[1, 2].map((step) => (
             <div key={step} className="flex items-center">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                 step <= currentStep ? 'bg-blue-900 text-white' : 'bg-gray-200 text-gray-600'
               }`}>
                 {step}
               </div>
-              {step < 3 && (
+              {step < 2 && (
                 <div className={`w-8 h-1 mx-2 ${
                   step < currentStep ? 'bg-blue-900' : 'bg-gray-200'
                 }`} />
@@ -431,15 +425,29 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
             </div>
           ))}
         </div>
+
+        {validationErrors.length > 0 && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="text-red-600 mt-0.5" size={16} />
+              <div>
+                <p className="font-medium text-red-800">Please correct the following errors:</p>
+                <ul className="text-sm text-red-700 mt-1 list-disc list-inside">
+                  {validationErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <Card className="border-0 shadow-sm">
         <CardHeader>
           <CardTitle>
-            Step {currentStep} of 3: {
-              currentStep === 1 ? 'Company Information' :
-              currentStep === 2 ? 'Business Details' :
-              'Review & Submit'
+            Step {currentStep} of 2: {
+              currentStep === 1 ? 'Company Information' : 'Business Details'
             }
           </CardTitle>
         </CardHeader>
@@ -448,7 +456,6 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {currentStep === 1 && renderStepOne()}
               {currentStep === 2 && renderStepTwo()}
-              {currentStep === 3 && renderStepThree()}
 
               <div className="flex justify-between pt-6">
                 {currentStep > 1 && (
@@ -456,13 +463,13 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
                     Previous
                   </Button>
                 )}
-                {currentStep < 3 ? (
+                {currentStep < 2 ? (
                   <Button type="button" onClick={nextStep} className="ml-auto">
                     Next
                   </Button>
                 ) : (
-                  <Button type="submit" className="ml-auto bg-emerald-600 hover:bg-emerald-700">
-                    Submit Registration
+                  <Button type="submit" className="ml-auto bg-blue-900 hover:bg-blue-800">
+                    Continue to Directors
                   </Button>
                 )}
               </div>

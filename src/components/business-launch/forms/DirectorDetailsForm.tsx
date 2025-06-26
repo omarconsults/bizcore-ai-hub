@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,11 +6,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Trash2, Users } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Users, AlertCircle } from 'lucide-react';
+import { validateDirectorsForm } from '@/utils/formValidation';
 
 interface DirectorDetailsFormProps {
   onBack: () => void;
-  onNext: () => void;
+  onNext: (data: any) => void;
+  initialData?: any;
 }
 
 interface Director {
@@ -30,11 +31,16 @@ interface FormData {
   directors: Director[];
 }
 
-const DirectorDetailsForm: React.FC<DirectorDetailsFormProps> = ({ onBack, onNext }) => {
+const DirectorDetailsForm: React.FC<DirectorDetailsFormProps> = ({ 
+  onBack, 
+  onNext, 
+  initialData 
+}) => {
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const { toast } = useToast();
   
   const form = useForm<FormData>({
-    defaultValues: {
+    defaultValues: initialData || {
       directors: [
         {
           firstName: '',
@@ -56,13 +62,46 @@ const DirectorDetailsForm: React.FC<DirectorDetailsFormProps> = ({ onBack, onNex
     name: 'directors',
   });
 
+  useEffect(() => {
+    if (initialData) {
+      form.reset(initialData);
+    }
+  }, [initialData, form]);
+
   const onSubmit = (data: FormData) => {
+    const validation = validateDirectorsForm(data.directors);
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      toast({
+        title: "Form Incomplete",
+        description: "Please complete all required director information.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate shareholding totals to 100%
+    const totalShares = data.directors.reduce((sum, director) => {
+      return sum + (parseFloat(director.shareholding) || 0);
+    }, 0);
+
+    if (Math.abs(totalShares - 100) > 0.01) {
+      setValidationErrors([`Total shareholding must equal 100%. Current total: ${totalShares}%`]);
+      toast({
+        title: "Shareholding Error",
+        description: "The total shareholding percentage must equal 100%.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setValidationErrors([]);
     console.log('Director Details Form Data:', data);
     toast({
       title: "Director Details Saved",
-      description: "Director information has been saved successfully.",
+      description: "Proceeding to document upload.",
     });
-    onNext();
+    onNext(data);
   };
 
   const addDirector = () => {
@@ -92,7 +131,23 @@ const DirectorDetailsForm: React.FC<DirectorDetailsFormProps> = ({ onBack, onNex
             Back
           </Button>
         </div>
-        <p className="text-gray-600">Add details for all company directors</p>
+        <p className="text-gray-600">Add details for all company directors (shareholding must total 100%)</p>
+
+        {validationErrors.length > 0 && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="text-red-600 mt-0.5" size={16} />
+              <div>
+                <p className="font-medium text-red-800">Please correct the following errors:</p>
+                <ul className="text-sm text-red-700 mt-1 list-disc list-inside">
+                  {validationErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <Form {...form}>

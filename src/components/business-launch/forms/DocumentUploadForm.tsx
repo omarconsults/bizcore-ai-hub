@@ -1,13 +1,14 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Upload, FileText, CheckCircle, AlertCircle } from 'lucide-react';
+import { validateDocumentsForm } from '@/utils/formValidation';
 
 interface DocumentUploadFormProps {
   onBack: () => void;
-  onNext: () => void;
+  onNext: (data: any) => void;
+  initialData?: any;
 }
 
 interface Document {
@@ -17,10 +18,15 @@ interface Document {
   file?: File;
 }
 
-const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ onBack, onNext }) => {
+const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ 
+  onBack, 
+  onNext, 
+  initialData 
+}) => {
   const { toast } = useToast();
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   
-  const [documents, setDocuments] = useState<Document[]>([
+  const [documents, setDocuments] = useState<Document[]>(initialData?.documents || [
     { name: 'Memorandum of Association', required: true, uploaded: false },
     { name: 'Articles of Association', required: true, uploaded: false },
     { name: 'Form CAC 2.1 (Statement of Share Capital)', required: true, uploaded: false },
@@ -31,6 +37,12 @@ const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ onBack, onNext 
     { name: 'Certified True Copy of Address Verification', required: false, uploaded: false },
     { name: 'Letter of Consent from Landlord', required: false, uploaded: false },
   ]);
+
+  useEffect(() => {
+    if (initialData?.documents) {
+      setDocuments(initialData.documents);
+    }
+  }, [initialData]);
 
   const handleFileUpload = (index: number, file: File) => {
     const updatedDocuments = [...documents];
@@ -48,24 +60,25 @@ const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ onBack, onNext 
   };
 
   const handleSubmit = () => {
-    const requiredDocuments = documents.filter(doc => doc.required);
-    const uploadedRequiredDocuments = requiredDocuments.filter(doc => doc.uploaded);
-    
-    if (uploadedRequiredDocuments.length < requiredDocuments.length) {
+    const validation = validateDocumentsForm(documents);
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
       toast({
-        title: "Missing Required Documents",
+        title: "Required Documents Missing",
         description: "Please upload all required documents before proceeding.",
         variant: "destructive",
       });
       return;
     }
 
-    console.log('Document Upload Form Data:', documents);
+    setValidationErrors([]);
+    const data = { documents };
+    console.log('Document Upload Form Data:', data);
     toast({
-      title: "Documents Submitted",
-      description: "All documents have been submitted successfully.",
+      title: "Documents Validated",
+      description: "Proceeding to payment.",
     });
-    onNext();
+    onNext(data);
   };
 
   return (
@@ -81,7 +94,23 @@ const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ onBack, onNext 
             Back
           </Button>
         </div>
-        <p className="text-gray-600">Upload the required documents for your business registration</p>
+        <p className="text-gray-600">Upload all required documents before proceeding to payment</p>
+
+        {validationErrors.length > 0 && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="text-red-600 mt-0.5" size={16} />
+              <div>
+                <p className="font-medium text-red-800">Required documents missing:</p>
+                <ul className="text-sm text-red-700 mt-1 list-disc list-inside">
+                  {validationErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <Card className="border-0 shadow-sm">
@@ -159,8 +188,8 @@ const DocumentUploadForm: React.FC<DocumentUploadFormProps> = ({ onBack, onNext 
         <Button variant="outline" onClick={onBack}>
           Previous
         </Button>
-        <Button onClick={handleSubmit} className="bg-emerald-600 hover:bg-emerald-700">
-          Submit Application
+        <Button onClick={handleSubmit} className="bg-blue-900 hover:bg-blue-800">
+          Continue to Payment
         </Button>
       </div>
     </div>
