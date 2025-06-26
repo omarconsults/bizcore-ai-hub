@@ -23,6 +23,11 @@ const LandingHeroContent = () => {
     "Full HR suite with payroll, contracts & performance tracking"
   ];
 
+  const achievements = [
+    { icon: Award, text: "Featured in Tech and Business Media" },
+    { icon: Zap, text: "45% faster business growth vs manual methods" },
+    { icon: Shield, text: "Zero compliance violations in 2024" }
+  ];
 
   return (
     <div className="space-y-8 text-center lg:text-left">
