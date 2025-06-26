@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -159,9 +158,8 @@ const BusinessSetupForm = ({ onComplete }: BusinessSetupFormProps) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Business Name">Business Name</SelectItem>
-                  <SelectItem value="Partnership">Partnership</SelectItem>
-                  <SelectItem value="LLC">Limited Liability Company (LLC)</SelectItem>
-                  <SelectItem value="LTD">Private Limited Company (LTD)</SelectItem>
+                  <SelectItem value="Limited Liability Partnership (LLP)">Limited Liability Partnership (LLP)</SelectItem>
+                  <SelectItem value="Private Limited Company (LTD)">Private Limited Company (LTD)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

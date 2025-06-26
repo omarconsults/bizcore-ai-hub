@@ -1,4 +1,3 @@
-
 import { EntityType, LaunchStep } from './types';
 
 export const entityTypes: EntityType[] = [
@@ -11,14 +10,6 @@ export const entityTypes: EntityType[] = [
     cost: '₦25,000'
   },
   {
-    type: 'Limited Liability Company (LLC)',
-    description: 'Most popular choice for growing businesses',
-    pros: ['Limited liability', 'Professional credibility', 'Easy to raise funds'],
-    cons: ['More paperwork', 'Higher costs', 'Annual filings required'],
-    bestFor: 'Startups, SMEs, businesses seeking investment',
-    cost: '₦60,000'
-  },
-  {
     type: 'Private Limited Company (LTD)',
     description: 'Corporate structure with share capital and limited liability',
     pros: ['Limited liability protection', 'Separate legal entity', 'Transferable shares', 'Tax advantages'],
@@ -27,12 +18,12 @@ export const entityTypes: EntityType[] = [
     cost: '₦60,000'
   },
   {
-    type: 'Partnership',
-    description: 'Shared ownership and responsibilities',
-    pros: ['Shared costs', 'Combined expertise', 'Shared liability'],
-    cons: ['Potential conflicts', 'Joint liability', 'Profit sharing'],
-    bestFor: 'Professional services, joint ventures',
-    cost: '₦₦50,000'
+    type: 'Limited Liability Partnership (LLP)',
+    description: 'Partnership with limited liability protection for partners',
+    pros: ['Limited liability for partners', 'Flexible management structure', 'Shared costs and expertise'],
+    cons: ['Complex registration process', 'Potential partner conflicts', 'Joint and several liability for some matters'],
+    bestFor: 'Professional services, joint ventures, multiple business partners',
+    cost: '₦50,000'
   }
 ];
 

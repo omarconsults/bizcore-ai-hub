@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -130,9 +129,8 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
               </FormControl>
               <SelectContent>
                 <SelectItem value="Business Name">Business Name</SelectItem>
-                <SelectItem value="Limited Liability Company (LLC)">Limited Liability Company (LLC)</SelectItem>
                 <SelectItem value="Private Limited Company (LTD)">Private Limited Company (LTD)</SelectItem>
-                <SelectItem value="Partnership">Partnership</SelectItem>
+                <SelectItem value="Limited Liability Partnership (LLP)">Limited Liability Partnership (LLP)</SelectItem>
                 <SelectItem value="Public Limited Company">Public Limited Company</SelectItem>
               </SelectContent>
             </Select>
@@ -141,7 +139,7 @@ const CACRegistrationForm: React.FC<CACRegistrationFormProps> = ({
         )}
       />
 
-      {(selectedEntityType === 'Limited Liability Company (LLC)' || selectedEntityType === 'Private Limited Company (LTD)') && (
+      {(selectedEntityType === 'Private Limited Company (LTD)') && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
